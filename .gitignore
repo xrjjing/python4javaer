@@ -34,3 +34,6 @@ dist/
 htmlcov/
 .pytest_cache/
 
+/AGENTS.md
+/.spec-workflow/
+/.serena/

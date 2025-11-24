@@ -4,29 +4,93 @@
 
 ---
 
-## 📚 仓库内容概览
+## 📂 仓库结构总览
 
-- `docs/Python学习规划_Java开发者版.md`  
-  详细的学习路线规划，按周拆分「语法 → 函数 → 面向对象 → 标准库 → Web 实战 → 进阶」等内容，可边学边在文档中打勾记录进度。
+- `docs/`  
+  - `docs/Python学习规划_Java开发者版.md`：整体学习路线与自检清单（按「语言基础 → 标准库 → Web / 脚本 → 进阶」分周规划）。
 
-- （推荐）`src/`  
-  放置每一阶段的练习代码、小脚本和小项目，例如：
-  - `src/week01/`：基础语法与小脚本
-  - `src/week02/`：函数与高级语法练习
-  - `src/web/`：Web / API 实战项目
+- `01.Python语言基础/`  
+  针对 Java 开发者整理的语法学习笔记与小 demo，覆盖：
+  - 快速上手、变量与数据类型、条件与循环；
+  - 容器类型、函数、模块与包、异常与文件；
+  - 面向对象、迭代器与生成器、lambda 与装饰器、命名空间与类型注解；
+  - 「开发技巧 / 写法优化」中的 pathlib、logging、推导式、解包、EAFP 等 Pythonic 写法。
 
-- （推荐）`tests/`  
-  使用 `pytest` 的单元测试目录，用于练习工程化与测试驱动开发。
+- `02.开发环境及框架介绍/`  
+  侧重工程化与框架：
+  - 开发工具与交互环境（PyCharm、REPL、Jupyter）；
+  - 虚拟环境与依赖管理（venv / pip / requirements.txt）；
+  - 项目结构与代码组织（推荐的 `src/` 布局思路）；
+  - Web 框架概览（Flask / Django / FastAPI）及**框架的好处**；
+  - FastAPI 的最小 demo 与常用用法（路由、Pydantic 模型、依赖注入、APIRouter、中间件、测试等）；
+  - 数据分析栈概览（numpy / pandas / 可视化）。
 
-> 说明：目前仓库可能还没有 `src/` 和 `tests/` 目录，你可以在需要时按上面结构自行创建。
+- `03.项目实战/`  
+  从易到难的一组小项目，练习「用 Python 解决真实问题」：
+  - `01_命令行工具_批量重命名文件`：Pathlib + argparse；
+  - `02_日志分析与报表生成`：日志解析与 Counter 统计；
+  - `03_TODO_Web_API_FastAPI`：使用 FastAPI + SQLite + SQLAlchemy 的 TODO API；
+  - `04_小型数据分析项目_销售统计`：pandas 读取 CSV 并做聚合统计；
+  - `05_简单爬虫_新闻标题抓取`：requests + BeautifulSoup；
+  - `06_自动化脚本_日志归档`：zip 归档 + 定时任务思路；
+  - `07_监控数据处理_指标聚合与告警`：CSV 指标聚合 + 简单告警规则；
+  - `08_系统对接_调用Java服务API`：Python 网关调用 Java 服务 API。
 
 ---
 
-## 🚀 快速开始
+## 🧭 推荐学习路径
 
-### 1. 创建并激活虚拟环境（已创建可跳过第一步）
+1. 把 `docs/Python学习规划_Java开发者版.md` 当作「总路线图」，先通读一遍，了解整体阶段划分。
+2. 按顺序完成 `01.Python语言基础` 下的章节（至少前 9~10 章），并运行每章的 demo 脚本。
+3. 阅读 `02.开发环境及框架介绍/02.开发环境及框架介绍.md`：
+   - 先掌握虚拟环境、依赖管理、项目结构；
+   - 再重点看第 4 节的 Web 框架与 FastAPI 常用用法。
+4. 在 `03.项目实战` 中选择项目动手：
+   - 想练接口开发 → 从 `03_TODO_Web_API_FastAPI` 开始，再看 `08_系统对接_调用Java服务API`；
+   - 想练脚本 / 自动化 → 先做 `01_命令行工具`、`06_自动化脚本_日志归档`；
+   - 想练数据分析 → 做 `04_小型数据分析项目_销售统计`，结合 pandas。
 
-在项目根目录（即当前 README 所在目录）执行：
+---
+
+## 🌐 Web 框架与 Demo 总览
+
+框架相关内容主要集中在：
+
+- 文档层面：`02.开发环境及框架介绍/02.开发环境及框架介绍.md` 的「04_Web 框架概览与 FastAPI 入门」；
+- 实战层面：
+  - `03.项目实战/03_TODO_Web_API_FastAPI`：完整的 REST API 项目骨架（路由拆分、数据库、Pydantic 模型等）；
+  - `03.项目实战/08_系统对接_调用Java服务API`：Python 网关调用 Java 系统接口的示例。
+
+你可以直接运行以下示例体验框架的好处（自动路由、Swagger 文档、依赖注入等）：
+
+```bash
+# 运行 TODO Web API（FastAPI + SQLite）
+pip install fastapi "uvicorn[standard]" sqlalchemy
+cd 03.项目实战/03_TODO_Web_API_FastAPI
+uvicorn app.main:app --reload
+```
+
+```bash
+# 运行调用 Java 服务的网关示例（FastAPI + requests）
+pip install fastapi "uvicorn[standard]" requests
+cd 03.项目实战/08_系统对接_调用Java服务API
+uvicorn api_gateway_example:app --reload
+```
+
+访问 `http://127.0.0.1:8000/docs` 即可在浏览器中通过 Swagger UI 调试接口。
+
+更多框架常用写法（路径参数、查询参数、请求体验证、依赖注入、APIRouter、中间件、后台任务、测试等），请参考：
+
+- `02.开发环境及框架介绍/02.开发环境及框架介绍.md` 中 FastAPI 小节；
+- `03.项目实战/03_TODO_Web_API_FastAPI/03_项目说明.md` 中对项目结构的说明。
+
+---
+
+## 🚀 环境准备（虚拟环境 + PyCharm）
+
+### 1. 创建并激活虚拟环境（已创建可跳过）
+
+在项目根目录执行：
 
 ```bash
 cd /Users/xrj/PycharmProjects/learn
@@ -50,16 +114,19 @@ source .venv/bin/activate   # macOS / Linux
 
 ---
 
-## 🧭 学习建议
+## 🧪 关于 `src/` 与 `tests/`（可选工程化布局）
 
-1. 把 `docs/Python学习规划_Java开发者版.md` 当作「总路线图」  
-   每学习一小段，就回去在文档里勾选对应自检项，并补充自己的笔记。
+当前仓库的学习示例主要放在 `01.*` 与 `03.*` 目录中，方便按章节与项目管理。  
+如果你更习惯「真实项目」的工程化结构，可以在此基础上另外创建：
 
-2. 每完成一个阶段，在 `src/` 下新建对应目录  
-   例如第 1 周就建 `src/week01/`，把所有小脚本都放进去，方便后续对比自己的进步。
+- `src/`：放置自己整理的通用库或更完整的项目代码，例如：
+  - `src/learn_py_basics/`：把基础语法练习整理成可复用模块；
+  - `src/api_fastapi_demo/`：提炼属于自己的 FastAPI 脚手架。
+- `tests/`：使用 `pytest` 编写单元测试或接口测试：
+  - `tests/test_*.py` 中调用 `03.项目实战` 里的代码进行自动化校验。
 
-3. 尽量用 Python 风格（Pythonic）重写你熟悉的 Java 小例子  
-   比如：日志分析、小工具脚本、简单 REST 接口等，加深对两门语言差异的理解。
+这两部分在 `docs/Python学习规划_Java开发者版.md` 与  
+`02.开发环境及框架介绍/02.开发环境及框架介绍.md` 中都有工程化结构建议，可按需采纳。
 
 ---
 
@@ -67,4 +134,3 @@ source .venv/bin/activate   # macOS / Linux
 
 - `.gitignore`：本仓库已为 Python 项目添加常用忽略规则（见根目录 `.gitignore` 文件），避免提交虚拟环境、缓存文件等。
 - `LICENSE`：开源协议类型（如 MIT、Apache-2.0 等）会影响项目的开源方式和使用限制，建议你先想清楚是否要对外开源、采用哪种协议，再创建对应的 `LICENSE` 文件；如果需要，我可以根据你的选择生成完整的 LICENSE 文件内容。
-
