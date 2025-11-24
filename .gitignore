@@ -1,0 +1,36 @@
+# ==========================
+# Python 项目常用忽略规则
+# ==========================
+
+# Python 编译缓存与字节码文件
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# 虚拟环境目录
+.venv/
+venv/
+env/
+
+# 分发与打包产物
+build/
+dist/
+*.egg-info/
+*.egg
+
+# 日志与临时文件
+*.log
+*.tmp
+*.swp
+.DS_Store
+
+# IDE / 编辑器配置
+.idea/
+.vscode/
+
+# 覆盖率与测试相关
+.coverage
+htmlcov/
+.pytest_cache/
+
