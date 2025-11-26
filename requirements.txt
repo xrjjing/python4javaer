@@ -1,0 +1,22 @@
+# Python学习项目 - 核心依赖
+# 用于项目实战部分的第三方库
+
+# Web框架（项目03）
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.4.0
+
+# 数据库ORM（项目03）
+sqlalchemy>=2.0.0
+
+# HTTP请求（项目05, 08）
+requests>=2.31.0
+
+# HTML解析/爬虫（项目05）
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# 数据分析（项目04）
+pandas>=2.1.0
+numpy>=1.26.0
+openpyxl>=3.1.0  # Excel文件支持
