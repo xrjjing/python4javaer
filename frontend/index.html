@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 学习导航 - Java 开发者版</title>
+
+    <!-- Prism.js & CodeJar for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codejar/4.2.0/codejar.min.js"></script>
+
+    <style>
+/* =========================================
+   1. RESET & VARIABLES (Gemini Design)
+   ========================================= */
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --primary-light: #eef2ff;
+    --bg-app: #f1f5f9;
+    --bg-panel: #ffffff;
+    --text-main: #334155;
+    --text-heading: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.12);
+    --radius: 8px;
+    --header-height: 60px;
+    --sidebar-width: 280px;
+    --code-bg: #f1f5f9;
+    --code-text: #0f172a;
+}
+
+/* DARK THEME OVERRIDES (Gemini Design) */
+[data-theme="dark"] {
+    --primary: #6366f1;
+    --primary-hover: #818cf8;
+    --primary-light: rgba(99, 102, 241, 0.15);
+    --bg-app: #020617;
+    --bg-panel: #0f172a;
+    --text-main: #cbd5e1;
+    --text-heading: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #1e293b;
+    --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.25);
+    --code-bg: #1e293b;
+    --code-text: #f1f5f9;
+}
+
+/* SMOOTH THEME TRANSITIONS (Gemini Design) */
+body,
+.sidebar,
+.main-content,
+.top-bar,
+.doc-panel,
+.editor-card,
+.output-card,
+button,
+.nav-item,
+textarea {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+}
+
+/* =========================================
+   2. LAYOUT SHELL
+   ========================================= */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    z-index: 10;
+}
+
+.sidebar-header {
+    height: var(--header-height);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+}
+
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem 1rem;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.top-bar {
+    height: var(--header-height);
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+}
+
+.top-bar-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+.content-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem;
+    display: flex;
+    gap: 1.5rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.doc-panel {
+    flex: 3;
+    min-width: 0;
+    background: var(--bg-panel);
+    padding: 2rem;
+    padding-bottom: 3rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+}
+
+.code-panel {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 350px;
+    position: sticky;
+    top: 0;
+    height: 100%;
+    max-height: calc(100vh - 4rem);
+    padding: 2rem;
+    background: var(--bg-panel);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-elevated);
+}
+
+/* =========================================
+   3. NAVIGATION COMPONENTS
+   ========================================= */
+.nav-group {
+    margin-bottom: 1.5rem;
+}
+
+.nav-group-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    padding-left: 0.75rem;
+}
+
+.nav-item {
+    display: block;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 2px;
+    border-radius: 6px;
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+}
+
+.nav-item:hover {
+    background-color: var(--primary-light);
+    color: var(--primary);
+}
+
+.nav-item.active {
+    background-color: var(--primary-light);
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.nav-item-code {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: "JetBrains Mono", Consolas, monospace;
+    margin-top: 2px;
+    display: block;
+}
+
+/* =========================================
+   4. DOCUMENT CONTENT
+   ========================================= */
+.chapter-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.chapter-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 0.5rem;
+}
+
+.chapter-path {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-family: "JetBrains Mono", Consolas, monospace;
+}
+
+.chapter-tags {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #eff6ff;
+    color: #3b82f6;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.chapter-overview {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-main);
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-heading);
+    margin: 2rem 0 1rem;
+}
+
+.unified-doc-card {
+    /* 作为文档内容的一部分，而不是「卡片套卡片」 */
+    background: transparent;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+
+    /* 顶部分隔线，让预览区域和上方内容有轻微层次 */
+    padding: 1.5rem 0 0;
+    border-top: 1px solid var(--border);
+
+    /* 增加底部留白，确保有足够呼吸空间 */
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+}
+
+.unified-doc-card .section-title:first-child {
+    margin-top: 0;
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+}
+
+.file-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: var(--bg-panel);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.file-name {
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 0.9rem;
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.file-hint {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.file-path {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: "JetBrains Mono", Consolas, monospace;
+    margin-top: 0.25rem;
+}
+
+/* Markdown Viewer */
+.markdown-viewer {
+    /* Layout & Spacing */
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    min-height: 220px;       /* 保留基本阅读区域和加载占位 */
+    max-height: 600px; /* Increased for better reading */
+    overflow-y: auto;
+
+    /* Visual Style - 跟随主题配色 */
+    background-color: var(--bg-panel);
+    color: var(--text-main);
+    border-radius: var(--radius); /* 8px */
+    border: 1px solid var(--border);    /* Subtle darker border */
+
+    /* Typography */
+    font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+    font-size: 0.85rem;       /* Slightly smaller for code density */
+    line-height: 1.6;
+    white-space: pre-wrap;    /* Preserve formatting */
+
+    /* Polish */
+    box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05); /* Inner shadow for depth */
+}
+
+/* Custom Scrollbar for markdown viewer */
+.markdown-viewer::-webkit-scrollbar {
+    width: 10px;
+}
+.markdown-viewer::-webkit-scrollbar-track {
+    background: var(--bg-panel);
+    border-radius: 0 var(--radius) var(--radius) 0;
+}
+.markdown-viewer::-webkit-scrollbar-thumb {
+    background-color: #475569;
+    border-radius: 5px;
+    border: 2px solid var(--bg-panel);
+}
+
+/* =========================================
+   5. CODE EDITOR & OUTPUT
+   ========================================= */
+.editor-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.editor-header {
+    background: var(--bg-app);
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-heading);
+}
+
+[data-theme="dark"] .editor-header {
+    background: var(--bg-app);
+}
+
+#my-code-pane,
+#reference-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.editor-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.code-tabs {
+    margin-top: 0.35rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.code-tab {
+    padding: 0.15rem 0.8rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.code-tab:hover {
+    background-color: var(--primary-light);
+    color: var(--primary);
+}
+
+.code-tab-active {
+    background-color: var(--primary-light);
+    color: var(--primary);
+    border-color: rgba(148, 163, 184, 0.7);
+}
+
+.editor-textarea {
+    width: 100%;
+    min-height: 0;
+    flex: 1;
+    padding: 1rem;
+    border: none;
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    background: var(--code-bg);
+    color: var(--code-text);
+    outline: none;
+    tab-size: 4;
+    overflow-y: auto;
+}
+
+.reference-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: #f8fafc;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .reference-toolbar {
+    background: #020617;
+}
+
+.reference-toolbar-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.reference-viewer {
+    background: var(--code-bg);
+    padding: 0.75rem 1rem 1rem;
+    max-height: 320px;
+    overflow: auto;
+    flex: 1;
+}
+
+.reference-close-btn {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+.code-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+}
+
+.code-modal-overlay.active {
+    display: flex;
+}
+
+.code-modal {
+    width: min(800px, 100%);
+    max-height: 85vh;
+    background: var(--bg-panel);
+    color: var(--text-main);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.code-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(148, 163, 184, 0.08);
+}
+
+[data-theme="dark"] .code-modal-header {
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.code-modal-header-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.code-modal-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+.code-modal-filename {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: "JetBrains Mono", Consolas, monospace;
+}
+
+.code-modal-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.code-modal-body {
+    padding: 1rem;
+    background: var(--code-bg);
+    overflow: auto;
+}
+
+/* Prism Syntax Highlighting (Gemini Design) */
+.token.keyword, .token.operator { color: var(--primary); font-weight: bold; }
+.token.string { color: #10b981; }
+[data-theme="dark"] .token.string { color: #34d399; }
+.token.comment { color: var(--text-muted); font-style: italic; }
+.token.function { color: #8b5cf6; }
+[data-theme="dark"] .token.function { color: #a78bfa; }
+.token.number, .token.boolean { color: #f59e0b; }
+.token.builtin { color: #ec4899; }
+
+pre[class*="language-"] {
+    background-color: var(--code-bg) !important;
+    color: var(--code-text) !important;
+    border-radius: 6px;
+    padding: 1em;
+    margin: 0.5em 0;
+    overflow: auto;
+}
+
+code[class*="language-"], pre[class*="language-"] {
+    text-shadow: none !important;
+    font-family: "JetBrains Mono", Consolas, monospace;
+}
+
+.output-card {
+    background: var(--code-bg);
+    border-radius: var(--radius);
+    color: var(--code-text);
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #334155;
+}
+
+.output-header {
+    padding: 0.5rem 1rem;
+    background: rgba(255,255,255,0.1);
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.output-content {
+    padding: 1rem;
+    min-height: 100px;
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+}
+
+/* =========================================
+   6. BUTTONS
+   ========================================= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    background-color: white;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+}
+
+.btn-secondary:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* 章节 demo 区域的「查看代码」按钮，跟随主题配色 */
+.load-code-btn {
+    background-color: var(--bg-panel);
+    color: var(--text-main);
+    border-color: var(--border);
+}
+
+.load-code-btn:hover {
+    background-color: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.snippet-chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+}
+
+#snippet-container:empty {
+    display: none;
+}
+
+.snippet-chip {
+    padding: 0.35rem 0.75rem;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.snippet-chip:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+/* Theme Toggle Button (Gemini Design) */
+.theme-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 8px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+    background-color: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+/* Icon Switching Logic */
+.icon-sun, .icon-moon {
+    display: none;
+}
+
+:root:not([data-theme="dark"]) .icon-sun {
+    display: block;
+}
+
+[data-theme="dark"] .icon-moon {
+    display: block;
+}
+
+/* =========================================
+   7. SCROLLBAR
+   ========================================= */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* =========================================
+   8. RESPONSIVE
+   ========================================= */
+@media (max-width: 1024px) {
+    .content-scroll-area {
+        flex-direction: column;
+    }
+
+    .code-panel {
+        position: static;
+        max-height: none;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .content-scroll-area {
+        padding: 1rem;
+    }
+
+    .doc-panel {
+        padding: 1.5rem;
+        padding-bottom: 3rem; /* 移动端同样增加底部内边距 */
+    }
+
+    .code-panel {
+        padding: 1.5rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            📚 Python 学习导航
+        </div>
+        <div class="sidebar-content">
+            <div class="nav-group">
+                <div class="nav-group-title">语言基础 · 15 章节</div>
+                <div id="chapter-nav"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="top-bar-title">Python 学习系统 - 面向 Java 开发者</div>
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Dark Mode">
+                <!-- Sun Icon (Show in Light Mode) -->
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+
+                <!-- Moon Icon (Show in Dark Mode) -->
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="content-scroll-area">
+            <!-- Document Panel -->
+            <div class="doc-panel" id="doc-panel">
+                <div class="chapter-header">
+                    <h1 class="chapter-title">欢迎使用 Python 学习系统</h1>
+                    <p class="chapter-overview">
+                        请从左侧选择一个章节开始学习。本系统包含 15 个完整章节，
+                        涵盖 Python 语言基础的所有核心知识点，特别为 Java 开发者优化。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Code Panel -->
+            <div class="code-panel">
+                <!-- Code Editor -->
+                <div class="editor-card">
+                    <div class="editor-header">
+                        <div>
+                            <div class="editor-title">🧪 在线 Python 执行器</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">
+                                注意：浏览器环境不支持 input() 函数，请使用直接赋值方式
+                            </div>
+                        </div>
+                        <button id="run-btn" class="btn btn-primary">▶ 运行代码</button>
+                    </div>
+                    <div id="my-code-pane">
+                        <div id="code-editor" class="editor-textarea language-python"># 在这里编写 Python 代码
+print("Hello, Python!")
+print("1 + 1 =", 1 + 1)</div>
+                        <div id="snippet-container" class="snippet-chips" style="padding: 0 1rem 1rem;"></div>
+                    </div>
+                </div>
+
+                <!-- Output Display -->
+                <div class="output-card">
+                    <div class="output-header">输出结果</div>
+                    <div id="output" class="output-content">点击"运行代码"查看输出...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 参考代码模态框 -->
+    <div id="code-modal-overlay" class="code-modal-overlay" aria-hidden="true">
+        <div id="code-modal" class="code-modal" role="dialog" aria-modal="true" aria-labelledby="code-modal-title">
+            <div class="code-modal-header">
+                <div class="code-modal-header-main">
+                    <div id="code-modal-title" class="code-modal-title">参考代码预览</div>
+                    <div id="code-modal-filename" class="code-modal-filename"></div>
+                </div>
+                <div class="code-modal-actions">
+                    <button id="code-modal-copy-to-editor" class="btn btn-secondary" type="button">复制到编辑器</button>
+                    <button id="code-modal-copy-to-clipboard" class="btn btn-secondary" type="button">复制到剪贴板</button>
+                    <button id="code-modal-close" class="btn btn-secondary reference-close-btn" type="button">×</button>
+                </div>
+            </div>
+            <div class="code-modal-body">
+                <pre class="language-python"><code id="code-modal-code" class="language-python"></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pyodide Script -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+
+    <script>
+// ========== 章节数据 ==========
+const chapters = [
+    {
+        id: '01',
+        title: '01_快速上手与基本语法',
+        dir: '01.Python语言基础/01_快速上手与基本语法',
+        doc: '01.Python语言基础/01_快速上手与基本语法/01_快速上手与基本语法.md',
+        overview: '从零跑通 Python 脚本，理解缩进、基本语句、print 与简单交互，是所有后续内容的起点。',
+        demos: [
+            { name: 'demo_hello.py', path: '01.Python语言基础/01_快速上手与基本语法/demo_hello.py', hint: '最小可运行示例' },
+            { name: 'practice_basic_io.py', path: '01.Python语言基础/01_快速上手与基本语法/practice_basic_io.py', hint: '基础输入输出练习' }
+        ],
+        tags: ['语法入门', '脚本执行'],
+        snippets: [
+            { label: '问候示例', code: '# 注意：浏览器环境不支持 input()，使用直接赋值\nname = "小明"\nprint("你好,", name)\nprint("欢迎学习 Python!")\n' }
+        ]
+    },
+    {
+        id: '02',
+        title: '02_变量_数据类型_运算符',
+        dir: '01.Python语言基础/02_变量_数据类型_运算符',
+        doc: '01.Python语言基础/02_变量_数据类型_运算符/02_变量_数据类型_运算符.md',
+        overview: '理解 Python 的动态类型系统，掌握常见数据类型与运算符，对比 Java 的差异。',
+        demos: [
+            { name: 'demo_types_ops.py', path: '01.Python语言基础/02_变量_数据类型_运算符/demo_types_ops.py', hint: '数据类型演示' },
+            { name: 'practice_types.py', path: '01.Python语言基础/02_变量_数据类型_运算符/practice_types.py', hint: '类型练习' }
+        ],
+        tags: ['动态类型', '运算符'],
+        snippets: [
+            { label: 'BMI 计算', code: '# BMI 计算示例（体重 kg / 身高 m²）\nweight = 70  # 体重 70kg\nheight = 1.75  # 身高 1.75m\nbmi = weight / (height ** 2)\nprint(f"体重: {weight}kg, 身高: {height}m")\nprint(f"BMI: {round(bmi, 2)}")' }
+        ]
+    },
+    {
+        id: '03',
+        title: '03_条件判断与分支',
+        dir: '01.Python语言基础/03_条件判断与分支',
+        doc: '01.Python语言基础/03_条件判断与分支/03_条件判断与分支.md',
+        overview: '熟悉 if / elif / else 的用法，理解"没有 switch"的典型写法，练习多分支业务逻辑。',
+        demos: [
+            { name: 'demo_conditions.py', path: '01.Python语言基础/03_条件判断与分支/demo_conditions.py', hint: '条件判断示例' },
+            { name: 'practice_conditions.py', path: '01.Python语言基础/03_条件判断与分支/practice_conditions.py', hint: '分支练习' }
+        ],
+        tags: ['if/elif/else', '分支逻辑'],
+        snippets: [
+            { label: '年龄判断', code: '# 年龄分段判断示例\nage = 25  # 可以修改这个值试试不同结果\n\nif age < 18:\n    print(f"{age}岁 - 未成年")\nelif age < 60:\n    print(f"{age}岁 - 成年人")\nelse:\n    print(f"{age}岁 - 老年人")' }
+        ]
+    },
+    {
+        id: '04',
+        title: '04_循环与迭代',
+        dir: '01.Python语言基础/04_循环与迭代',
+        doc: '01.Python语言基础/04_循环与迭代/04_循环与迭代.md',
+        overview: '掌握 for / while，理解 Python 的迭代协议和 for-in 写法，配合 range / enumerate 进行遍历。',
+        demos: [
+            { name: 'demo_loops.py', path: '01.Python语言基础/04_循环与迭代/demo_loops.py', hint: '循环示例' },
+            { name: 'practice_loops.py', path: '01.Python语言基础/04_循环与迭代/practice_loops.py', hint: '循环练习' }
+        ],
+        tags: ['for', 'while', 'enumerate'],
+        snippets: [
+            { label: '循环打印', code: 'for i in range(1, 6):\n    print("数字:", i)' },
+            { label: 'enumerate', code: 'names = ["Alice", "Bob", "Charlie"]\nfor idx, name in enumerate(names, 1):\n    print(f"{idx}. {name}")' }
+        ]
+    },
+    {
+        id: '05',
+        title: '05_序列与集合类型',
+        dir: '01.Python语言基础/05_序列与集合类型',
+        doc: '01.Python语言基础/05_序列与集合类型/05_序列与集合类型.md',
+        overview: '从 list / tuple / dict / set 出发，建立 Python 容器思维，是写业务代码时最常用的一块。',
+        demos: [
+            { name: 'demo_containers.py', path: '01.Python语言基础/05_序列与集合类型/demo_containers.py', hint: '容器类型示例' },
+            { name: 'practice_containers.py', path: '01.Python语言基础/05_序列与集合类型/practice_containers.py', hint: '容器练习' }
+        ],
+        tags: ['list', 'dict', 'set', 'tuple'],
+        snippets: [
+            { label: '单词计数', code: 'text = "python is fun and python is powerful"\ncounter = {}\nfor word in text.split():\n    counter[word] = counter.get(word, 0) + 1\nprint(counter)' }
+        ]
+    },
+    {
+        id: '06',
+        title: '06_函数与参数',
+        dir: '01.Python语言基础/06_函数与参数',
+        doc: '01.Python语言基础/06_函数与参数/06_函数与参数.md',
+        overview: '理解 Python 函数定义、多种参数形式（默认值、关键字参数、可变参数）以及返回值习惯。',
+        demos: [
+            { name: 'demo_functions.py', path: '01.Python语言基础/06_函数与参数/demo_functions.py', hint: '函数定义示例' },
+            { name: 'practice_functions.py', path: '01.Python语言基础/06_函数与参数/practice_functions.py', hint: '函数练习' }
+        ],
+        tags: ['函数', '参数'],
+        snippets: [
+            { label: '问候函数', code: 'def greet(name, prefix="你好"):\n    print(f"{prefix}, {name}")\n\ngreet("小明")\ngreet("小红", prefix="Hello")' }
+        ]
+    },
+    {
+        id: '07',
+        title: '07_模块与包基础',
+        dir: '01.Python语言基础/07_模块与包基础',
+        doc: '01.Python语言基础/07_模块与包基础/07_模块与包基础.md',
+        overview: '理解「模块」和「包」的概念，掌握 import 的多种用法，学会组织代码结构。',
+        demos: [
+            { name: 'demo_modules.py', path: '01.Python语言基础/07_模块与包基础/demo_modules.py', hint: '模块导入示例' },
+            { name: 'practice_modules.py', path: '01.Python语言基础/07_模块与包基础/practice_modules.py', hint: '模块练习' }
+        ],
+        tags: ['模块', 'import', '包'],
+        snippets: []
+    },
+    {
+        id: '08',
+        title: '08_异常与文件基础',
+        dir: '01.Python语言基础/08_异常与文件基础',
+        doc: '01.Python语言基础/08_异常与文件基础/08_异常与文件基础.md',
+        overview: '理解异常的概念与常见异常类型，掌握 try/except/finally，学会基本的文件读写操作。',
+        demos: [
+            { name: 'demo_exceptions_files.py', path: '01.Python语言基础/08_异常与文件基础/demo_exceptions_files.py', hint: '异常和文件示例' },
+            { name: 'practice_exceptions_files.py', path: '01.Python语言基础/08_异常与文件基础/practice_exceptions_files.py', hint: '异常练习' }
+        ],
+        tags: ['异常处理', '文件操作'],
+        snippets: []
+    },
+    {
+        id: '09',
+        title: '09_面向对象入门',
+        dir: '01.Python语言基础/09_面向对象入门',
+        doc: '01.Python语言基础/09_面向对象入门/09_面向对象入门.md',
+        overview: '理解在 Python 中定义类和创建对象的方式，掌握 __init__、实例方法、继承等基础概念。',
+        demos: [
+            { name: 'demo_oop.py', path: '01.Python语言基础/09_面向对象入门/demo_oop.py', hint: '面向对象示例' },
+            { name: 'practice_oop.py', path: '01.Python语言基础/09_面向对象入门/practice_oop.py', hint: 'OOP 练习' }
+        ],
+        tags: ['类', '对象', '继承'],
+        snippets: []
+    },
+    {
+        id: '10',
+        title: '10_迭代器与生成器',
+        dir: '01.Python语言基础/10_迭代器与生成器',
+        doc: '01.Python语言基础/10_迭代器与生成器/10_迭代器与生成器.md',
+        overview: '理解「可迭代对象」「迭代器」的概念，掌握生成器的用法，体会 Python 的惰性计算思想。',
+        demos: [
+            { name: 'demo_iterators_generators.py', path: '01.Python语言基础/10_迭代器与生成器/demo_iterators_generators.py', hint: '迭代器示例' },
+            { name: 'practice_iterators_generators.py', path: '01.Python语言基础/10_迭代器与生成器/practice_iterators_generators.py', hint: '生成器练习' }
+        ],
+        tags: ['迭代器', '生成器', 'yield'],
+        snippets: []
+    },
+    {
+        id: '11',
+        title: '11_lambda表达式与装饰器',
+        dir: '01.Python语言基础/11_lambda表达式与装饰器',
+        doc: '01.Python语言基础/11_lambda表达式与装饰器/11_lambda表达式与装饰器.md',
+        overview: '掌握 lambda 匿名函数和装饰器的基本用法，理解高阶函数和代码复用的思想。',
+        demos: [
+            { name: 'demo_lambda_decorators.py', path: '01.Python语言基础/11_lambda表达式与装饰器/demo_lambda_decorators.py', hint: 'lambda 和装饰器示例' },
+            { name: 'practice_lambda_decorators.py', path: '01.Python语言基础/11_lambda表达式与装饰器/practice_lambda_decorators.py', hint: '装饰器练习' }
+        ],
+        tags: ['lambda', '装饰器', '高阶函数'],
+        snippets: []
+    },
+    {
+        id: '12',
+        title: '12_命名空间_作用域_类型注解',
+        dir: '01.Python语言基础/12_命名空间_作用域_类型注解',
+        doc: '01.Python语言基础/12_命名空间_作用域_类型注解/12_命名空间_作用域_类型注解.md',
+        overview: '理解 Python 的作用域规则（LEGB），掌握类型注解的基本用法，编写更清晰的代码。',
+        demos: [
+            { name: 'demo_scope_typing.py', path: '01.Python语言基础/12_命名空间_作用域_类型注解/demo_scope_typing.py', hint: '作用域和类型注解示例' },
+            { name: 'practice_scope_typing.py', path: '01.Python语言基础/12_命名空间_作用域_类型注解/practice_scope_typing.py', hint: '作用域练习' }
+        ],
+        tags: ['作用域', '类型注解', 'LEGB'],
+        snippets: []
+    },
+    {
+        id: '13',
+        title: '13_更多运算符与表达式细节',
+        dir: '01.Python语言基础/13_更多运算符与表达式细节',
+        doc: '01.Python语言基础/13_更多运算符与表达式细节/13_更多运算符与表达式细节.md',
+        overview: '补齐容易被忽略但常用的语法点：in、is、运算符优先级、pass 等。',
+        demos: [
+            { name: 'demo_operators.py', path: '01.Python语言基础/13_更多运算符与表达式细节/demo_operators.py', hint: '运算符细节示例' },
+            { name: 'practice_operators.py', path: '01.Python语言基础/13_更多运算符与表达式细节/practice_operators.py', hint: '运算符练习' }
+        ],
+        tags: ['运算符', 'in', 'is'],
+        snippets: []
+    },
+    {
+        id: '14',
+        title: '14_开发技巧_写法优化',
+        dir: '01.Python语言基础/14_开发技巧_写法优化',
+        doc: '01.Python语言基础/14_开发技巧_写法优化/14_开发技巧_写法优化.md',
+        overview: 'Python 开发技巧集合：f-string、推导式、pathlib、with、logging 等 Pythonic 写法。',
+        demos: [],
+        tags: ['技巧', 'Pythonic', '最佳实践'],
+        snippets: []
+    },
+    {
+        id: '15',
+        title: '15_进阶专题',
+        dir: '01.Python语言基础/15_进阶专题',
+        doc: '01.Python语言基础/15_进阶专题/15_进阶专题.md',
+        overview: '进阶主题：正则表达式、标准库模块、文件操作、序列化、网络编程、并发、异步等。',
+        demos: [],
+        tags: ['进阶', '正则', '并发', '异步'],
+        snippets: []
+    }
+];
+
+// ========== 初始化 ==========
+let currentChapter = null;
+let pyodide = null;
+let jar = null; // CodeJar 实例
+let currentReferencePath = null;
+let currentReferenceCode = '';
+let currentReferenceLanguage = 'python';
+
+// 代码编辑与参考代码模态框相关元素
+const myCodePane = document.getElementById('my-code-pane');
+const codeModalOverlay = document.getElementById('code-modal-overlay');
+const codeModalElement = document.getElementById('code-modal');
+const codeModalFilename = document.getElementById('code-modal-filename');
+const codeModalCodeElement = document.getElementById('code-modal-code');
+const codeModalCopyToEditorBtn = document.getElementById('code-modal-copy-to-editor');
+const codeModalCopyToClipboardBtn = document.getElementById('code-modal-copy-to-clipboard');
+const codeModalCloseBtn = document.getElementById('code-modal-close');
+
+// 📦 缓存机制 (Gemini 设计)
+const contentCache = new Map(); // Markdown 文件缓存
+const codeFileCache = new Map(); // Python 代码文件缓存
+
+// ========== CodeJar + Prism 语法高亮 (Gemini Design) ==========
+const editorElement = document.querySelector('#code-editor');
+if (editorElement && window.CodeJar && window.Prism) {
+    const highlight = (editor) => {
+        const code = editor.textContent;
+        editor.innerHTML = Prism.highlight(code, Prism.languages.python, 'python');
+    };
+    jar = CodeJar(editorElement, highlight);
+} else if (editorElement) {
+    console.error('CodeJar 或 Prism 未加载，语法高亮不可用，将使用简易编辑模式');
+    // 提供一个最小的 jar 兼容实现，避免后续代码报错
+    editorElement.setAttribute('contenteditable', 'true');
+    jar = {
+        updateCode(code) {
+            editorElement.textContent = code;
+        },
+        toString() {
+            return editorElement.textContent || '';
+        }
+    };
+} else {
+    console.error('找不到代码编辑器元素，编辑器不可用');
+}
+
+// ========== 参考代码模态框 ==========
+function openCodeModal(path, code, baseMessage) {
+    const output = document.getElementById('output');
+
+    currentReferencePath = path;
+    currentReferenceCode = code || '';
+    currentReferenceLanguage = 'python';
+
+    if (codeModalFilename) {
+        const filename = path ? path.split('/').pop() : '';
+        codeModalFilename.textContent = filename || '参考代码';
+    }
+
+    if (codeModalCodeElement) {
+        // 设置代码内容并使用 Prism 高亮
+        codeModalCodeElement.textContent = currentReferenceCode;
+        codeModalCodeElement.className = 'language-' + currentReferenceLanguage;
+        const pre = codeModalCodeElement.parentElement;
+        if (pre) {
+            pre.className = 'language-' + currentReferenceLanguage;
+        }
+        if (window.Prism && typeof Prism.highlightElement === 'function') {
+            Prism.highlightElement(codeModalCodeElement);
+        }
+    }
+
+    if (codeModalOverlay) {
+        codeModalOverlay.classList.add('active');
+        codeModalOverlay.setAttribute('aria-hidden', 'false');
+    }
+
+    if (output && baseMessage) {
+        output.textContent = baseMessage + '\n💡 示例代码已在弹窗中打开，可使用“复制到编辑器”或“复制到剪贴板”。';
+    }
+}
+
+function closeCodeModal() {
+    if (codeModalOverlay) {
+        codeModalOverlay.classList.remove('active');
+        codeModalOverlay.setAttribute('aria-hidden', 'true');
+    }
+    currentReferencePath = null;
+    currentReferenceCode = '';
+    currentReferenceLanguage = 'python';
+}
+
+// 绑定模态框按钮事件
+if (codeModalCopyToEditorBtn) {
+    codeModalCopyToEditorBtn.addEventListener('click', () => {
+        if (!jar) return;
+        const output = document.getElementById('output');
+        const code = currentReferenceCode || (codeModalCodeElement ? codeModalCodeElement.textContent || '' : '');
+        if (!code) return;
+
+        jar.updateCode(code);
+        closeCodeModal();
+        if (output) {
+            output.textContent = '已将参考代码复制到编辑器，可根据需要修改后点击“运行代码”。';
+        }
+    });
+}
+
+if (codeModalCopyToClipboardBtn) {
+    codeModalCopyToClipboardBtn.addEventListener('click', async () => {
+        const text = currentReferenceCode || (codeModalCodeElement ? codeModalCodeElement.textContent || '' : '');
+        if (!text) return;
+
+        const output = document.getElementById('output');
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const temp = document.createElement('textarea');
+                temp.value = text;
+                temp.style.position = 'fixed';
+                temp.style.opacity = '0';
+                document.body.appendChild(temp);
+                temp.select();
+                document.execCommand('copy');
+                document.body.removeChild(temp);
+            }
+            if (output) {
+                output.textContent = '参考代码已复制到剪贴板。';
+            }
+        } catch (err) {
+            if (output) {
+                output.textContent = '复制到剪贴板失败: ' + err.message;
+            }
+        }
+    });
+}
+
+if (codeModalCloseBtn) {
+    codeModalCloseBtn.addEventListener('click', closeCodeModal);
+}
+
+// 点击遮罩关闭模态框
+if (codeModalOverlay) {
+    codeModalOverlay.addEventListener('click', (event) => {
+        if (event.target === codeModalOverlay) {
+            closeCodeModal();
+        }
+    });
+}
+
+// ESC 键关闭模态框
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        closeCodeModal();
+    }
+});
+
+function renderNav() {
+    const nav = document.getElementById('chapter-nav');
+    nav.innerHTML = chapters.map(ch => `
+        <button class="nav-item" data-id="${ch.id}">
+            <div>${ch.title}</div>
+            <div class="nav-item-code">${ch.dir}</div>
+        </button>
+    `).join('');
+
+    // 添加点击事件
+    document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            showChapter(id);
+            // 更新活动状态
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+}
+
+function showChapter(chapterId) {
+    const chapter = chapters.find(ch => ch.id === chapterId);
+    if (!chapter) return;
+
+    currentChapter = chapter;
+
+    // 渲染文档面板
+    const docPanel = document.getElementById('doc-panel');
+    const tags = Array.isArray(chapter.tags) ? chapter.tags : [];
+    const demos = Array.isArray(chapter.demos) ? chapter.demos : [];
+    const tagsHtml = tags.map(t => `<span class="tag">${t}</span>`).join('');
+    const demosHtml = demos.length > 0
+        ? demos.map((d, idx) => `
+            <li class="file-item">
+                <div style="display: flex; justify-content: space-between; align-items: start; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <div class="file-name">${d.name}</div>
+                        <div class="file-hint">${d.hint}</div>
+                        <div class="file-path">${d.path}</div>
+                    </div>
+                    <button class="btn btn-secondary load-code-btn"
+                            data-file-path="${d.path}"
+                            style="padding: 0.35rem 0.75rem; font-size: 0.85rem; white-space: nowrap;">
+                        📄 查看代码
+                    </button>
+                </div>
+            </li>
+          `).join('')
+        : '<li class="file-item"><div class="file-hint">该章节暂无 demo 文件</div></li>';
+
+    docPanel.innerHTML = `
+        <div class="chapter-header">
+            <h1 class="chapter-title">${chapter.title}</h1>
+            <div class="chapter-path">${chapter.dir}</div>
+            <div class="chapter-tags">${tagsHtml}</div>
+        </div>
+        <p class="chapter-overview">${chapter.overview}</p>
+
+        <h2 class="section-title">📄 章节文档</h2>
+        <div class="file-item">
+            <div class="file-name">${chapter.doc.split('/').pop()}</div>
+            <div class="file-path">${chapter.doc}</div>
+        </div>
+
+        <h2 class="section-title">🧪 示例与练习</h2>
+        <ul class="file-list">${demosHtml}</ul>
+
+        <div class="unified-doc-card">
+            <h2 class="section-title">📝 文档预览</h2>
+            <div id="md-preview" class="markdown-viewer">正在加载文档...</div>
+
+            <h2 class="section-title">💡 学习建议</h2>
+            <ul class="file-list">
+                <li class="file-item">先阅读章节文档，理解核心概念</li>
+                <li class="file-item">在终端运行 demo 文件体验效果</li>
+                <li class="file-item">在右侧代码编辑器中尝试修改和运行代码</li>
+                <li class="file-item">完成 practice 练习巩固知识点</li>
+            </ul>
+        </div>
+    `;
+
+    // 加载 Markdown
+    loadMarkdown('../' + chapter.doc);
+
+    // 更新代码编辑器
+    updateCodeEditor(chapter);
+}
+
+async function loadMarkdown(path) {
+    const preview = document.getElementById('md-preview');
+    if (!preview) return;
+
+    try {
+        // 🚀 缓存命中 - 即时加载
+        if (contentCache.has(path)) {
+            preview.textContent = contentCache.get(path);
+            if (window.Prism && typeof Prism.highlightAllUnder === 'function') {
+                Prism.highlightAllUnder(preview);
+            }
+            return;
+        }
+
+        // 缓存未命中 - 从服务器加载
+        const response = await fetch(path);
+        if (!response.ok) throw new Error('文档加载失败');
+
+        const arrayBuffer = await response.arrayBuffer();
+        const decoder = new TextDecoder('utf-8');
+        const text = decoder.decode(arrayBuffer);
+
+        // 保存到缓存
+        contentCache.set(path, text);
+        preview.textContent = text;
+        if (window.Prism && typeof Prism.highlightAllUnder === 'function') {
+            Prism.highlightAllUnder(preview);
+        }
+    } catch (err) {
+        preview.textContent = `文档加载失败: ${err.message}\n\n提示：请在 IDE 中打开文件查看完整内容。`;
+    }
+}
+
+// 加载示例代码并在模态框中展示
+async function loadCodeFile(path) {
+    const output = document.getElementById('output');
+    if (!output) return;
+
+    try {
+        // 🚀 缓存命中 - 即时加载
+        if (codeFileCache.has(path)) {
+            const cachedData = codeFileCache.get(path);
+            openCodeModal(path, cachedData.code, cachedData.message + '\n(已缓存)');
+            return;
+        }
+
+        // 缓存未命中 - 从服务器加载
+        output.textContent = '正在加载代码文件...';
+
+        const response = await fetch('../' + path);
+        if (!response.ok) throw new Error('文件加载失败');
+
+        const arrayBuffer = await response.arrayBuffer();
+        const decoder = new TextDecoder('utf-8');
+        let code = decoder.decode(arrayBuffer);
+
+        // 🔧 自动转换 input() 为浏览器兼容模式
+        const hasInput = code.includes('input(');
+        let message = '';
+        if (hasInput) {
+            code = convertInputToBrowserMode(code);
+            message = `已加载文件: ${path.split('/').pop()}\n⚠️ 已自动转换 input() 为浏览器兼容模式\n点击"运行代码"按钮执行`;
+        } else {
+            message = `已加载文件: ${path.split('/').pop()}\n点击"运行代码"按钮执行`;
+        }
+
+        // 保存到缓存
+        codeFileCache.set(path, { code, message });
+
+        // 将代码加载到参考代码模态框中
+        openCodeModal(path, code, message);
+    } catch (err) {
+        output.textContent = `代码文件加载失败: ${err.message}\n\n提示：请确保文件存在并且路径正确。`;
+        if (jar) {
+            jar.updateCode(`# 加载失败: ${path}\n# 错误: ${err.message}`);
+        }
+    }
+}
+
+// 将 input() 转换为浏览器兼容的赋值语句
+function convertInputToBrowserMode(code) {
+    // 添加转换说明注释
+    let converted = '# ========== 浏览器兼容模式 ==========\n';
+    converted += '# 原代码中的 input() 已自动转换为示例值\n';
+    converted += '# 你可以修改这些值来测试不同情况\n';
+    converted += '# =====================================\n\n';
+
+    // 常见的 input() 模式及其替换值
+    const inputPatterns = [
+        // int(input(...)) -> 示例整数
+        { regex: /(\w+)\s*=\s*int\s*\(\s*input\s*\(\s*['"]([^'"]*)['"]\s*\)\s*\)/g,
+          replace: (match, varName, prompt) => {
+            const sampleValues = { 'age': 25, 'year': 2024, 'num': 10, 'count': 5 };
+            const value = sampleValues[varName] || 42;
+            return `${varName} = ${value}  # 原提示: ${prompt}`;
+          }
+        },
+        // float(input(...)) -> 示例浮点数
+        { regex: /(\w+)\s*=\s*float\s*\(\s*input\s*\(\s*['"]([^'"]*)['"]\s*\)\s*\)/g,
+          replace: (match, varName, prompt) => {
+            const sampleValues = { 'weight': 70.0, 'height': 1.75, 'price': 99.9, 'score': 85.5 };
+            const value = sampleValues[varName] || 3.14;
+            return `${varName} = ${value}  # 原提示: ${prompt}`;
+          }
+        },
+        // input(...) -> 示例字符串
+        { regex: /(\w+)\s*=\s*input\s*\(\s*['"]([^'"]*)['"]\s*\)/g,
+          replace: (match, varName, prompt) => {
+            const sampleValues = { 'name': '"小明"', 'city': '"北京"', 'text': '"Hello"' };
+            const value = sampleValues[varName] || '"示例输入"';
+            return `${varName} = ${value}  # 原提示: ${prompt}`;
+          }
+        }
+    ];
+
+    // 应用所有转换规则
+    let result = code;
+    inputPatterns.forEach(pattern => {
+        result = result.replace(pattern.regex, pattern.replace);
+    });
+
+    // 如果有转换，添加说明
+    if (result !== code) {
+        return converted + result;
+    }
+    return result;
+}
+
+function updateCodeEditor(chapter) {
+    const snippetContainer = document.getElementById('snippet-container');
+
+    // 设置初始代码
+    if (chapter.snippets && chapter.snippets.length > 0) {
+        jar.updateCode(chapter.snippets[0].code);
+
+        // 渲染代码片段按钮
+        snippetContainer.innerHTML = chapter.snippets.map((s, i) =>
+            `<button class="snippet-chip" data-index="${i}">${s.label}</button>`
+        ).join('');
+
+        // 添加点击事件
+        snippetContainer.querySelectorAll('.snippet-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.dataset.index);
+                jar.updateCode(chapter.snippets[idx].code);
+                document.getElementById('output').textContent = '代码已加载，点击"运行代码"执行';
+            });
+        });
+    } else {
+        jar.updateCode(`# ${chapter.title}\n# 在这里编写练习代码\n\nprint("Hello from ${chapter.title}")`);
+        snippetContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem;">该章节暂无预设代码片段</div>';
+    }
+}
+
+// 统一通过事件委托处理“查看代码”按钮点击
+const docPanelElement = document.getElementById('doc-panel');
+if (docPanelElement) {
+    docPanelElement.addEventListener('click', async (event) => {
+        const target = event.target;
+        if (!target || !target.closest) return;
+        const btn = target.closest('.load-code-btn');
+        if (!btn) return;
+        const filePath = btn.dataset.filePath;
+        if (!filePath) return;
+        await loadCodeFile(filePath);
+    });
+}
+
+// ========== Pyodide 代码执行 ==========
+async function ensurePyodide() {
+    if (!pyodide) {
+        pyodide = await loadPyodide({
+            indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/'
+        });
+    }
+    return pyodide;
+}
+
+async function runCode() {
+    const output = document.getElementById('output');
+    const runBtn = document.getElementById('run-btn');
+
+    if (!jar) {
+        output.textContent = '编辑器尚未初始化';
+        return;
+    }
+
+    const code = jar.toString();
+    runBtn.disabled = true;
+    runBtn.textContent = '⏳ 执行中...';
+    output.textContent = '正在加载 Python 环境...\n';
+
+    try {
+        const py = await ensurePyodide();
+
+        // 捕获输出
+        const wrappedCode = `
+import sys
+import io
+_stdout = sys.stdout
+_stderr = sys.stderr
+_buf = io.StringIO()
+sys.stdout = sys.stderr = _buf
+try:
+${code.split('\n').map(line => '    ' + line).join('\n')}
+finally:
+    sys.stdout = _stdout
+    sys.stderr = _stderr
+result = _buf.getvalue()
+`;
+
+        await py.runPythonAsync(wrappedCode);
+        const resultProxy = py.globals.get('result');
+        const result = resultProxy ? resultProxy.toString() : '';
+        if (resultProxy && resultProxy.destroy) resultProxy.destroy();
+        output.textContent = result || '(执行完成，无输出)';
+    } catch (err) {
+        output.textContent = `执行错误:\n${err}`;
+    } finally {
+        runBtn.disabled = false;
+        runBtn.textContent = '▶ 运行代码';
+    }
+}
+
+// 绑定运行按钮
+document.getElementById('run-btn').addEventListener('click', runCode);
+
+// ========== 主题切换功能 (Gemini Design) ==========
+const toggleBtn = document.getElementById('theme-toggle');
+const htmlEl = document.documentElement;
+
+// 1. 检查 LocalStorage 或系统偏好设置
+let currentTheme = null;
+try {
+    currentTheme = localStorage.getItem('theme');
+} catch (e) {
+    console.warn('localStorage 不可用:', e);
+}
+
+const systemPrefersDark = window.matchMedia
+    ? window.matchMedia('(prefers-color-scheme: dark)').matches
+    : false;
+
+if (currentTheme === 'dark' || (!currentTheme && systemPrefersDark)) {
+    htmlEl.setAttribute('data-theme', 'dark');
+} else {
+    htmlEl.setAttribute('data-theme', 'light');
+}
+
+// 2. 切换逻辑
+if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+        const isDark = htmlEl.getAttribute('data-theme') === 'dark';
+
+        if (isDark) {
+            htmlEl.setAttribute('data-theme', 'light');
+            try { localStorage.setItem('theme', 'light'); } catch (e) {}
+        } else {
+            htmlEl.setAttribute('data-theme', 'dark');
+            try { localStorage.setItem('theme', 'dark'); } catch (e) {}
+        }
+    });
+} else {
+    console.warn('theme-toggle 按钮未找到，主题切换不可用');
+}
+
+// 初始化
+renderNav();
+if (chapters.length > 0) {
+    showChapter(chapters[0].id);
+    document.querySelector('.nav-item').classList.add('active');
+}
+    </script>
+</body>
+</html>

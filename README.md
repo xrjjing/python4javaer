@@ -36,6 +36,15 @@
   - `07_监控数据处理_指标聚合与告警`：CSV 指标聚合 + 简单告警规则；
   - `08_系统对接_调用Java服务API`：Python 网关调用 Java 服务 API。
 
+- `rbac_auth_service/`  
+  独立的 RBAC 认证与权限服务示例（FastAPI + SQLAlchemy + JWT + Redis 可选）：
+  - 可单独运行，作为「真实项目雏形」或通用用户/权限模块的起点；
+  - 详见 `rbac_auth_service/09_项目说明.md`。
+
+- `frontend/`  
+  纯静态前端页面目录：
+  - `frontend/index.html`：用于浏览学习目录的导航页，目前重点展示 `01.Python语言基础` 各章节及对应 demo 路径，方便你在 IDE / 终端中跳转练习。
+
 ---
 
 ## 🧭 推荐学习路径
