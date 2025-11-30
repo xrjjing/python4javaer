@@ -182,7 +182,97 @@ curl -X POST "http://127.0.0.1:8000/gateway/backend/orders" \
 
 ---
 
-## 五、后续可扩展方向（仅规划）
+## 五、进阶练习：四服务全链路联调
+
+> 本练习将 `log_audit_service` 也纳入，形成完整的"登录 → 管理 → 网关调用 → 审计日志查看"全链路。
+
+### 练习目标
+
+1. 同时启动 4 个服务
+2. 通过前端登录并进行用户/角色管理
+3. 通过网关调用后端服务
+4. 在审计日志服务中查看操作记录
+
+### 步骤 1：启动全部服务
+
+在 4 个终端窗口中分别执行：
+
+```bash
+# 终端 1：RBAC 服务 (端口 8001)
+python rbac_auth_service/init_rbac_data.py
+uvicorn rbac_auth_service.app.main:app --reload --port 8001
+
+# 终端 2：后端用户订单服务 (端口 9000)
+uvicorn backend_user_order_service.app.main:app --reload --port 9000
+
+# 终端 3：网关服务 (端口 8000)
+uvicorn integration_gateway_service.app.main:app --reload --port 8000
+
+# 终端 4：审计日志服务 (端口 8002)
+uvicorn log_audit_service.app.main:app --reload --port 8002
+```
+
+### 步骤 2：启动前端并登录
+
+```bash
+# 终端 5：前端静态服务 (端口 5500)
+cd frontend
+python -m http.server 5500
+```
+
+1. 访问 `http://127.0.0.1:5500/login.html`
+2. 使用 `admin` / `admin123` 登录
+3. 登录成功后跳转到 `admin.html`
+
+### 步骤 3：在 Admin Dashboard 中操作
+
+1. **查看用户列表**：点击侧边栏"用户管理"
+2. **查看角色列表**：点击侧边栏"角色管理"
+3. **查看权限列表**：点击侧边栏"权限管理"
+4. **创建新角色**：尝试创建一个新角色（如 `test_role`）
+
+### 步骤 4：通过网关调用后端服务
+
+使用获取的 Token 调用网关接口：
+
+```bash
+# 获取 Token（或从 localStorage 复制）
+TOKEN="your_access_token_here"
+
+# 查询用户
+curl "http://127.0.0.1:8000/gateway/backend/users/1" \
+  -H "Authorization: Bearer $TOKEN"
+
+# 创建订单
+curl -X POST "http://127.0.0.1:8000/gateway/backend/orders" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"product_id": 100, "quantity": 2}'
+```
+
+### 步骤 5：查看审计日志
+
+在 Admin Dashboard 中点击"审计日志"标签，或直接调用 API：
+
+```bash
+curl "http://127.0.0.1:8002/logs"
+```
+
+预期看到类似记录：
+- 用户登录记录
+- 角色/权限查询记录
+- 网关调用记录（如已集成）
+
+### 练习思考题
+
+1. **Token 传递**：网关如何验证 Token 并提取用户身份？
+2. **服务解耦**：RBAC 服务与后端服务之间没有直接依赖，如何做到的？
+3. **审计完整性**：如果要记录所有网关调用，应该在哪里添加日志记录代码？
+4. **错误处理**：当后端服务不可用时，网关返回什么？审计日志如何记录失败操作？
+
+---
+
+## 六、后续可扩展方向（仅规划）
 
 - 在网关中根据 Token 的角色/权限，对不同路由施加访问控制；
 - 将订单创建、敏感查询等操作的审计日志写入后续的 `log_audit_service`；

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Python Learning Platform</title>
+
+    <!-- ====================================================== -->
+    <!-- 模拟 API 脚本 - 必须在其他脚本之前加载                 -->
+    <!-- 使用方式：访问 admin.html?mock=true 或在控制台执行     -->
+    <!-- localStorage.setItem('mockApi', 'true')                -->
+    <!-- ====================================================== -->
+    <script src="mock-data.js"></script>
+    <script src="mock-api.js"></script>
+    <!-- ====================================================== -->
+
+    <style>
+/* CSS Variables - Identical to index.html */
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --primary-light: #eef2ff;
+    --bg-app: #f1f5f9;
+    --bg-panel: #ffffff;
+    --text-main: #334155;
+    --text-heading: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.12);
+    --radius: 8px;
+    --header-height: 60px;
+    --sidebar-width: 250px;
+    --code-bg: #f1f5f9;
+    --code-text: #0f172a;
+}
+
+[data-theme="dark"] {
+    --primary: #6366f1;
+    --primary-hover: #818cf8;
+    --primary-light: rgba(99, 102, 241, 0.15);
+    --bg-app: #020617;
+    --bg-panel: #0f172a;
+    --text-main: #cbd5e1;
+    --text-heading: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #1e293b;
+    --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.25);
+    --code-bg: #1e293b;
+    --code-text: #f1f5f9;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Layout */
+.admin-layout { display: flex; min-height: 100vh; }
+
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+    z-index: 10;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.sidebar-header {
+    height: var(--header-height);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary);
+}
+
+.sidebar-content { flex: 1; overflow-y: auto; padding: 1.5rem 1rem; }
+.sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); }
+.sidebar-footer a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+.sidebar-footer a:hover { color: var(--primary); }
+
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.top-bar {
+    height: var(--header-height);
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.top-bar-title { font-size: 1.2rem; font-weight: 600; color: var(--text-heading); }
+.top-bar-actions { display: flex; gap: 0.75rem; align-items: center; }
+.user-info { font-size: 0.9rem; color: var(--text-muted); margin-right: 1rem; }
+
+.content-area { flex: 1; padding: 2rem; }
+
+/* Navigation */
+.nav-group { margin-bottom: 1.5rem; }
+.nav-group-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    padding-left: 0.75rem;
+}
+
+.nav-item {
+    display: block;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 2px;
+    border-radius: 6px;
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.nav-item:hover { background-color: var(--primary-light); color: var(--primary); }
+.nav-item.active { background-color: var(--primary-light); color: var(--primary); font-weight: 500; }
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    gap: 0.5rem;
+}
+
+.btn-primary { background-color: var(--primary); color: white; }
+.btn-primary:hover { background-color: var(--primary-hover); }
+.btn-secondary {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+}
+.btn-secondary:hover { background-color: var(--bg-app); border-color: var(--text-muted); }
+.btn-danger { background-color: #ef4444; color: white; }
+.btn-danger:hover { background-color: #dc2626; }
+.btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
+
+.theme-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    padding: 8px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+.theme-toggle-btn:hover { background-color: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+.icon-sun, .icon-moon { display: none; }
+:root:not([data-theme="dark"]) .icon-sun { display: block; }
+[data-theme="dark"] .icon-moon { display: block; }
+
+/* Panels */
+.content-panel { display: none; }
+.content-panel.active { display: block; }
+
+/* Stats Grid */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.stat-card {
+    background: var(--bg-panel);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+}
+.stat-card h3 { color: var(--text-muted); font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; }
+.stat-card .value { font-size: 2rem; font-weight: 600; color: var(--text-heading); }
+
+/* Tables */
+.table-container {
+    background: var(--bg-panel);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+.table-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.table-header h2 { font-size: 1rem; font-weight: 600; color: var(--text-heading); }
+
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th, .data-table td { text-align: left; padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--border); }
+.data-table th { font-weight: 600; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; background: var(--bg-app); }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--primary-light); }
+
+/* Log Viewer */
+.log-viewer {
+    background: var(--code-bg);
+    color: var(--code-text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    max-height: 600px;
+    overflow: auto;
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    line-height: 1.5;
+}
+
+/* Loading */
+.loading { text-align: center; padding: 2rem; color: var(--text-muted); }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main-content { margin-left: 0; }
+    .content-area { padding: 1rem; }
+    .stats-grid { grid-template-columns: 1fr; }
+}
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">Admin Dashboard</div>
+            <div class="sidebar-content">
+                <div class="nav-group">
+                    <div class="nav-group-title">Overview</div>
+                    <a href="#dashboard" class="nav-item active" data-panel="dashboard">Dashboard</a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">Management</div>
+                    <a href="#users" class="nav-item" data-panel="users">Users</a>
+                    <a href="#roles" class="nav-item" data-panel="roles">Roles</a>
+                    <a href="#permissions" class="nav-item" data-panel="permissions">Permissions</a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">Monitoring</div>
+                    <a href="#logs" class="nav-item" data-panel="logs">Audit Logs</a>
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <a href="index.html">Back to Learning</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="top-bar-title">RBAC Management</div>
+                <div class="top-bar-actions">
+                    <span class="user-info" id="user-info"></span>
+                    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Dark Mode">
+                        <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                    <button id="logout-btn" class="btn btn-secondary">Logout</button>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <!-- Dashboard Panel -->
+                <section id="dashboard" class="content-panel active">
+                    <div class="stats-grid">
+                        <div class="stat-card"><h3>Total Users</h3><p id="stat-users" class="value">-</p></div>
+                        <div class="stat-card"><h3>Total Roles</h3><p id="stat-roles" class="value">-</p></div>
+                        <div class="stat-card"><h3>Total Permissions</h3><p id="stat-permissions" class="value">-</p></div>
+                        <div class="stat-card"><h3>Recent Logs</h3><p id="stat-logs" class="value">-</p></div>
+                    </div>
+                </section>
+
+                <!-- Users Panel -->
+                <section id="users" class="content-panel">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>User Management</h2>
+                            <button class="btn btn-primary btn-sm" onclick="showCreateUserModal()">+ Create User</button>
+                        </div>
+                        <table class="data-table">
+                            <thead><tr><th>ID</th><th>Username</th><th>Active</th><th>Superuser</th><th>Roles</th><th>Actions</th></tr></thead>
+                            <tbody id="users-table"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Roles Panel -->
+                <section id="roles" class="content-panel">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>Role Management</h2>
+                            <button class="btn btn-primary btn-sm" onclick="showCreateRoleModal()">+ Create Role</button>
+                        </div>
+                        <table class="data-table">
+                            <thead><tr><th>ID</th><th>Name</th><th>Description</th><th>Permissions</th></tr></thead>
+                            <tbody id="roles-table"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Permissions Panel -->
+                <section id="permissions" class="content-panel">
+                    <div class="table-container">
+                        <div class="table-header"><h2>Permission List</h2></div>
+                        <table class="data-table">
+                            <thead><tr><th>ID</th><th>Code</th><th>Description</th></tr></thead>
+                            <tbody id="permissions-table"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Logs Panel -->
+                <section id="logs" class="content-panel">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>Audit Logs</h2>
+                            <button class="btn btn-secondary btn-sm" onclick="loadAuditLogs()">Refresh</button>
+                        </div>
+                        <pre id="log-viewer" class="log-viewer">Loading audit logs...</pre>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+    (() => {
+        // API Configuration - defaults to same origin for production
+        const API_BASE = window.API_BASE_URL || '';
+        const LOG_API_BASE = window.LOG_API_BASE_URL || '';
+
+        // Authentication check
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Theme management
+        const htmlEl = document.documentElement;
+        const themeToggle = document.getElementById('theme-toggle');
+        let currentTheme = null;
+        try { currentTheme = localStorage.getItem('theme'); } catch (e) {}
+        const systemPrefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+        htmlEl.setAttribute('data-theme', currentTheme === 'dark' || (!currentTheme && systemPrefersDark) ? 'dark' : 'light');
+
+        themeToggle?.addEventListener('click', () => {
+            const newTheme = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            htmlEl.setAttribute('data-theme', newTheme);
+            try { localStorage.setItem('theme', newTheme); } catch (e) {}
+        });
+
+        // Logout
+        document.getElementById('logout-btn')?.addEventListener('click', async () => {
+            try {
+                await fetch(`${API_BASE}/auth/logout`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+            } catch (e) {}
+            localStorage.removeItem('accessToken');
+            window.location.href = 'login.html';
+        });
+
+        // API Helper with unified response handling
+        async function apiFetch(url, options = {}) {
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                ...options.headers,
+            };
+
+            const response = await fetch(url, { ...options, headers });
+
+            if (response.status === 401) {
+                localStorage.removeItem('accessToken');
+                window.location.href = 'login.html';
+                throw new Error('Unauthorized');
+            }
+
+            const body = await response.json();
+
+            if (body.code !== 'OK') {
+                throw new Error(body.message || 'Request failed');
+            }
+
+            return body.data;
+        }
+
+        // Navigation
+        const navItems = document.querySelectorAll('.nav-item');
+        const panels = document.querySelectorAll('.content-panel');
+
+        function switchPanel(panelId) {
+            navItems.forEach(item => item.classList.toggle('active', item.dataset.panel === panelId));
+            panels.forEach(panel => panel.classList.toggle('active', panel.id === panelId));
+
+            // Load data for panel
+            switch (panelId) {
+                case 'dashboard': loadDashboard(); break;
+                case 'users': loadUsers(); break;
+                case 'roles': loadRoles(); break;
+                case 'permissions': loadPermissions(); break;
+                case 'logs': loadAuditLogs(); break;
+            }
+        }
+
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                switchPanel(item.dataset.panel);
+            });
+        });
+
+        // Data Loading Functions
+        async function loadCurrentUser() {
+            try {
+                const user = await apiFetch(`${API_BASE}/auth/me`);
+                document.getElementById('user-info').textContent = `${user.username} ${user.is_superuser ? '(Admin)' : ''}`;
+                if (!user.is_superuser) {
+                    alert('Access denied. Admin privileges required.');
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error('Failed to load user:', error);
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const [users, roles, permissions] = await Promise.all([
+                    apiFetch(`${API_BASE}/users/`),
+                    apiFetch(`${API_BASE}/rbac/roles`),
+                    apiFetch(`${API_BASE}/rbac/permissions`)
+                ]);
+                document.getElementById('stat-users').textContent = users.length;
+                document.getElementById('stat-roles').textContent = roles.length;
+                document.getElementById('stat-permissions').textContent = permissions.length;
+
+                // Try to load logs count
+                try {
+                    const logs = await fetch(`${LOG_API_BASE}/logs`).then(r => r.json());
+                    const logData = logs.data || logs;
+                    document.getElementById('stat-logs').textContent = Array.isArray(logData) ? logData.length : '-';
+                } catch { document.getElementById('stat-logs').textContent = 'N/A'; }
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const users = await apiFetch(`${API_BASE}/users/`);
+                const tbody = document.getElementById('users-table');
+                tbody.innerHTML = '';
+                users.forEach(user => {
+                    const tr = document.createElement('tr');
+
+                    const tdId = document.createElement('td');
+                    tdId.textContent = user.id;
+                    tr.appendChild(tdId);
+
+                    const tdUsername = document.createElement('td');
+                    tdUsername.textContent = user.username;
+                    tr.appendChild(tdUsername);
+
+                    const tdActive = document.createElement('td');
+                    tdActive.textContent = user.is_active ? 'Yes' : 'No';
+                    tr.appendChild(tdActive);
+
+                    const tdSuperuser = document.createElement('td');
+                    tdSuperuser.textContent = user.is_superuser ? 'Yes' : 'No';
+                    tr.appendChild(tdSuperuser);
+
+                    const tdRoles = document.createElement('td');
+                    tdRoles.textContent = (user.roles || []).map(r => r.name).join(', ') || '-';
+                    tr.appendChild(tdRoles);
+
+                    const tdActions = document.createElement('td');
+                    const button = document.createElement('button');
+                    button.className = 'btn btn-secondary btn-sm';
+                    button.textContent = user.is_active ? 'Disable' : 'Enable';
+                    button.onclick = () => toggleUserActive(user.id, !user.is_active);
+                    tdActions.appendChild(button);
+                    tr.appendChild(tdActions);
+
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Failed to load users:', error);
+            }
+        }
+
+        async function loadRoles() {
+            try {
+                const roles = await apiFetch(`${API_BASE}/rbac/roles`);
+                const tbody = document.getElementById('roles-table');
+                tbody.innerHTML = '';
+                roles.forEach(role => {
+                    const tr = document.createElement('tr');
+
+                    const tdId = document.createElement('td');
+                    tdId.textContent = role.id;
+                    tr.appendChild(tdId);
+
+                    const tdName = document.createElement('td');
+                    tdName.textContent = role.name;
+                    tr.appendChild(tdName);
+
+                    const tdDesc = document.createElement('td');
+                    tdDesc.textContent = role.description || '-';
+                    tr.appendChild(tdDesc);
+
+                    const tdPerms = document.createElement('td');
+                    tdPerms.textContent = (role.permissions || []).map(p => p.code).join(', ') || '-';
+                    tr.appendChild(tdPerms);
+
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Failed to load roles:', error);
+            }
+        }
+
+        async function loadPermissions() {
+            try {
+                const permissions = await apiFetch(`${API_BASE}/rbac/permissions`);
+                const tbody = document.getElementById('permissions-table');
+                tbody.innerHTML = '';
+                permissions.forEach(perm => {
+                    const tr = document.createElement('tr');
+
+                    const tdId = document.createElement('td');
+                    tdId.textContent = perm.id;
+                    tr.appendChild(tdId);
+
+                    const tdCode = document.createElement('td');
+                    tdCode.textContent = perm.code;
+                    tr.appendChild(tdCode);
+
+                    const tdDesc = document.createElement('td');
+                    tdDesc.textContent = perm.description || '-';
+                    tr.appendChild(tdDesc);
+
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Failed to load permissions:', error);
+            }
+        }
+
+        window.loadAuditLogs = async function() {
+            const viewer = document.getElementById('log-viewer');
+            viewer.textContent = 'Loading...';
+            try {
+                const response = await fetch(`${LOG_API_BASE}/logs`);
+                const body = await response.json();
+                const logs = body.data || body;
+                viewer.textContent = JSON.stringify(logs, null, 2);
+            } catch (error) {
+                viewer.textContent = `Failed to load logs: ${error.message}\n\nNote: Ensure log_audit_service is running on port 8002.`;
+            }
+        };
+
+        // CRUD Operations (exposed globally for onclick handlers)
+        window.toggleUserActive = async function(userId, setActive) {
+            const action = setActive ? 'enable' : 'disable';
+            if (!confirm(`${action.charAt(0).toUpperCase() + action.slice(1)} user ${userId}?`)) return;
+            try {
+                await apiFetch(`${API_BASE}/users/${userId}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ is_active: setActive })
+                });
+                loadUsers();
+            } catch (error) {
+                alert(`Failed to ${action} user: ${error.message}`);
+            }
+        };
+
+        window.showCreateUserModal = function() {
+            const username = prompt('Enter username:');
+            if (!username) return;
+            const password = prompt('Enter password:');
+            if (!password) return;
+            createUser(username, password);
+        };
+
+        async function createUser(username, password) {
+            try {
+                await apiFetch(`${API_BASE}/users/`, {
+                    method: 'POST',
+                    body: JSON.stringify({ username, password, is_active: true, is_superuser: false })
+                });
+                loadUsers();
+            } catch (error) {
+                alert(`Failed to create user: ${error.message}`);
+            }
+        }
+
+        window.showCreateRoleModal = function() {
+            const name = prompt('Enter role name:');
+            if (!name) return;
+            const description = prompt('Enter description (optional):') || '';
+            createRole(name, description);
+        };
+
+        async function createRole(name, description) {
+            try {
+                await apiFetch(`${API_BASE}/rbac/roles`, {
+                    method: 'POST',
+                    body: JSON.stringify({ name, description })
+                });
+                loadRoles();
+            } catch (error) {
+                alert(`Failed to create role: ${error.message}`);
+            }
+        }
+
+        // Initialize
+        loadCurrentUser();
+        switchPanel('dashboard');
+    })();
+    </script>
+</body>
+</html>

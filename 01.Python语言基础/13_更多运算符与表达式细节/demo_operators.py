@@ -99,7 +99,7 @@ class EmptyClass:
 # 条件分支占位
 score = 95
 if score >= 90:
-    pass  # TODO: 实现优秀学生奖励逻辑
+    print("优秀")  # 读者可扩展为奖励逻辑
 elif score >= 60:
     print("及格")
 else:
@@ -108,7 +108,7 @@ else:
 # 循环占位
 for i in range(5):
     if i == 2:
-        pass  # TODO: 特殊处理
+        print("跳过2")  # 读者可扩展为其他处理逻辑
     else:
         print(i)
 

@@ -1341,9 +1341,17 @@ function showChapter(chapterId) {
             这个控制台由 <code>rbac_auth_service</code> 提供，前端直接调用后端 RBAC API，
             用于演示登录、查看当前用户、角色与权限管理以及受控业务资源访问。
         </p>
-        <button id="open-rbac-console-btn" class="btn btn-primary" type="button">
-            打开 RBAC 管理控制台
-        </button>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+            <button id="open-login-btn" class="btn btn-primary" type="button">
+                登录入口 (login.html)
+            </button>
+            <button id="open-admin-btn" class="btn btn-secondary" type="button">
+                管理后台 (admin.html)
+            </button>
+            <button id="open-rbac-console-btn" class="btn btn-secondary" type="button">
+                旧版控制台 (rbac_admin.html)
+            </button>
+        </div>
         ` : ''}
     `;
 
@@ -1355,9 +1363,22 @@ function showChapter(chapterId) {
 
     // 若章节提供了控制台入口，为按钮绑定事件
     if (chapter.consoleUrl) {
-        const btnOpen = document.getElementById('open-rbac-console-btn');
-        if (btnOpen) {
-            btnOpen.addEventListener('click', () => {
+        const btnLogin = document.getElementById('open-login-btn');
+        const btnAdmin = document.getElementById('open-admin-btn');
+        const btnRbacConsole = document.getElementById('open-rbac-console-btn');
+
+        if (btnLogin) {
+            btnLogin.addEventListener('click', () => {
+                window.open('login.html', '_blank');
+            });
+        }
+        if (btnAdmin) {
+            btnAdmin.addEventListener('click', () => {
+                window.open('admin.html', '_blank');
+            });
+        }
+        if (btnRbacConsole) {
+            btnRbacConsole.addEventListener('click', () => {
                 window.open(chapter.consoleUrl, '_blank');
             });
         }

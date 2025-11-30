@@ -9,12 +9,13 @@
 - `docs/`  
   - `docs/Python学习规划_Java开发者版.md`：整体学习路线与自检清单（按「语言基础 → 标准库 → Web / 脚本 → 进阶」分周规划）。
 
-- `01.Python语言基础/`  
+- `01.Python语言基础/`
   针对 Java 开发者整理的语法学习笔记与小 demo，覆盖：
   - 快速上手、变量与数据类型、条件与循环；
   - 容器类型、函数、模块与包、异常与文件；
   - 面向对象、迭代器与生成器、lambda 与装饰器、命名空间与类型注解；
-  - 「开发技巧 / 写法优化」中的 pathlib、logging、推导式、解包、EAFP 等 Pythonic 写法。
+  - 「开发技巧 / 写法优化」中的 pathlib、logging、推导式、解包、EAFP 等 Pythonic 写法；
+  - **「15_进阶专题」**：正则表达式、标准库模块、文件操作、数据序列化、网络编程、多线程与多进程、异步编程入门，每个专题都包含与本仓库项目的对应关系说明。
 
 - `02.开发环境及框架介绍/`  
   侧重工程化与框架：
@@ -41,9 +42,33 @@
   - 可单独运行，作为「真实项目雏形」或通用用户/权限模块的起点；
   - 详见 `rbac_auth_service/09_项目说明.md`。
 
-- `frontend/`  
+- `frontend/`
   纯静态前端页面目录：
-  - `frontend/index.html`：用于浏览学习目录的导航页，目前重点展示 `01.Python语言基础` 各章节及对应 demo 路径，方便你在 IDE / 终端中跳转练习。
+  - `index.html`：学习导航主页，包含章节导航和在线 Python 执行器（基于 Pyodide）
+  - `login.html`：RBAC 登录页面，使用 OAuth2 密码模式认证
+  - `admin.html`：RBAC 管理后台，支持用户/角色/权限管理和审计日志查看
+  - 详见 `frontend/README.md`
+
+- `integration_gateway_service/`
+  通用 HTTP 网关服务（FastAPI + httpx），演示：
+  - JWT Token 验证与转发
+  - 统一响应格式包装
+  - 后端服务代理调用
+
+- `backend_user_order_service/`
+  Python 后端用户与订单示例服务（FastAPI），提供：
+  - 用户查询接口
+  - 订单创建接口
+  - 配合网关服务演示完整调用链
+
+- `log_audit_service/`
+  审计日志服务（FastAPI），用于：
+  - 接收和存储操作审计日志
+  - 提供日志查询接口
+  - 配合 admin.html 展示审计记录
+
+- `网关_RBAC_后端联调说明.md`
+  四服务联调指南，包含完整的端到端练习流程。
 
 ---
 
@@ -70,6 +95,10 @@
    - 想练接口开发 → 从 `03_TODO_Web_API_FastAPI` 开始，再看 `08_系统对接_调用Java服务API`；
    - 想练脚本 / 自动化 → 先做 `01_命令行工具`、`06_自动化脚本_日志归档`；
    - 想练数据分析 → 做 `04_小型数据分析项目_销售统计`，结合 pandas。
+5. **进阶：微服务联调体验**
+   - 阅读 `网关_RBAC_后端联调说明.md`，启动 4 个服务 + 前端
+   - 完成"五、进阶练习：四服务全链路联调"
+   - 体验：登录 → 用户管理 → 网关调用 → 审计日志查看
 
 ---
 
@@ -99,6 +128,37 @@ uvicorn api_gateway_example:app --reload
 ```
 
 访问 `http://127.0.0.1:8000/docs` 即可在浏览器中通过 Swagger UI 调试接口。
+
+---
+
+## 🔗 微服务联调快速启动
+
+本仓库包含 4 个可联调的微服务，演示完整的认证 → 网关 → 后端 → 审计链路：
+
+```bash
+# 终端 1：RBAC 认证服务 (端口 8001)
+python rbac_auth_service/init_rbac_data.py
+uvicorn rbac_auth_service.app.main:app --reload --port 8001
+
+# 终端 2：后端用户订单服务 (端口 9000)
+uvicorn backend_user_order_service.app.main:app --reload --port 9000
+
+# 终端 3：网关服务 (端口 8000)
+uvicorn integration_gateway_service.app.main:app --reload --port 8000
+
+# 终端 4：审计日志服务 (端口 8002)
+uvicorn log_audit_service.app.main:app --reload --port 8002
+
+# 终端 5：前端静态服务 (端口 5500)
+cd frontend && python -m http.server 5500
+```
+
+启动后访问：
+- 前端登录：`http://127.0.0.1:5500/login.html`（用户名 `admin`，密码 `admin123`）
+- 管理后台：`http://127.0.0.1:5500/admin.html`
+- 各服务 API 文档：`http://127.0.0.1:<端口>/docs`
+
+详细联调流程见 `网关_RBAC_后端联调说明.md`。
 
 更多框架常用写法（路径参数、查询参数、请求体验证、依赖注入、APIRouter、中间件、后台任务、测试等），请参考：
 
@@ -156,9 +216,15 @@ source .venv/bin/activate   # macOS / Linux
 │   ├── 01_字符串格式化_f_string/
 │   ├── 02_推导式_列表字典集合/
 │   └── ...
-└── 15_进阶专题/
-    ├── 01_正则表达式/
-    └── ...
+└── 15_进阶专题/                    # 进阶主题
+    ├── 01_正则表达式/              # 含与项目对应关系
+    ├── 02_标准库常用模块/
+    ├── 03_文件与目录操作/
+    ├── 04_数据序列化/
+    ├── 05_网络编程基础/
+    ├── 06_多线程与多进程/
+    ├── 07_异步编程入门/
+    └── 15_进阶专题.md              # 综合实战练习
 ```
 
 ### 如何使用代码示例
