@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>RBAC 管理控制台</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-app: #f1f5f9;
+            --bg-panel: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 8px;
+            --shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: radial-gradient(circle at top left, #eef2ff, #e2e8f0);
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .app-shell {
+            max-width: 1200px;
+            margin: 24px auto;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 20px;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .header-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-title span.badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background-color: rgba(79, 70, 229, 0.08);
+            color: #4f46e5;
+        }
+
+        .header-status {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 16px 14px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            backdrop-filter: blur(10px);
+            height: fit-content;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin: 4px 0 8px;
+            padding-left: 4px;
+        }
+
+        .nav-item {
+            width: 100%;
+            text-align: left;
+            border: none;
+            background: transparent;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+            cursor: pointer;
+            margin-bottom: 4px;
+        }
+
+        .nav-item span.icon {
+            font-size: 1rem;
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            background-color: rgba(79, 70, 229, 0.08);
+            color: #1e293b;
+        }
+
+        .main-panel {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 16px;
+            padding: 18px 20px 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .section-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 10px 0 8px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn {
+            border-radius: 999px;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: #e5e7eb;
+            color: #111827;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+        }
+
+        .btn-ghost {
+            background-color: transparent;
+            color: var(--text-muted);
+        }
+
+        .btn-ghost:hover {
+            background-color: rgba(148, 163, 184, 0.15);
+        }
+
+        .help-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .output-card {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #0f172a;
+            color: #e5e7eb;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.8rem;
+            max-height: 360px;
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+
+        .output-card .placeholder {
+            color: #6b7280;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background-color: #f1f5f9;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .tag-ok {
+            color: #16a34a;
+        }
+
+        .tag-error {
+            color: #b91c1c;
+        }
+
+        .matrix-wrapper {
+            margin-top: 8px;
+            overflow-x: auto;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            border: 1px solid var(--border);
+            padding: 4px 6px;
+            text-align: center;
+        }
+
+        .matrix-table th.role-col {
+            text-align: left;
+            white-space: nowrap;
+            background-color: #f1f5f9;
+        }
+
+        .matrix-table th.perm-col {
+            white-space: nowrap;
+        }
+
+        .matrix-table td.role-cell {
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .matrix-table td.save-cell {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 900px) {
+            .app-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                order: 2;
+            }
+
+            .main-panel {
+                order: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app-shell">
+    <header class="header">
+        <div class="header-title">
+            <span>🔐 RBAC 管理控制台</span>
+            <span class="badge">FastAPI Demo</span>
+        </div>
+        <div class="header-status">
+            当前登录：<span id="status-user">未登录</span>
+            <span id="status-role" class="pill" style="margin-left: 4px; display: none;"></span>
+            <span id="mock-indicator" class="pill tag-ok" style="margin-left: 4px;">模拟数据模式</span>
+            <button id="toggle-mode-btn" class="btn btn-ghost" type="button" style="margin-left: 4px;">
+                切换到直连后端
+            </button>
+        </div>
+    </header>
+
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">基础</div>
+            <button class="nav-item active" data-section="auth">
+                <span class="icon">🧩</span>
+                <span>认证与会话</span>
+            </button>
+            <button class="nav-item" data-section="me">
+                <span class="icon">👤</span>
+                <span>当前用户信息</span>
+            </button>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">RBAC 管理</div>
+            <button class="nav-item" data-section="rbac">
+                <span class="icon">🧱</span>
+                <span>角色与权限</span>
+            </button>
+            <button class="nav-item" data-section="users">
+                <span class="icon">👥</span>
+                <span>用户管理（超管）</span>
+            </button>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">示例资源</div>
+            <button class="nav-item" data-section="resources">
+                <span class="icon">✅</span>
+                <span>Todos / Projects / Tasks</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-panel">
+        <!-- 认证与会话 -->
+        <section id="section-auth">
+            <div class="section-header">
+                <div>
+                    <div class="section-title">认证与会话</div>
+                    <div class="section-subtitle">通过 /auth/login 和 /auth/logout 体验整套 JWT 登录流程。</div>
+                </div>
+                <div class="pill">
+                    默认账号：<code>admin / admin123</code>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field">
+                    <label class="form-label" for="login-username">用户名</label>
+                    <input id="login-username" class="form-input" type="text" value="admin" autocomplete="username">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="login-password">密码</label>
+                    <input id="login-password" class="form-input" type="password" value="admin123" autocomplete="current-password">
+                </div>
+            </div>
+            <div class="btn-row">
+                <button id="btn-login" class="btn btn-primary">🔑 登录</button>
+                <button id="btn-logout" class="btn btn-secondary">🚪 登出</button>
+                <button id="btn-me-quick" class="btn btn-ghost">👀 快速查看 /auth/me</button>
+                <button id="btn-quick-admin" class="btn btn-ghost">⚡ 一键 admin</button>
+                <button id="btn-quick-alice" class="btn btn-ghost">⚡ 一键 alice</button>
+            </div>
+            <p class="help-text">
+                提示：后端登录接口路径为 <code>/auth/login</code>，使用表单 <code>username/password</code>。
+                完成登录后会在前端内存保存 access token。
+            </p>
+
+            <div id="auth-output" class="output-card">
+                <span class="placeholder">这里会显示登录 / 登出以及 /auth/me 的响应结果。</span>
+            </div>
+        </section>
+
+        <!-- 当前用户信息 -->
+        <section id="section-me" style="display: none;">
+            <div class="section-header">
+                <div>
+                    <div class="section-title">当前用户信息</div>
+                    <div class="section-subtitle">调用 <code>/auth/me</code> 查看绑定在 JWT 上的用户信息与角色。</div>
+                </div>
+            </div>
+            <div class="btn-row">
+                <button id="btn-me" class="btn btn-primary">👤 获取 /auth/me</button>
+            </div>
+            <p class="help-text">
+                需要先完成登录；如果返回 401，则说明 Token 无效或已过期。
+            </p>
+            <div id="me-output" class="output-card">
+                <span class="placeholder">点击「获取 /auth/me」后，在这里查看用户 ID、用户名、是否超管以及绑定的角色。</span>
+            </div>
+        </section>
+
+        <!-- 角色与权限 -->
+        <section id="section-rbac" style="display: none;">
+            <div class="section-header">
+                <div>
+                    <div class="section-title">角色与权限管理</div>
+                    <div class="section-subtitle">通过 /rbac/roles 与 /rbac/permissions 了解当前系统内的 RBAC 配置。</div>
+                </div>
+                <span class="pill tag-ok">需要超管权限</span>
+            </div>
+            <div class="form-grid">
+                <div class="form-field">
+                    <label class="form-label" for="create-role-name">新角色名称</label>
+                    <input id="create-role-name" class="form-input" type="text" placeholder="例如：teacher">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="create-role-desc">角色描述</label>
+                    <input id="create-role-desc" class="form-input" type="text" placeholder="用于说明角色用途">
+                </div>
+            </div>
+            <div class="btn-row">
+                <button id="btn-create-role" class="btn btn-secondary">➕ 创建角色</button>
+            </div>
+            <div class="form-grid" style="margin-top: 12px;">
+                <div class="form-field">
+                    <label class="form-label" for="create-perm-code">新权限 code</label>
+                    <input id="create-perm-code" class="form-input" type="text" placeholder="例如：courses:read">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="create-perm-name">权限名称</label>
+                    <input id="create-perm-name" class="form-input" type="text" placeholder="简要说明权限用途">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="create-perm-desc">权限描述（可选）</label>
+                    <input id="create-perm-desc" class="form-input" type="text" placeholder="更详细的说明（可空）">
+                </div>
+            </div>
+            <div class="btn-row">
+                <button id="btn-create-perm" class="btn btn-secondary">➕ 创建权限</button>
+            </div>
+            <div class="btn-row">
+                <button id="btn-list-roles" class="btn btn-primary">📜 列出角色列表</button>
+                <button id="btn-list-perms" class="btn btn-secondary">🧾 列出权限列表</button>
+            </div>
+            <p class="help-text">
+                默认 admin 账号具备超管权限；如果使用普通用户登录，请求会返回 403 Forbidden。
+            </p>
+            <div id="rbac-matrix" class="help-text" style="margin-top: 8px;">
+                当前尚未加载角色数据，点击上方「列出角色列表」后，这里会以矩阵形式展示「角色 → 权限码」。
+            </div>
+            <div id="rbac-output" class="output-card">
+                <span class="placeholder">点击按钮后，这里会显示角色列表或权限列表完整 JSON 数据。</span>
+            </div>
+        </section>
+
+        <!-- 用户管理 -->
+        <section id="section-users" style="display: none;">
+            <div class="section-header">
+                <div>
+                    <div class="section-title">用户管理（只读 Demo）</div>
+                    <div class="section-subtitle">通过 /users 列出用户，观察角色分配效果。</div>
+                </div>
+                <span class="pill tag-ok">仅限超管访问</span>
+            </div>
+            <div class="btn-row">
+                <button id="btn-list-users" class="btn btn-primary">👥 列出用户列表</button>
+            </div>
+            <p class="help-text">
+                这里做的是「只读」演示：实际 API 还支持创建用户、更新状态以及为用户分配角色，
+                你可以在熟悉流程后再通过 Postman 或代码调用这些写入接口。
+            </p>
+            <div id="users-output" class="output-card">
+                <span class="placeholder">点击「列出用户列表」后，这里会显示所有用户及其角色信息。</span>
+            </div>
+        </section>
+
+        <!-- 示例资源 -->
+        <section id="section-resources" style="display: none;">
+            <div class="section-header">
+                <div>
+                    <div class="section-title">示例业务资源（Todos / Projects / Tasks）</div>
+                    <div class="section-subtitle">体验「登录 + RBAC 权限控制」下的业务接口访问。</div>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field">
+                    <label class="form-label" for="project-id-input">项目 ID（用于 Tasks 示例）</label>
+                    <input id="project-id-input" class="form-input" type="number" placeholder="例如：1">
+                </div>
+            </div>
+            <div class="btn-row">
+                <button id="btn-list-todos" class="btn btn-primary">✅ GET /todos</button>
+                <button id="btn-list-projects" class="btn btn-secondary">📂 GET /projects</button>
+                <button id="btn-list-tasks" class="btn btn-secondary">🧩 GET /projects/{id}/tasks</button>
+            </div>
+            <p class="help-text">
+                这些接口都通过 <code>require_permissions</code> 进行保护：普通用户与超管的权限集不同，返回 403 时请留意后端错误信息中的提示。
+            </p>
+            <div id="resources-output" class="output-card">
+                <span class="placeholder">点击上方按钮后，这里会显示对应业务接口返回的数据或错误信息。</span>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    // ========== 全局状态 ==========
+    // 默认使用模拟数据模式，便于在未启动后端服务时也能交互体验。
+    let MOCK_MODE = true;
+    let accessToken = null;
+
+    // 默认后端基地址：假定 uvicorn 在本机 8000 端口运行
+    const API_BASE = "";
+
+    // ========== 模拟数据（结构尽量与后端模型一致） ==========
+    const mockPermissionsData = [
+        { id: 1, code: "todos:read", name: "读取 TODO", description: "查看 TODO 列表" },
+        { id: 2, code: "todos:write", name: "创建/更新 TODO", description: "创建或修改 TODO" },
+        { id: 3, code: "todos:delete", name: "删除 TODO", description: "删除 TODO" },
+        { id: 4, code: "projects:read", name: "读取项目", description: "查看项目列表" },
+        { id: 5, code: "projects:write", name: "创建/更新项目", description: "创建或修改项目" },
+        { id: 6, code: "projects:delete", name: "删除项目", description: "删除项目" },
+        { id: 7, code: "tasks:read", name: "读取任务", description: "查看任务列表" },
+        { id: 8, code: "tasks:write", name: "创建/更新任务", description: "创建或修改任务" },
+        { id: 9, code: "tasks:delete", name: "删除任务", description: "删除任务" },
+    ];
+    let nextMockPermId = 10;
+
+    const mockRolesData = [
+        {
+            id: 1,
+            name: "admin",
+            description: "管理员",
+            permissionCodes: mockPermissionsData.map(p => p.code),
+        },
+        {
+            id: 2,
+            name: "user",
+            description: "普通用户",
+            permissionCodes: [
+                "todos:read",
+                "todos:write",
+                "projects:read",
+                "projects:write",
+                "tasks:read",
+                "tasks:write",
+            ],
+        },
+    ];
+    let nextMockRoleId = 3;
+
+    const mockUsersData = [
+        {
+            id: 1,
+            username: "admin",
+            is_active: true,
+            is_superuser: true,
+            roleNames: ["admin"],
+        },
+        {
+            id: 2,
+            username: "alice",
+            is_active: true,
+            is_superuser: false,
+            roleNames: ["user"],
+        },
+    ];
+
+    // 简单的业务数据：Todo / Project / Task
+    const mockTodos = [
+        { id: 1, title: "示例 TODO（admin）", completed: false, owner_id: 1 },
+        { id: 2, title: "示例 TODO（alice）", completed: true, owner_id: 2 },
+    ];
+    const mockProjects = [
+        { id: 1, name: "demo-project-admin", description: "管理员的示例项目", status: "active", owner_id: 1 },
+        { id: 2, name: "demo-project-alice", description: "alice 的示例项目", status: "active", owner_id: 2 },
+    ];
+    const mockTasks = [
+        { id: 1, title: "admin-task-1", description: "管理员任务", status: "todo", project_id: 1 },
+        { id: 2, title: "alice-task-1", description: "alice 的任务", status: "todo", project_id: 2 },
+    ];
+
+    let currentMockUser = null;
+
+    function mockFindPermissionByCode(code) {
+        return mockPermissionsData.find(p => p.code === code) || null;
+    }
+
+    function mockFindPermissionById(id) {
+        return mockPermissionsData.find(p => p.id === id) || null;
+    }
+
+    function mockFindRoleById(id) {
+        return mockRolesData.find(r => r.id === id) || null;
+    }
+
+    function mockGetUserRoles(user) {
+        if (!user) return [];
+        return mockRolesData.filter(r => user.roleNames && user.roleNames.includes(r.name));
+    }
+
+    function mockGetUserPermissions(user) {
+        if (!user) return new Set();
+        if (user.is_superuser) {
+            return new Set(mockPermissionsData.map(p => p.code));
+        }
+        const perms = new Set();
+        const roles = mockGetUserRoles(user);
+        roles.forEach(role => {
+            role.permissionCodes.forEach(code => perms.add(code));
+        });
+        return perms;
+    }
+
+    function mockUserHasPermission(user, code) {
+        const perms = mockGetUserPermissions(user);
+        return perms.has(code);
+    }
+
+    function makeApiResponse(code, message, data) {
+        return { code, message, data };
+    }
+
+    function mockNowIso() {
+        return new Date().toISOString();
+    }
+
+    function mockUserOut(user) {
+        const roles = mockGetUserRoles(user).map(r => ({ id: r.id, name: r.name }));
+        return {
+            id: user.id,
+            username: user.username,
+            is_active: user.is_active,
+            is_superuser: user.is_superuser,
+            roles,
+            created_at: mockNowIso(),
+            updated_at: mockNowIso(),
+        };
+    }
+
+    function mockRoleOut(role) {
+        const perms = role.permissionCodes
+            .map(code => mockFindPermissionByCode(code))
+            .filter(Boolean)
+            .map(p => ({ id: p.id, code: p.code, name: p.name }));
+        return { id: role.id, name: role.name, description: role.description, permissions: perms };
+    }
+
+    function mockPermissionOut(p) {
+        return { id: p.id, code: p.code, name: p.name, description: p.description || null };
+    }
+
+    async function mockApiRequest(path, options = {}) {
+        const method = (options.method || "GET").toUpperCase();
+
+        // 解析登录表单
+        if (path === "/auth/login" && method === "POST") {
+            let username = "";
+            let password = "";
+            if (options.body instanceof URLSearchParams) {
+                username = options.body.get("username") || "";
+                password = options.body.get("password") || "";
+            }
+            const user = mockUsersData.find(u => u.username === username);
+            if (!user) {
+                return {
+                    status: 400,
+                    data: makeApiResponse("BAD_REQUEST", "用户名或密码错误（模拟）", null),
+                };
+            }
+            if (
+                (username === "admin" && password !== "admin123") ||
+                (username === "alice" && password !== "alice123")
+            ) {
+                return {
+                    status: 400,
+                    data: makeApiResponse("BAD_REQUEST", "用户名或密码错误（模拟）", null),
+                };
+            }
+            currentMockUser = { ...user };
+            const token = {
+                access_token: `mock-${user.username}-token`,
+                token_type: "bearer",
+            };
+            return {
+                status: 200,
+                data: makeApiResponse("OK", "登录成功（模拟）", token),
+            };
+        }
+
+        if (path === "/auth/me" && method === "GET") {
+            if (!currentMockUser) {
+                return {
+                    status: 401,
+                    data: makeApiResponse("UNAUTHORIZED", "未登录（模拟）", null),
+                };
+            }
+            return {
+                status: 200,
+                data: makeApiResponse("OK", "获取成功（模拟）", mockUserOut(currentMockUser)),
+            };
+        }
+
+        if (path === "/auth/logout" && method === "POST") {
+            currentMockUser = null;
+            return {
+                status: 200,
+                data: makeApiResponse("OK", "登出成功（模拟）", { username: "mock" }),
+            };
+        }
+
+        // 需要超管的接口：admin 才能访问
+        function assertSuperuser() {
+            if (!currentMockUser) {
+                return {
+                    status: 401,
+                    data: makeApiResponse("UNAUTHORIZED", "未登录（模拟）", null),
+                };
+            }
+            if (!currentMockUser.is_superuser) {
+                return {
+                    status: 403,
+                    data: makeApiResponse("FORBIDDEN", "需要超级管理员权限（模拟）", null),
+                };
+            }
+            return null;
+        }
+
+        if (path === "/rbac/roles" && method === "GET") {
+            const err = assertSuperuser();
+            if (err) return err;
+            const roles = mockRolesData.map(mockRoleOut);
+            return {
+                status: 200,
+                data: makeApiResponse("OK", "获取角色列表成功（模拟）", roles),
+            };
+        }
+
+        if (path === "/rbac/permissions" && method === "GET") {
+            const err = assertSuperuser();
+            if (err) return err;
+            const perms = mockPermissionsData.map(mockPermissionOut);
+            return {
+                status: 200,
+                data: makeApiResponse("OK", "获取权限列表成功（模拟）", perms),
+            };
+        }
+
+        if (path === "/rbac/roles" && method === "POST") {
+            const err = assertSuperuser();
+            if (err) return err;
+            let payload = {};
+            try {
+                payload = JSON.parse(options.body || "{}");
+            } catch {
+                payload = {};
+            }
+            const name = (payload.name || "").trim();
+            const description = payload.description || null;
+            if (!name) {
+                return {
+                    status: 400,
+                    data: makeApiResponse("BAD_REQUEST", "角色名称不能为空（模拟）", null),
+                };
+            }
+            if (mockRolesData.some(r => r.name === name)) {
+                return {
+                    status: 400,
+                    data: makeApiResponse("BAD_REQUEST", "角色名已存在（模拟）", null),
+                };
+            }
+            const role = {
+                id: nextMockRoleId++,
+                name,
+                description,
+                permissionCodes: [],
+            };
+            mockRolesData.push(role);
+            return {
+                status: 201,
+                data: makeApiResponse("OK", "创建角色成功（模拟）", mockRoleOut(role)),
+            };
+        }
+
+        if (path === "/rbac/permissions" && method === "POST") {
+            const err = assertSuperuser();
+            if (err) return err;
+            let payload = {};
+            try {
+                payload = JSON.parse(options.body || "{}");
+            } catch {
+                payload = {};
+            }
+            const code = (payload.code || "").trim();
+            const name = (payload.name || "").trim();
+            const description = payload.description || null;
+            if (!code || !name) {
+                return {
+                    status: 400,
+                    data: makeApiResponse("BAD_REQUEST", "权限 code 和名称均不能为空（模拟）", null),
+                };
+            }
+            if (mockPermissionsData.some(p => p.code === code)) {
+                return {
+                    status: 400,
+                    data: makeApiResponse("BAD_REQUEST", "权限 code 已存在（模拟）", null),
+                };
+            }
+            const perm = {
+                id: nextMockPermId++,
+                code,
+                name,
+                description,
+            };
+            mockPermissionsData.push(perm);
+            return {
+                status: 201,
+                data: makeApiResponse("OK", "创建权限成功（模拟）", mockPermissionOut(perm)),
+            };
+        }
+
+        if (path.startsWith("/rbac/roles/") && path.endsWith("/permissions") && method === "POST") {
+            const err = assertSuperuser();
+            if (err) return err;
+            const parts = path.split("/");
+            const roleId = parseInt(parts[3], 10);
+            const role = mockFindRoleById(roleId);
+            if (!role) {
+                return {
+                    status: 404,
+                    data: makeApiResponse("NOT_FOUND", "角色不存在（模拟）", null),
+                };
+            }
+            let payload = {};
+            try {
+                payload = JSON.parse(options.body || "{}");
+            } catch {
+                payload = {};
+            }
+            const ids = Array.isArray(payload.permission_ids) ? payload.permission_ids : [];
+            const codes = [];
+            for (const pid of ids) {
+                const perm = mockFindPermissionById(pid);
+                if (perm) {
+                    codes.push(perm.code);
+                }
+            }
+            role.permissionCodes = codes;
+            return {
+                status: 200,
+                data: makeApiResponse("OK", "分配权限成功（模拟）", mockRoleOut(role)),
+            };
+        }
+
+        // 用户列表（仅超管）
+        if (path === "/users/" && method === "GET") {
+            const err = assertSuperuser();
+            if (err) return err;
+            const users = mockUsersData.map(mockUserOut);
+            return {
+                status: 200,
+                data: makeApiResponse("OK", "获取用户列表成功（模拟）", users),
+            };
+        }
+
+        // TODO / Projects / Tasks 示例资源
+        if (path === "/todos/" && method === "GET") {
+            if (!currentMockUser) {
+                return {
+                    status: 401,
+                    data: makeApiResponse("UNAUTHORIZED", "未登录（模拟）", null),
+                };
+            }
+            if (!mockUserHasPermission(currentMockUser, "todos:read")) {
+                return {
+                    status: 403,
+                    data: makeApiResponse("FORBIDDEN", "缺少 todos:read 权限（模拟）", null),
+                };
+            }
+            const todos = mockTodos.filter(t => t.owner_id === currentMockUser.id);
+            return {
+                status: 200,
+                data: makeApiResponse("OK", "获取 TODO 列表成功（模拟）", todos),
+            };
+        }
+
+        if (path === "/projects/" && method === "GET") {
+            if (!currentMockUser) {
+                return {
+                    status: 401,
+                    data: makeApiResponse("UNAUTHORIZED", "未登录（模拟）", null),
+                };
+            }
+            if (!mockUserHasPermission(currentMockUser, "projects:read")) {
+                return {
+                    status: 403,
+                    data: makeApiResponse("FORBIDDEN", "缺少 projects:read 权限（模拟）", null),
+                };
+            }
+            const projects = mockProjects.filter(p => p.owner_id === currentMockUser.id).map(p => ({
+                ...p,
+                created_at: mockNowIso(),
+                updated_at: mockNowIso(),
+            }));
+            return {
+                status: 200,
+                data: makeApiResponse("OK", "获取项目列表成功（模拟）", projects),
+            };
+        }
+
+        if (path.startsWith("/projects/") && path.endsWith("/tasks/") && method === "GET") {
+            if (!currentMockUser) {
+                return {
+                    status: 401,
+                    data: makeApiResponse("UNAUTHORIZED", "未登录（模拟）", null),
+                };
+            }
+            if (!mockUserHasPermission(currentMockUser, "tasks:read")) {
+                return {
+                    status: 403,
+                    data: makeApiResponse("FORBIDDEN", "缺少 tasks:read 权限（模拟）", null),
+                };
+            }
+            const parts = path.split("/");
+            const projectId = parseInt(parts[2], 10);
+            const tasks = mockTasks
+                .filter(t => t.project_id === projectId)
+                .map(t => ({
+                    ...t,
+                    created_at: mockNowIso(),
+                    updated_at: mockNowIso(),
+                }));
+            return {
+                status: 200,
+                data: makeApiResponse("OK", "获取任务列表成功（模拟）", tasks),
+            };
+        }
+
+        // 默认返回 404（模拟）
+        return {
+            status: 404,
+            data: makeApiResponse("NOT_FOUND", `未在模拟数据中实现的接口: ${path}`, null),
+        };
+    }
+
+    function setOutput(elementId, payload, isError = false) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        if (!payload) {
+            el.innerHTML = '<span class="placeholder">无内容</span>';
+            return;
+        }
+        if (typeof payload === "string") {
+            el.textContent = payload;
+        } else {
+            el.textContent = JSON.stringify(payload, null, 2);
+        }
+        if (isError) {
+            el.style.border = "1px solid rgba(248, 113, 113, 0.7)";
+        } else {
+            el.style.border = "none";
+        }
+    }
+
+    function updateStatusBar(user) {
+        const userEl = document.getElementById("status-user");
+        const roleEl = document.getElementById("status-role");
+        const mockIndicator = document.getElementById("mock-indicator");
+        const toggleBtn = document.getElementById("toggle-mode-btn");
+        if (!user || !user.username) {
+            userEl.textContent = "未登录";
+            roleEl.style.display = "none";
+        } else {
+            userEl.textContent = user.username;
+            let roleText = user.is_superuser ? "超级管理员" : "普通用户";
+            if (user.roles && user.roles.length > 0) {
+                const names = user.roles.map(r => r.name).join(", ");
+                roleText += " · 角色: " + names;
+            }
+            roleEl.textContent = roleText;
+            roleEl.style.display = "inline-flex";
+        }
+        if (mockIndicator) {
+            mockIndicator.textContent = MOCK_MODE ? "模拟数据模式" : "直连后端模式";
+        }
+        if (toggleBtn) {
+            toggleBtn.textContent = MOCK_MODE ? "切换到直连后端" : "切换到模拟数据模式";
+        }
+    }
+
+    async function apiRequest(path, options = {}) {
+        if (MOCK_MODE) {
+            return mockApiRequest(path, options);
+        }
+        const headers = options.headers || {};
+        if (accessToken) {
+            headers["Authorization"] = "Bearer " + accessToken;
+        }
+        options.headers = headers;
+
+        const resp = await fetch(API_BASE + path, options);
+        let data = null;
+        const text = await resp.text();
+        try {
+            data = text ? JSON.parse(text) : null;
+        } catch {
+            data = text || null;
+        }
+        return { status: resp.status, data };
+    }
+
+    // ========== 导航切换 ==========
+    const sections = ["auth", "me", "rbac", "users", "resources"];
+    function switchSection(name) {
+        sections.forEach(s => {
+            const secEl = document.getElementById(`section-${s}`);
+            if (secEl) {
+                secEl.style.display = s === name ? "block" : "none";
+            }
+        });
+        document.querySelectorAll(".nav-item").forEach(btn => {
+            btn.classList.toggle("active", btn.dataset.section === name);
+        });
+    }
+
+    document.querySelectorAll(".nav-item").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const target = btn.dataset.section;
+            switchSection(target);
+        });
+    });
+
+    // ========== 登录 / 登出 / 当前用户 ==========
+    document.getElementById("btn-login").addEventListener("click", async () => {
+        const username = document.getElementById("login-username").value.trim();
+        const password = document.getElementById("login-password").value;
+        if (!username || !password) {
+            setOutput("auth-output", "用户名和密码不能为空", true);
+            return;
+        }
+        const body = new URLSearchParams();
+        body.append("username", username);
+        body.append("password", password);
+
+        try {
+            const { status, data } = await apiRequest("/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body,
+            });
+            if (status === 200 && data && data.data && data.data.access_token) {
+                accessToken = data.data.access_token;
+                setOutput("auth-output", data);
+                // 登录成功后自动调用 /auth/me 更新状态栏
+                await fetchMe(true);
+            } else {
+                setOutput("auth-output", data || `登录失败，HTTP 状态码：${status}`, true);
+            }
+        } catch (err) {
+            setOutput("auth-output", `请求出错：${err}`, true);
+        }
+    });
+
+    // 便捷切换账号：admin / alice
+    document.getElementById("btn-quick-admin").addEventListener("click", () => {
+        document.getElementById("login-username").value = "admin";
+        document.getElementById("login-password").value = "admin123";
+    });
+
+    document.getElementById("btn-quick-alice").addEventListener("click", () => {
+        document.getElementById("login-username").value = "alice";
+        document.getElementById("login-password").value = "alice123";
+    });
+
+    document.getElementById("btn-logout").addEventListener("click", async () => {
+        if (!accessToken) {
+            setOutput("auth-output", "当前尚未登录，无需登出。");
+            return;
+        }
+        try {
+            const { status, data } = await apiRequest("/auth/logout", {
+                method: "POST",
+            });
+            accessToken = null;
+            updateStatusBar(null);
+            setOutput("auth-output", data || `登出完成，HTTP 状态码：${status}`);
+        } catch (err) {
+            setOutput("auth-output", `请求出错：${err}`, true);
+        }
+    });
+
+    async function fetchMe(updateAuthPanel = false) {
+        try {
+            const { status, data } = await apiRequest("/auth/me", {
+                method: "GET",
+            });
+            if (status === 200 && data && data.data) {
+                updateStatusBar(data.data);
+            } else {
+                updateStatusBar(null);
+            }
+            if (updateAuthPanel) {
+                setOutput("auth-output", data || `HTTP 状态码：${status}`);
+            }
+            setOutput("me-output", data || `HTTP 状态码：${status}`, status !== 200);
+        } catch (err) {
+            setOutput("me-output", `请求出错：${err}`, true);
+        }
+    }
+
+    document.getElementById("btn-me-quick").addEventListener("click", () => {
+        fetchMe(true);
+    });
+    document.getElementById("btn-me").addEventListener("click", () => {
+        fetchMe(false);
+    });
+
+    // ========== 角色与权限 ==========
+    function renderRolePermissionMatrix(roles, perms) {
+        const matrixEl = document.getElementById("rbac-matrix");
+        if (!matrixEl) return;
+
+        if (!Array.isArray(roles) || roles.length === 0) {
+            matrixEl.textContent = "当前系统中没有任何角色。";
+            return;
+        }
+        if (!Array.isArray(perms) || perms.length === 0) {
+            matrixEl.textContent = "无法生成矩阵视图：尚未获取到权限列表。";
+            return;
+        }
+
+        let html = '<div class="matrix-wrapper">';
+        html += '<div style="font-size:0.8rem;margin-bottom:4px;">勾选后点击对应行「保存」按钮，将更新该角色拥有的权限（调用 /rbac/roles/{id}/permissions）。</div>';
+        html += '<table class="matrix-table"><thead><tr>';
+        html += '<th class="role-col">角色</th>';
+        for (const perm of perms) {
+            html += `<th class="perm-col" title="${perm.code}">${perm.code}</th>`;
+        }
+        html += '<th>操作</th></tr></thead><tbody>';
+
+        for (const role of roles) {
+            const rolePermIds = new Set((role.permissions || []).map(p => p.id));
+            html += '<tr>';
+            html += `<td class="role-cell">${role.name}</td>`;
+            for (const perm of perms) {
+                const checked = rolePermIds.has(perm.id) ? 'checked' : '';
+                html += `<td><input type="checkbox" data-role-id="${role.id}" data-perm-id="${perm.id}" ${checked}></td>`;
+            }
+            html += `<td class="save-cell"><button type="button" class="btn btn-secondary role-save-btn" data-role-id="${role.id}">💾 保存</button></td>`;
+            html += '</tr>';
+        }
+
+        html += '</tbody></table></div>';
+        matrixEl.innerHTML = html;
+    }
+
+    document.getElementById("btn-list-roles").addEventListener("click", async () => {
+        try {
+            const { status, data } = await apiRequest("/rbac/roles", { method: "GET" });
+            setOutput("rbac-output", data || `HTTP 状态码：${status}`, status !== 200);
+
+            const matrixEl = document.getElementById("rbac-matrix");
+            if (!matrixEl) return;
+            if (status !== 200 || !data || !Array.isArray(data.data)) {
+                matrixEl.textContent = "无法生成矩阵视图：请确认已使用 admin 登录且接口返回 200。";
+                return;
+            }
+            const roles = data.data;
+
+            // 同时获取权限列表，保证与后端定义完全一致
+            const permsResp = await apiRequest("/rbac/permissions", { method: "GET" });
+            if (permsResp.status !== 200 || !permsResp.data || !Array.isArray(permsResp.data.data)) {
+                matrixEl.textContent = "已获取角色，但拉取权限列表失败，无法生成矩阵视图。";
+                return;
+            }
+            const perms = permsResp.data.data;
+            renderRolePermissionMatrix(roles, perms);
+        } catch (err) {
+            setOutput("rbac-output", `请求出错：${err}`, true);
+        }
+    });
+
+    document.getElementById("btn-list-perms").addEventListener("click", async () => {
+        try {
+            const { status, data } = await apiRequest("/rbac/permissions", { method: "GET" });
+            setOutput("rbac-output", data || `HTTP 状态码：${status}`, status !== 200);
+        } catch (err) {
+            setOutput("rbac-output", `请求出错：${err}`, true);
+        }
+    });
+
+    // 创建角色与权限
+    document.getElementById("btn-create-role").addEventListener("click", async () => {
+        const nameInput = document.getElementById("create-role-name");
+        const descInput = document.getElementById("create-role-desc");
+        const name = nameInput.value.trim();
+        const description = descInput.value.trim() || null;
+        if (!name) {
+            setOutput("rbac-output", "角色名称不能为空。", true);
+            return;
+        }
+        try {
+            const { status, data } = await apiRequest("/rbac/roles", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ name, description }),
+            });
+            setOutput("rbac-output", data || `HTTP 状态码：${status}`, status !== 201);
+            if (status === 201) {
+                nameInput.value = "";
+                descInput.value = "";
+                // 创建成功后刷新角色列表和矩阵视图
+                document.getElementById("btn-list-roles").click();
+            }
+        } catch (err) {
+            setOutput("rbac-output", `创建角色时出错：${err}`, true);
+        }
+    });
+
+    document.getElementById("btn-create-perm").addEventListener("click", async () => {
+        const codeInput = document.getElementById("create-perm-code");
+        const nameInput = document.getElementById("create-perm-name");
+        const descInput = document.getElementById("create-perm-desc");
+        const code = codeInput.value.trim();
+        const name = nameInput.value.trim();
+        const description = descInput.value.trim() || null;
+        if (!code || !name) {
+            setOutput("rbac-output", "权限 code 和名称均不能为空。", true);
+            return;
+        }
+        try {
+            const { status, data } = await apiRequest("/rbac/permissions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ code, name, description }),
+            });
+            setOutput("rbac-output", data || `HTTP 状态码：${status}`, status !== 201);
+            if (status === 201) {
+                codeInput.value = "";
+                nameInput.value = "";
+                descInput.value = "";
+                // 创建成功后刷新权限列表和矩阵视图
+                document.getElementById("btn-list-roles").click();
+                document.getElementById("btn-list-perms").click();
+            }
+        } catch (err) {
+            setOutput("rbac-output", `创建权限时出错：${err}`, true);
+        }
+    });
+
+    // 角色-权限矩阵保存事件（事件委托）
+    document.getElementById("rbac-matrix").addEventListener("click", async (event) => {
+        const target = event.target;
+        if (!target || !target.classList || !target.classList.contains("role-save-btn")) {
+            return;
+        }
+        const roleId = target.dataset.roleId;
+        if (!roleId) return;
+
+        const row = target.closest("tr");
+        if (!row) return;
+
+        const checkboxes = row.querySelectorAll('input[type="checkbox"][data-perm-id]');
+        const permissionIds = [];
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                const pid = parseInt(cb.dataset.permId, 10);
+                if (!Number.isNaN(pid)) {
+                    permissionIds.push(pid);
+                }
+            }
+        });
+
+        try {
+            const { status, data } = await apiRequest(`/rbac/roles/${roleId}/permissions`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ permission_ids: permissionIds }),
+            });
+            setOutput("rbac-output", data || `HTTP 状态码：${status}`, status !== 200);
+        } catch (err) {
+            setOutput("rbac-output", `更新角色权限时出错：${err}`, true);
+        }
+    });
+
+    // ========== 用户管理（只读） ==========
+    document.getElementById("btn-list-users").addEventListener("click", async () => {
+        try {
+            const { status, data } = await apiRequest("/users/", { method: "GET" });
+            setOutput("users-output", data || `HTTP 状态码：${status}`, status !== 200);
+        } catch (err) {
+            setOutput("users-output", `请求出错：${err}`, true);
+        }
+    });
+
+    // ========== 示例业务资源 ==========
+    document.getElementById("btn-list-todos").addEventListener("click", async () => {
+        try {
+            const { status, data } = await apiRequest("/todos/", { method: "GET" });
+            setOutput("resources-output", data || `HTTP 状态码：${status}`, status !== 200);
+        } catch (err) {
+            setOutput("resources-output", `请求出错：${err}`, true);
+        }
+    });
+
+    document.getElementById("btn-list-projects").addEventListener("click", async () => {
+        try {
+            const { status, data } = await apiRequest("/projects/", { method: "GET" });
+            setOutput("resources-output", data || `HTTP 状态码：${status}`, status !== 200);
+        } catch (err) {
+            setOutput("resources-output", `请求出错：${err}`, true);
+        }
+    });
+
+    document.getElementById("btn-list-tasks").addEventListener("click", async () => {
+        const projectId = document.getElementById("project-id-input").value.trim();
+        if (!projectId) {
+            setOutput("resources-output", "请先填写项目 ID，例如 1。", true);
+            return;
+        }
+        try {
+            const { status, data } = await apiRequest(`/projects/${projectId}/tasks/`, { method: "GET" });
+            setOutput("resources-output", data || `HTTP 状态码：${status}`, status !== 200);
+        } catch (err) {
+            setOutput("resources-output", `请求出错：${err}`, true);
+        }
+    });
+
+    // 切换模拟模式 / 直连后端模式
+    const toggleBtn = document.getElementById("toggle-mode-btn");
+    if (toggleBtn) {
+        toggleBtn.addEventListener("click", () => {
+            MOCK_MODE = !MOCK_MODE;
+            // 切换模式时清空当前登录状态与输出，避免混淆
+            accessToken = null;
+            currentMockUser = null;
+            updateStatusBar(null);
+            setOutput("auth-output", "已切换模式，请重新登录。");
+            setOutput("me-output", null);
+            setOutput("rbac-output", null);
+            setOutput("users-output", null);
+            setOutput("resources-output", null);
+        });
+    }
+
+    // 默认展示认证页，并刷新状态栏中的模式提示
+    switchSection("auth");
+    updateStatusBar(null);
+</script>
+</body>
+</html>

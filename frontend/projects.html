@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 项目实战 - Java 开发者版</title>
+
+    <!-- Prism.js & CodeJar for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codejar/4.2.0/codejar.min.js"></script>
+
+    <style>
+/* =========================================
+   1. RESET & VARIABLES (Gemini Design)
+   ========================================= */
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --primary-light: #eef2ff;
+    --bg-app: #f1f5f9;
+    --bg-panel: #ffffff;
+    --text-main: #334155;
+    --text-heading: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.12);
+    --radius: 8px;
+    --header-height: 60px;
+    --sidebar-width: 320px;
+    --code-bg: #f1f5f9;
+    --code-text: #0f172a;
+    --star-color: #f59e0b;
+}
+
+/* DARK THEME OVERRIDES (Gemini Design) */
+[data-theme="dark"] {
+    --primary: #6366f1;
+    --primary-hover: #818cf8;
+    --primary-light: rgba(99, 102, 241, 0.15);
+    --bg-app: #020617;
+    --bg-panel: #0f172a;
+    --text-main: #cbd5e1;
+    --text-heading: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #1e293b;
+    --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.25);
+    --code-bg: #1e293b;
+    --code-text: #f1f5f9;
+}
+
+/* SMOOTH THEME TRANSITIONS */
+body, .sidebar, .main-content, .top-bar, .doc-panel, .editor-card, .output-card, button, .nav-item, textarea {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+}
+
+/* =========================================
+   2. LAYOUT SHELL
+   ========================================= */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    z-index: 10;
+}
+
+.sidebar-header {
+    height: var(--header-height);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+}
+
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem 1rem;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.top-bar {
+    height: var(--header-height);
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+}
+
+.top-bar-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+.content-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem 2rem 5rem 2rem;
+    display: flex;
+    gap: 1.5rem;
+    width: 100%;
+    align-items: flex-start;
+}
+
+.doc-panel {
+    flex: 3;
+    min-width: 0;
+    background: var(--bg-panel);
+    padding: 2rem;
+    padding-bottom: 3rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+}
+
+.code-panel {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 350px;
+    position: sticky;
+    top: 2rem;
+    padding: 2rem;
+    background: var(--bg-panel);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-elevated);
+}
+
+/* =========================================
+   3. NAVIGATION COMPONENTS
+   ========================================= */
+.nav-group {
+    margin-bottom: 1.5rem;
+}
+
+.nav-group-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    padding-left: 0.75rem;
+}
+
+.nav-item {
+    display: block;
+    padding: 0.75rem;
+    margin-bottom: 4px;
+    border-radius: 6px;
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+}
+
+.nav-item:hover {
+    background-color: var(--primary-light);
+    color: var(--primary);
+}
+
+.nav-item.active {
+    background-color: var(--primary-light);
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.nav-item-title {
+    font-weight: 500;
+    margin-bottom: 0.35rem;
+}
+
+.nav-item-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+}
+
+.project-type-tag {
+    background-color: #e0e7ff;
+    color: #4338ca;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-weight: 500;
+}
+
+[data-theme="dark"] .project-type-tag {
+    background-color: #312e81;
+    color: #c7d2fe;
+}
+
+.difficulty-rating {
+    color: var(--star-color);
+    letter-spacing: 1px;
+}
+
+/* =========================================
+   4. DOCUMENT CONTENT
+   ========================================= */
+.project-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.project-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 0.5rem;
+}
+
+.project-meta {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.project-path {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-family: "JetBrains Mono", Consolas, monospace;
+}
+
+.project-overview {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-main);
+    margin-bottom: 2rem;
+    max-width: 80ch;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-heading);
+    margin: 2rem 0 1rem;
+}
+
+.unified-doc-card {
+    background: transparent;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    padding: 1.5rem 0 0;
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+}
+
+.unified-doc-card .section-title:first-child {
+    margin-top: 0;
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+}
+
+.file-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: var(--bg-panel);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.file-name {
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 0.9rem;
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.file-hint {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.file-path {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: "JetBrains Mono", Consolas, monospace;
+    margin-top: 0.25rem;
+}
+
+.file-type-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+    color: white;
+}
+
+.file-type-main { background: #16a34a; }
+.file-type-test { background: #ca8a04; }
+
+/* Markdown Viewer */
+.markdown-viewer {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    min-height: 220px;
+    max-height: 600px;
+    overflow-y: auto;
+    background-color: var(--bg-panel);
+    color: var(--text-main);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+    max-width: 100ch;
+    margin-right: auto;
+}
+
+.markdown-viewer::-webkit-scrollbar { width: 10px; }
+.markdown-viewer::-webkit-scrollbar-track { background: var(--bg-panel); border-radius: 0 var(--radius) var(--radius) 0; }
+.markdown-viewer::-webkit-scrollbar-thumb { background-color: #475569; border-radius: 5px; border: 2px solid var(--bg-panel); }
+
+/* =========================================
+   5. CODE EDITOR & OUTPUT
+   ========================================= */
+.editor-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.editor-header {
+    background: var(--bg-app);
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-heading);
+}
+
+[data-theme="dark"] .editor-header { background: var(--bg-app); }
+
+#my-code-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.editor-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.editor-textarea {
+    width: 100%;
+    min-height: 200px;
+    flex: 1;
+    padding: 1rem;
+    border: none;
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    background: var(--code-bg);
+    color: var(--code-text);
+    outline: none;
+    tab-size: 4;
+    overflow-y: auto;
+}
+
+.code-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+}
+
+.code-modal-overlay.active { display: flex; }
+
+.code-modal {
+    width: min(800px, 100%);
+    max-height: 85vh;
+    background: var(--bg-panel);
+    color: var(--text-main);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.code-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(148, 163, 184, 0.08);
+}
+
+[data-theme="dark"] .code-modal-header { background: rgba(15, 23, 42, 0.9); }
+
+.code-modal-header-main { display: flex; flex-direction: column; }
+.code-modal-title { font-size: 0.85rem; font-weight: 600; color: var(--text-heading); }
+.code-modal-filename { font-size: 0.75rem; color: var(--text-muted); font-family: "JetBrains Mono", Consolas, monospace; }
+.code-modal-actions { display: flex; align-items: center; gap: 0.5rem; }
+.code-modal-body { padding: 1rem; background: var(--code-bg); overflow: auto; }
+
+/* Prism Syntax Highlighting */
+.token.keyword, .token.operator { color: var(--primary); font-weight: bold; }
+.token.string { color: #10b981; }
+[data-theme="dark"] .token.string { color: #34d399; }
+.token.comment { color: var(--text-muted); font-style: italic; }
+.token.function { color: #8b5cf6; }
+[data-theme="dark"] .token.function { color: #a78bfa; }
+.token.number, .token.boolean { color: #f59e0b; }
+.token.builtin { color: #ec4899; }
+
+pre[class*="language-"] {
+    background-color: var(--code-bg) !important;
+    color: var(--code-text) !important;
+    border-radius: 6px;
+    padding: 1em;
+    margin: 0.5em 0;
+    overflow: auto;
+}
+
+code[class*="language-"], pre[class*="language-"] {
+    text-shadow: none !important;
+    font-family: "JetBrains Mono", Consolas, monospace;
+}
+
+.output-card {
+    background: var(--code-bg);
+    border-radius: var(--radius);
+    color: var(--code-text);
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #334155;
+}
+
+.output-header {
+    padding: 0.5rem 1rem;
+    background: rgba(255,255,255,0.1);
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.output-content {
+    padding: 1rem;
+    min-height: 100px;
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+}
+
+/* =========================================
+   6. BUTTONS
+   ========================================= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btn-secondary {
+    background-color: white;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+}
+
+.btn-secondary:hover { background-color: #f8fafc; border-color: #cbd5e1; }
+
+.load-code-btn {
+    background-color: var(--bg-panel);
+    color: var(--text-main);
+    border-color: var(--border);
+}
+
+.load-code-btn:hover { background-color: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 8px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.theme-toggle-btn:hover { background-color: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+.icon-sun, .icon-moon { display: none; }
+:root:not([data-theme="dark"]) .icon-sun { display: block; }
+[data-theme="dark"] .icon-moon { display: block; }
+
+/* =========================================
+   7. SCROLLBAR
+   ========================================= */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* =========================================
+   8. RESPONSIVE
+   ========================================= */
+@media (max-width: 1024px) {
+    .content-scroll-area { flex-direction: column; align-items: stretch; }
+    .code-panel { position: static; max-height: none; min-width: 0; top: auto; }
+    .doc-panel { min-height: auto; }
+}
+
+@media (max-width: 768px) {
+    .sidebar { display: none; }
+    .content-scroll-area { padding: 1rem; }
+    .doc-panel { padding: 1.5rem; padding-bottom: 3rem; }
+    .code-panel { padding: 1.5rem; }
+}
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            💼 Python 项目实战
+        </div>
+        <div class="sidebar-content">
+            <div class="nav-group">
+                <div class="nav-group-title">共 8 个项目</div>
+                <div id="project-nav"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="top-bar-title">Python 项目实战 - 面向 Java 开发者</div>
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Dark Mode">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+        </div>
+
+        <div class="content-scroll-area">
+            <!-- Document Panel -->
+            <div class="doc-panel" id="doc-panel">
+                <div class="project-header">
+                    <h1 class="project-title">欢迎来到项目实战</h1>
+                    <p class="project-overview">
+                        请从左侧选择一个项目开始。这里包含了 8 个精心设计的实战项目，
+                        覆盖不同领域和难度，帮助你将 Python 知识应用到实际场景中。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Code Panel -->
+            <div class="code-panel">
+                <!-- Code Editor -->
+                <div class="editor-card">
+                    <div class="editor-header">
+                        <div>
+                            <div class="editor-title">🧪 在线 Python 执行器</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">
+                                注意:浏览器环境不支持 input() 函数,请使用直接赋值方式
+                            </div>
+                        </div>
+                        <button id="run-btn" class="btn btn-primary">▶ 运行代码</button>
+                    </div>
+                    <div id="my-code-pane">
+                        <div id="code-editor" class="editor-textarea language-python"># 在这里编写 Python 代码
+print("Hello, Python Projects!")</div>
+                    </div>
+                </div>
+
+                <!-- Output Display -->
+                <div class="output-card">
+                    <div class="output-header">输出结果</div>
+                    <div id="output" class="output-content">点击"运行代码"查看输出...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 参考代码模态框 -->
+    <div id="code-modal-overlay" class="code-modal-overlay" aria-hidden="true">
+        <div id="code-modal" class="code-modal" role="dialog" aria-modal="true" aria-labelledby="code-modal-title">
+            <div class="code-modal-header">
+                <div class="code-modal-header-main">
+                    <div id="code-modal-title" class="code-modal-title">参考代码预览</div>
+                    <div id="code-modal-filename" class="code-modal-filename"></div>
+                </div>
+                <div class="code-modal-actions">
+                    <button id="code-modal-copy-to-editor" class="btn btn-secondary" type="button">复制到编辑器</button>
+                    <button id="code-modal-copy-to-clipboard" class="btn btn-secondary" type="button">复制到剪贴板</button>
+                    <button id="code-modal-close" class="btn btn-secondary" type="button" style="padding: 0.35rem 0.6rem; font-size: 0.9rem; line-height: 1;">×</button>
+                </div>
+            </div>
+            <div class="code-modal-body">
+                <pre class="language-python"><code id="code-modal-code" class="language-python"></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pyodide Script -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+
+    <script>
+// ========== 项目数据 (Codex优化的路径结构) ==========
+const projects = [
+    {
+        id: 'p01',
+        title: '01_命令行工具_批量重命名文件',
+        dir: '03.项目实战/01_命令行工具_批量重命名文件',
+        doc: '03.项目实战/03.项目实战.md',
+        overview: '编写一个命令行工具,用于批量重命名指定目录下的文件,支持添加前缀、后缀或替换文件名中的部分字符串。',
+        files: [
+            { name: 'rename_files.py', path: '03.项目实战/01_命令行工具_批量重命名文件/rename_files.py', type: 'main' },
+            { name: 'test_rename_files.py', path: '03.项目实战/01_命令行工具_批量重命名文件/test_rename_files.py', type: 'test' }
+        ],
+        type: '命令行工具',
+        difficulty: 1,
+    },
+    {
+        id: 'p02',
+        title: '02_日志分析与报表生成',
+        dir: '03.项目实战/02_日志分析与报表生成',
+        doc: '03.项目实战/03.项目实战.md',
+        overview: '分析 Web 服务器的访问日志,统计每日的独立 IP 数量、最常访问的页面(Top 10)以及各 HTTP 状态码的占比,并生成一份文本或 Markdown 格式的报告。',
+        files: [
+            { name: 'log_analyzer.py', path: '03.项目实战/02_日志分析与报表生成/log_analyzer.py', type: 'main' },
+            { name: 'test_log_analyzer.py', path: '03.项目实战/02_日志分析与报表生成/test_log_analyzer.py', type: 'test' }
+        ],
+        type: '日志分析',
+        difficulty: 2,
+    },
+    {
+        id: 'p03',
+        title: '03_TODO_Web_API_FastAPI',
+        dir: '03.项目实战/03_TODO_Web_API_FastAPI',
+        doc: '03.项目实战/03.项目实战.md',
+        overview: '使用 FastAPI 框架构建一个简单的 TODO List Web API,支持对任务的增、删、改、查(CRUD)操作,并提供 OpenAPI 自动生成的 API 文档。',
+        files: [
+            { name: 'main.py', path: '03.项目实战/03_TODO_Web_API_FastAPI/app/main.py', type: 'main' },
+            { name: 'test_todo_api.py', path: '03.项目实战/03_TODO_Web_API_FastAPI/test_todo_api.py', type: 'test' }
+        ],
+        type: 'Web API',
+        difficulty: 3,
+    },
+    {
+        id: 'p04',
+        title: '04_小型数据分析项目_销售统计',
+        dir: '03.项目实战/04_小型数据分析项目_销售统计',
+        doc: '03.项目实战/03.项目实战.md',
+        overview: '读取 CSV 格式的销售数据,使用 Pandas 库进行数据清洗和分析,计算总销售额、月度销售趋势以及最畅销的商品,并将结果可视化。',
+        files: [
+            { name: 'analyze_sales.py', path: '03.项目实战/04_小型数据分析项目_销售统计/analyze_sales.py', type: 'main' },
+            { name: 'test_analyze_sales.py', path: '03.项目实战/04_小型数据分析项目_销售统计/test_analyze_sales.py', type: 'test' }
+        ],
+        type: '数据分析',
+        difficulty: 2,
+    },
+    {
+        id: 'p05',
+        title: '05_简单爬虫_新闻标题抓取',
+        dir: '03.项目实战/05_简单爬虫_新闻标题抓取',
+        doc: '03.项目实战/03.项目实战.md',
+        overview: '使用 requests 和 BeautifulSoup 库编写一个简单的网络爬虫,抓取指定新闻网站首页的头条新闻标题和链接,并将其保存到文件中。',
+        files: [
+            { name: 'crawler_news_titles.py', path: '03.项目实战/05_简单爬虫_新闻标题抓取/crawler_news_titles.py', type: 'main' },
+            { name: 'test_crawler_news_titles.py', path: '03.项目实战/05_简单爬虫_新闻标题抓取/test_crawler_news_titles.py', type: 'test' }
+        ],
+        type: '网络爬虫',
+        difficulty: 2,
+    },
+    {
+        id: 'p06',
+        title: '06_自动化脚本_日志归档',
+        dir: '03.项目实战/06_自动化脚本_日志归档',
+        doc: '03.项目实战/03.项目实战.md',
+        overview: '编写一个自动化脚本,定期检查指定目录下的日志文件,将超过一定天数(如 30 天)的旧日志文件压缩并移动到归档目录。',
+        files: [
+            { name: 'archive_old_logs.py', path: '03.项目实战/06_自动化脚本_日志归档/archive_old_logs.py', type: 'main' },
+            { name: 'test_archive_old_logs.py', path: '03.项目实战/06_自动化脚本_日志归档/test_archive_old_logs.py', type: 'test' }
+        ],
+        type: '自动化脚本',
+        difficulty: 2,
+    },
+    {
+        id: 'p07',
+        title: '07_监控数据处理_指标聚合与告警',
+        dir: '03.项目实战/07_监控数据处理_指标聚合与告警',
+        doc: '03.项目实战/03.项目实战.md',
+        overview: '处理一批 JSON 格式的监控指标数据,计算关键指标(如 CPU 平均使用率、内存占用率)的聚合值,并根据预设阈值判断是否需要触发告警。',
+        files: [
+            { name: 'process_metrics.py', path: '03.项目实战/07_监控数据处理_指标聚合与告警/process_metrics.py', type: 'main' },
+            { name: 'test_process_metrics.py', path: '03.项目实战/07_监控数据处理_指标聚合与告警/test_process_metrics.py', type: 'test' }
+        ],
+        type: '监控处理',
+        difficulty: 3,
+    },
+    {
+        id: 'p08',
+        title: '08_系统对接_调用Java服务API',
+        dir: '03.项目实战/08_系统对接_调用Java服务API',
+        doc: '03.项目实战/03.项目实战.md',
+        overview: '模拟一个 Python 服务作为客户端,调用一个(模拟的)Java 后端服务提供的 RESTful API,并处理其返回的数据。重点练习 HTTP 请求、认证(如 Bearer Token)和 JSON 数据处理。',
+        files: [
+            { name: 'client_java_service.py', path: '03.项目实战/08_系统对接_调用Java服务API/client_java_service.py', type: 'main' },
+            { name: 'test_client_java_service.py', path: '03.项目实战/08_系统对接_调用Java服务API/test_client_java_service.py', type: 'test' }
+        ],
+        type: '系统对接',
+        difficulty: 4,
+    },
+];
+
+// ========== 全局状态 (Codex建议的改进) ==========
+let currentProject = null;
+let pyodide = null;
+let pyodideReadyPromise = null;
+let jar = null;
+
+const markdownCache = new Map();
+const codeFileCache = new Map();
+
+// Codex建议:统一路径解析函数
+function resolveRepoPath(path) {
+    if (!path) return '';
+    if (path.startsWith('../')) return path;
+    return '../' + path;
+}
+
+// ========== CodeJar + Prism 语法高亮 ==========
+const editorElement = document.querySelector('#code-editor');
+if (editorElement && window.CodeJar && window.Prism) {
+    const highlight = (editor) => {
+        const code = editor.textContent;
+        editor.innerHTML = Prism.highlight(code, Prism.languages.python, 'python');
+    };
+    jar = CodeJar(editorElement, highlight);
+} else if (editorElement) {
+    console.error('CodeJar 或 Prism 未加载');
+    editorElement.setAttribute('contenteditable', 'true');
+    jar = {
+        updateCode(code) { editorElement.textContent = code; },
+        toString() { return editorElement.textContent || ''; }
+    };
+}
+
+// ========== 参考代码模态框 ==========
+const codeModalOverlay = document.getElementById('code-modal-overlay');
+const codeModalFilename = document.getElementById('code-modal-filename');
+const codeModalCodeElement = document.getElementById('code-modal-code');
+
+function openCodeModal(path, code, message) {
+    if (codeModalFilename) {
+        codeModalFilename.textContent = path ? path.split('/').pop() : '参考代码';
+    }
+
+    if (codeModalCodeElement) {
+        codeModalCodeElement.textContent = code || '';
+        codeModalCodeElement.className = 'language-python';
+        const pre = codeModalCodeElement.parentElement;
+        if (pre) pre.className = 'language-python';
+        if (window.Prism) Prism.highlightElement(codeModalCodeElement);
+    }
+
+    if (codeModalOverlay) codeModalOverlay.classList.add('active');
+
+    const output = document.getElementById('output');
+    if (output && message) {
+        output.textContent = message;
+    }
+}
+
+function closeCodeModal() {
+    if (codeModalOverlay) codeModalOverlay.classList.remove('active');
+}
+
+document.getElementById('code-modal-copy-to-editor')?.addEventListener('click', () => {
+    if (jar && codeModalCodeElement) {
+        const code = codeModalCodeElement.textContent || '';
+        if (code) {
+            jar.updateCode(code);
+            closeCodeModal();
+            document.getElementById('output').textContent = '已将参考代码复制到编辑器。';
+        }
+    }
+});
+
+document.getElementById('code-modal-copy-to-clipboard')?.addEventListener('click', async () => {
+    const code = codeModalCodeElement?.textContent || '';
+    if (!code) return;
+    try {
+        await navigator.clipboard.writeText(code);
+        document.getElementById('output').textContent = '参考代码已复制到剪贴板。';
+    } catch (err) {
+        document.getElementById('output').textContent = '复制失败: ' + err.message;
+    }
+});
+
+document.getElementById('code-modal-close')?.addEventListener('click', closeCodeModal);
+codeModalOverlay?.addEventListener('click', (e) => e.target === codeModalOverlay && closeCodeModal());
+document.addEventListener('keydown', (e) => e.key === 'Escape' && closeCodeModal());
+
+// ========== 导航渲染 ==========
+function renderNav() {
+    const nav = document.getElementById('project-nav');
+    nav.innerHTML = projects.map(p => `
+        <button class="nav-item" data-id="${p.id}">
+            <div class="nav-item-title">${p.title}</div>
+            <div class="nav-item-meta">
+                <span class="project-type-tag">${p.type}</span>
+                <span class="difficulty-rating">${'★'.repeat(p.difficulty)}${'☆'.repeat(5 - p.difficulty)}</span>
+            </div>
+        </button>
+    `).join('');
+
+    document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+            showProject(btn.dataset.id);
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+}
+
+// ========== 项目展示 ==========
+function showProject(projectId) {
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+
+    currentProject = project;
+
+    const docPanel = document.getElementById('doc-panel');
+    const filesHtml = project.files.map(f => {
+        const typeLabel = f.type === 'main'
+            ? '<span class="file-type-label file-type-main">主文件</span>'
+            : '<span class="file-type-label file-type-test">测试</span>';
+        return `
+            <li class="file-item">
+                <div style="display: flex; justify-content: space-between; align-items: start; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <div class="file-name">${typeLabel}${f.name}</div>
+                        <div class="file-path">${f.path}</div>
+                    </div>
+                    <button class="btn btn-secondary load-code-btn" data-file-path="${f.path}" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;">📄 查看代码</button>
+                </div>
+            </li>
+        `;
+    }).join('');
+
+    docPanel.innerHTML = `
+        <div class="project-header">
+            <div class="project-meta">
+                <span class="project-type-tag">${project.type}</span>
+                <span class="difficulty-rating" style="font-size: 1.2rem;">${'★'.repeat(project.difficulty)}${'☆'.repeat(5 - project.difficulty)}</span>
+            </div>
+            <h1 class="project-title">${project.title}</h1>
+            <div class="project-path">${project.dir}</div>
+        </div>
+        <p class="project-overview">${project.overview}</p>
+
+        <h2 class="section-title">📦 核心文件</h2>
+        <ul class="file-list">${filesHtml}</ul>
+
+        <div class="unified-doc-card">
+            <h2 class="section-title">📝 项目说明</h2>
+            <div id="md-preview" class="markdown-viewer">正在加载文档...</div>
+        </div>
+    `;
+
+    loadMarkdown(project.doc);
+    updateCodeEditor(project);
+}
+
+// ========== Markdown加载 (Codex优化) ==========
+async function loadMarkdown(path) {
+    const preview = document.getElementById('md-preview');
+    if (!preview) return;
+
+    const resolvedPath = resolveRepoPath(path);
+
+    try {
+        if (markdownCache.has(resolvedPath)) {
+            preview.textContent = markdownCache.get(resolvedPath);
+            if (window.Prism) Prism.highlightAllUnder(preview);
+            return;
+        }
+
+        const response = await fetch(resolvedPath);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status} ${response.statusText || ''}`.trim());
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        const text = new TextDecoder('utf-8').decode(arrayBuffer);
+
+        markdownCache.set(resolvedPath, text);
+        preview.textContent = text;
+        if (window.Prism) Prism.highlightAllUnder(preview);
+    } catch (err) {
+        preview.textContent = `文档加载失败: ${err.message}\n\n请确认文件存在: ${resolvedPath}`;
+    }
+}
+
+// ========== 代码文件加载 (Codex优化) ==========
+async function loadCodeFile(path) {
+    const output = document.getElementById('output');
+    if (!output) return;
+
+    const resolvedPath = resolveRepoPath(path);
+
+    try {
+        if (codeFileCache.has(resolvedPath)) {
+            const cachedData = codeFileCache.get(resolvedPath);
+            openCodeModal(resolvedPath, cachedData.code, cachedData.message + '\n(已缓存)');
+            return;
+        }
+
+        output.textContent = '正在加载代码文件...';
+
+        const response = await fetch(resolvedPath);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status} ${response.statusText || ''}`.trim());
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        let code = new TextDecoder('utf-8').decode(arrayBuffer);
+
+        const hasInput = code.includes('input(');
+        let message;
+        if (hasInput) {
+            code = convertInputToBrowserMode(code);
+            message = `已加载文件: ${resolvedPath.split('/').pop()}\n⚠️ 已自动转换 input() 为浏览器兼容模式\n点击"运行代码"按钮执行`;
+        } else {
+            message = `已加载文件: ${resolvedPath.split('/').pop()}\n点击"运行代码"按钮执行`;
+        }
+
+        codeFileCache.set(resolvedPath, { code, message });
+        openCodeModal(resolvedPath, code, message);
+    } catch (err) {
+        output.textContent = `代码文件加载失败: ${err.message}\n\n请确认文件存在: ${resolvedPath}`;
+        if (jar) {
+            jar.updateCode(`# 加载失败: ${resolvedPath}\n# 错误: ${err.message}`);
+        }
+    }
+}
+
+// ========== input()转换 (复用index.html逻辑) ==========
+function convertInputToBrowserMode(code) {
+    let converted = '# ========== 浏览器兼容模式 ==========\n';
+    converted += '# 原代码中的 input() 已自动转换为示例值\n';
+    converted += '# 你可以修改这些值来测试不同情况\n';
+    converted += '# =====================================\n\n';
+
+    const inputPatterns = [
+        {
+            regex: /(\w+)\s*=\s*int\s*\(\s*input\s*\(\s*['"]([^'"]*)['"]\s*\)\s*\)/g,
+            replace: (match, varName, prompt) => {
+                const sampleValues = { age: 25, year: 2024, num: 10, count: 5 };
+                const value = Object.prototype.hasOwnProperty.call(sampleValues, varName) ? sampleValues[varName] : 42;
+                return `${varName} = ${value}  # 原提示: ${prompt}`;
+            }
+        },
+        {
+            regex: /(\w+)\s*=\s*float\s*\(\s*input\s*\(\s*['"]([^'"]*)['"]\s*\)\s*\)/g,
+            replace: (match, varName, prompt) => {
+                const sampleValues = { weight: 70.0, height: 1.75, price: 99.9, score: 85.5 };
+                const value = Object.prototype.hasOwnProperty.call(sampleValues, varName) ? sampleValues[varName] : 3.14;
+                return `${varName} = ${value}  # 原提示: ${prompt}`;
+            }
+        },
+        {
+            regex: /(\w+)\s*=\s*input\s*\(\s*['"]([^'"]*)['"]\s*\)/g,
+            replace: (match, varName, prompt) => {
+                const sampleValues = { name: '"小明"', city: '"北京"', text: '"Hello"' };
+                const value = Object.prototype.hasOwnProperty.call(sampleValues, varName) ? sampleValues[varName] : '"示例输入"';
+                return `${varName} = ${value}  # 原提示: ${prompt}`;
+            }
+        }
+    ];
+
+    let result = code;
+    inputPatterns.forEach(pattern => {
+        result = result.replace(pattern.regex, pattern.replace);
+    });
+
+    return result !== code ? converted + result : result;
+}
+
+// ========== 编辑器更新 ==========
+function updateCodeEditor(project) {
+    const mainFile = project.files.find(f => f.type === 'main');
+    if (mainFile && jar) {
+        jar.updateCode(`# ${project.title}\n# 点击"查看代码"加载项目文件\n\nprint("欢迎来到项目实战!")`);
+    }
+}
+
+// ========== 代码文件点击事件 ==========
+document.getElementById('doc-panel')?.addEventListener('click', async (event) => {
+    const btn = event.target.closest('.load-code-btn');
+    if (btn?.dataset.filePath) {
+        await loadCodeFile(btn.dataset.filePath);
+    }
+});
+
+// ========== Pyodide执行 (Codex优化的单例Promise) ==========
+async function ensurePyodide() {
+    if (pyodide) return pyodide;
+
+    if (typeof loadPyodide !== 'function') {
+        throw new Error('Pyodide 脚本尚未加载完成');
+    }
+
+    if (!pyodideReadyPromise) {
+        pyodideReadyPromise = loadPyodide({
+            indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/'
+        }).then(instance => {
+            pyodide = instance;
+            return instance;
+        }).catch(err => {
+            pyodideReadyPromise = null;
+            throw err;
+        });
+    }
+
+    return pyodideReadyPromise;
+}
+
+async function runCode() {
+    const output = document.getElementById('output');
+    const runBtn = document.getElementById('run-btn');
+
+    if (!output || !runBtn || !jar) return;
+
+    const code = jar.toString();
+    if (!code || !code.trim()) {
+        output.textContent = '当前编辑器为空,请先输入或加载代码后再执行。';
+        return;
+    }
+
+    runBtn.disabled = true;
+    runBtn.textContent = '⏳ 执行中...';
+    output.textContent = '正在加载 Python 环境...\n';
+
+    try {
+        const py = await ensurePyodide();
+
+        const wrappedCode = `
+import sys
+import io
+_stdout = sys.stdout
+_stderr = sys.stderr
+_buf = io.StringIO()
+sys.stdout = sys.stderr = _buf
+try:
+${code.split('\n').map(line => '    ' + line).join('\n')}
+finally:
+    sys.stdout = _stdout
+    sys.stderr = _stderr
+result = _buf.getvalue()
+`;
+
+        await py.runPythonAsync(wrappedCode);
+        const resultProxy = py.globals.get('result');
+        const result = resultProxy ? resultProxy.toString() : '';
+        if (resultProxy?.destroy) resultProxy.destroy();
+        output.textContent = result || '(执行完成,无输出)';
+    } catch (err) {
+        const msg = err?.message || String(err);
+        output.textContent = `执行错误:\n${msg}`;
+    } finally {
+        runBtn.disabled = false;
+        runBtn.textContent = '▶ 运行代码';
+    }
+}
+
+document.getElementById('run-btn')?.addEventListener('click', runCode);
+
+// ========== 主题切换 ==========
+const toggleBtn = document.getElementById('theme-toggle');
+const htmlEl = document.documentElement;
+
+let currentTheme = null;
+try {
+    currentTheme = localStorage.getItem('theme');
+} catch (e) {
+    console.warn('localStorage 不可用');
+}
+
+const systemPrefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches || false;
+
+if (currentTheme === 'dark' || (!currentTheme && systemPrefersDark)) {
+    htmlEl.setAttribute('data-theme', 'dark');
+} else {
+    htmlEl.setAttribute('data-theme', 'light');
+}
+
+toggleBtn?.addEventListener('click', () => {
+    const isDark = htmlEl.getAttribute('data-theme') === 'dark';
+    htmlEl.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    try {
+        localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    } catch (e) {}
+});
+
+// ========== 初始化 ==========
+renderNav();
+if (projects.length > 0) {
+    showProject(projects[0].id);
+    document.querySelector('.nav-item')?.classList.add('active');
+}
+    </script>
+</body>
+</html>
