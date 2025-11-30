@@ -12,7 +12,8 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Optional
 
-from pydantic import BaseSettings, AnyUrl
+from pydantic import AnyUrl, AnyHttpUrl
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -35,6 +36,9 @@ class Settings(BaseSettings):
     # JWT 相关配置
     secret_key: str = "CHANGE_ME_TO_A_RANDOM_SECRET"
     access_token_expire_minutes: int = 60
+
+    # 日志 / 审计服务基础地址，未配置则不上报审计日志
+    log_audit_base_url: Optional[AnyHttpUrl] = None
 
     class Config:
         env_file = ".env"
@@ -60,4 +64,3 @@ settings = get_settings()
 
 
 __all__ = ["Settings", "settings", "get_settings"]
-

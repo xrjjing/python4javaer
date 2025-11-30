@@ -12,6 +12,8 @@ from __future__ import annotations
 from fastapi import FastAPI, HTTPException, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 from starlette.requests import Request
 
 from .database import Base, engine
@@ -89,6 +91,15 @@ def create_app() -> FastAPI:
             data=None,
         )
         return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=resp.model_dump())
+
+    # 静态前端：RBAC 管理控制台
+    static_dir = Path(__file__).resolve().parent / "static"
+    if static_dir.exists():
+        app.mount(
+            "/rbac-admin",
+            StaticFiles(directory=static_dir, html=True),
+            name="rbac-admin",
+        )
 
     return app
 

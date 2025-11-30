@@ -9,7 +9,7 @@ RBAC 示例数据初始化脚本
   - 超级管理员：用户名 admin，密码 admin123
   - 普通用户：用户名 alice，密码 alice123
   - 角色：admin、user
-  - 权限：todos:read、todos:write、todos:delete
+  - 权限：todos:read/write/delete，projects:read/write/delete，tasks:read/write/delete
 
 你可以通过环境变量覆盖默认用户名和密码：
   ADMIN_USERNAME / ADMIN_PASSWORD

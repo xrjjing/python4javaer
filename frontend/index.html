@@ -133,12 +133,13 @@ body {
 .content-scroll-area {
     flex: 1;
     overflow-y: auto;
-    padding: 2rem;
+    padding: 2rem 2rem 5rem 2rem;
     display: flex;
     gap: 1.5rem;
     max-width: 1600px;
     margin: 0 auto;
     width: 100%;
+    align-items: flex-start;
 }
 
 .doc-panel {
@@ -159,9 +160,7 @@ body {
     gap: 1rem;
     min-width: 350px;
     position: sticky;
-    top: 0;
-    height: 100%;
-    max-height: calc(100vh - 4rem);
+    top: 2rem;
     padding: 2rem;
     background: var(--bg-panel);
     border-radius: var(--radius);
@@ -346,6 +345,8 @@ body {
     font-size: 0.85rem;       /* Slightly smaller for code density */
     line-height: 1.6;
     white-space: pre-wrap;    /* Preserve formatting */
+    max-width: 100ch;
+    margin-right: auto;
 
     /* Polish */
     box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05); /* Inner shadow for depth */
@@ -442,7 +443,7 @@ body {
 
 .editor-textarea {
     width: 100%;
-    min-height: 0;
+    min-height: 200px;
     flex: 1;
     padding: 1rem;
     border: none;
@@ -742,12 +743,14 @@ code[class*="language-"], pre[class*="language-"] {
 @media (max-width: 1024px) {
     .content-scroll-area {
         flex-direction: column;
+        align-items: stretch;
     }
 
     .code-panel {
         position: static;
         max-height: none;
         min-width: 0;
+        top: auto;
     }
 }
 
@@ -1079,6 +1082,25 @@ const chapters = [
         demos: [],
         tags: ['进阶', '正则', '并发', '异步'],
         snippets: []
+    },
+    {
+        id: 'RBAC',
+        title: 'RBAC 权限服务与控制台',
+        dir: 'rbac_auth_service',
+        doc: 'rbac_auth_service/09_项目说明.md',
+        overview: '通过 FastAPI 实现的 RBAC 认证与授权服务示例，并配套可交互的管理控制台，用于演示用户/角色/权限与受控资源的完整链路。',
+        demos: [
+            { name: 'init_rbac_data.py', path: 'rbac_auth_service/init_rbac_data.py', hint: '初始化用户、角色、权限示例数据' },
+            { name: 'app/main.py', path: 'rbac_auth_service/app/main.py', hint: 'RBAC 示例 API 应用入口' }
+        ],
+        tags: ['RBAC', '认证', '授权', 'FastAPI'],
+        snippets: [
+            {
+                label: '快速启动 RBAC 服务',
+                code: 'cd rbac_auth_service\npython init_rbac_data.py\nuvicorn app.main:app --reload\n# 浏览器访问: http://127.0.0.1:8000/rbac-admin/rbac_admin.html\n'
+            }
+        ],
+        consoleUrl: '/rbac-admin/rbac_admin.html'
     }
 ];
 
@@ -1311,15 +1333,18 @@ function showChapter(chapterId) {
         <div class="unified-doc-card">
             <h2 class="section-title">📝 文档预览</h2>
             <div id="md-preview" class="markdown-viewer">正在加载文档...</div>
-
-            <h2 class="section-title">💡 学习建议</h2>
-            <ul class="file-list">
-                <li class="file-item">先阅读章节文档，理解核心概念</li>
-                <li class="file-item">在终端运行 demo 文件体验效果</li>
-                <li class="file-item">在右侧代码编辑器中尝试修改和运行代码</li>
-                <li class="file-item">完成 practice 练习巩固知识点</li>
-            </ul>
         </div>
+
+        ${chapter.consoleUrl ? `
+        <h2 class="section-title">🔐 RBAC 管理控制台</h2>
+        <p class="chapter-overview">
+            这个控制台由 <code>rbac_auth_service</code> 提供，前端直接调用后端 RBAC API，
+            用于演示登录、查看当前用户、角色与权限管理以及受控业务资源访问。
+        </p>
+        <button id="open-rbac-console-btn" class="btn btn-primary" type="button">
+            打开 RBAC 管理控制台
+        </button>
+        ` : ''}
     `;
 
     // 加载 Markdown
@@ -1327,6 +1352,16 @@ function showChapter(chapterId) {
 
     // 更新代码编辑器
     updateCodeEditor(chapter);
+
+    // 若章节提供了控制台入口，为按钮绑定事件
+    if (chapter.consoleUrl) {
+        const btnOpen = document.getElementById('open-rbac-console-btn');
+        if (btnOpen) {
+            btnOpen.addEventListener('click', () => {
+                window.open(chapter.consoleUrl, '_blank');
+            });
+        }
+    }
 }
 
 async function loadMarkdown(path) {

@@ -9,19 +9,21 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from .. import models, schemas, security
 from ..database import get_db
 from ..dependencies import get_current_user, get_token_payload
+from ..log_audit_client import log_audit_client
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/login", response_model=schemas.APIResponse[schemas.Token])
 def login(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
@@ -49,6 +51,18 @@ def login(
         is_superuser=user.is_superuser,
     )
     token = schemas.Token(access_token=access_token)
+    # 上报登录成功的审计日志（失败时静默忽略）
+    client_host = request.client.host if request.client else None
+    log_audit_client.send_log(
+        {
+            "actor": user.username,
+            "action": "login",
+            "resource": "user",
+            "source_service": "rbac",
+            "ip": client_host,
+            "detail": "用户登录成功",
+        }
+    )
     return schemas.APIResponse(code=schemas.ErrorCode.OK, message="登录成功", data=token)
 
 
@@ -60,6 +74,7 @@ def read_me(current_user: models.User = Depends(get_current_user)):
 
 @router.post("/logout", response_model=schemas.APIResponse[dict])
 def logout(
+    request: Request,
     current_user: models.User = Depends(get_current_user),
     payload = Depends(get_token_payload),
 ):
@@ -73,6 +88,20 @@ def logout(
     """
     # 将当前 Token 放入黑名单直到过期
     security.token_blacklist.add(payload.jti, payload.exp)
+
+    # 上报登出操作的审计日志（失败时静默忽略）
+    client_host = request.client.host if request.client else None
+    log_audit_client.send_log(
+        {
+            "actor": current_user.username,
+            "action": "logout",
+            "resource": "user",
+            "source_service": "rbac",
+            "ip": client_host,
+            "detail": "用户登出成功",
+        }
+    )
+
     return schemas.APIResponse(
         code=schemas.ErrorCode.OK,
         message="登出成功",

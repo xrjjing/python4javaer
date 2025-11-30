@@ -207,8 +207,8 @@ __table_args__ = (
 
 角色分配：
 
-- `admin` 角色：拥有所有 `todos:*` + `projects:*` 权限；
-- `user`  角色：拥有 `todos:read/write` + `projects:read/write`。
+- `admin` 角色：拥有所有 `todos:*` + `projects:*` + `tasks:*` 权限；
+- `user`  角色：拥有 `todos:read/write` + `projects:read/write` + `tasks:read/write`。
 
 ### 7.2 权限检查入口
 
