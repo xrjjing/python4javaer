@@ -11,8 +11,15 @@
     <!-- localStorage.setItem('mockApi', 'true')                -->
     <!-- ====================================================== -->
     <script src="mock-data.js"></script>
+
+    <!-- 全局配置 -->
+    <script src="config.js"></script>
+
     <script src="mock-api.js"></script>
     <!-- ====================================================== -->
+
+    <!-- 公共工具库 - 提供安全的 API 客户端和表格渲染器 -->
+    <script src="common.js"></script>
 
     <style>
 /* CSS Variables - Identical to index.html */
@@ -278,6 +285,10 @@ body {
                 <div class="top-bar-title">RBAC Management</div>
                 <div class="top-bar-actions">
                     <span class="user-info" id="user-info"></span>
+                    <div class="debug-toggle-container">
+                        <input type="checkbox" id="debug-toggle" />
+                        <label for="debug-toggle">调试模式</label>
+                    </div>
                     <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Dark Mode">
                         <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                         <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -353,8 +364,8 @@ body {
     <script>
     (() => {
         // API Configuration - defaults to same origin for production
-        const API_BASE = window.API_BASE_URL || '';
-        const LOG_API_BASE = window.LOG_API_BASE_URL || '';
+        const API_BASE = window.AppConfig?.apiBaseUrl ?? window.API_BASE_URL ?? '';
+        const LOG_API_BASE = window.AppConfig?.logApiBaseUrl ?? window.LOG_API_BASE_URL ?? '';
 
         // Authentication check
         const token = localStorage.getItem('accessToken');
@@ -478,101 +489,61 @@ body {
         async function loadUsers() {
             try {
                 const users = await apiFetch(`${API_BASE}/users/`);
-                const tbody = document.getElementById('users-table');
-                tbody.innerHTML = '';
-                users.forEach(user => {
-                    const tr = document.createElement('tr');
 
-                    const tdId = document.createElement('td');
-                    tdId.textContent = user.id;
-                    tr.appendChild(tdId);
-
-                    const tdUsername = document.createElement('td');
-                    tdUsername.textContent = user.username;
-                    tr.appendChild(tdUsername);
-
-                    const tdActive = document.createElement('td');
-                    tdActive.textContent = user.is_active ? 'Yes' : 'No';
-                    tr.appendChild(tdActive);
-
-                    const tdSuperuser = document.createElement('td');
-                    tdSuperuser.textContent = user.is_superuser ? 'Yes' : 'No';
-                    tr.appendChild(tdSuperuser);
-
-                    const tdRoles = document.createElement('td');
-                    tdRoles.textContent = (user.roles || []).map(r => r.name).join(', ') || '-';
-                    tr.appendChild(tdRoles);
-
-                    const tdActions = document.createElement('td');
-                    const button = document.createElement('button');
-                    button.className = 'btn btn-secondary btn-sm';
-                    button.textContent = user.is_active ? 'Disable' : 'Enable';
-                    button.onclick = () => toggleUserActive(user.id, !user.is_active);
-                    tdActions.appendChild(button);
-                    tr.appendChild(tdActions);
-
-                    tbody.appendChild(tr);
-                });
+                // 使用通用表格渲染器 - 配置驱动的方式
+                renderGenericTable('users-table', users, [
+                    { key: 'id' },
+                    { key: 'username' },
+                    { key: 'is_active', render: (val) => val ? 'Yes' : 'No' },
+                    { key: 'is_superuser', render: (val) => val ? 'Yes' : 'No' },
+                    { key: 'roles', render: (roles) => (roles || []).map(r => r.name).join(', ') || '-' },
+                    {
+                        key: 'id',
+                        render: (_, user) => {
+                            const button = document.createElement('button');
+                            button.className = 'btn btn-secondary btn-sm';
+                            button.textContent = user.is_active ? 'Disable' : 'Enable';
+                            button.onclick = () => toggleUserActive(user.id, !user.is_active);
+                            return button;
+                        }
+                    }
+                ]);
             } catch (error) {
                 console.error('Failed to load users:', error);
+                showToast('Failed to load users: ' + error.message, 'error');
             }
         }
 
         async function loadRoles() {
             try {
                 const roles = await apiFetch(`${API_BASE}/rbac/roles`);
-                const tbody = document.getElementById('roles-table');
-                tbody.innerHTML = '';
-                roles.forEach(role => {
-                    const tr = document.createElement('tr');
 
-                    const tdId = document.createElement('td');
-                    tdId.textContent = role.id;
-                    tr.appendChild(tdId);
-
-                    const tdName = document.createElement('td');
-                    tdName.textContent = role.name;
-                    tr.appendChild(tdName);
-
-                    const tdDesc = document.createElement('td');
-                    tdDesc.textContent = role.description || '-';
-                    tr.appendChild(tdDesc);
-
-                    const tdPerms = document.createElement('td');
-                    tdPerms.textContent = (role.permissions || []).map(p => p.code).join(', ') || '-';
-                    tr.appendChild(tdPerms);
-
-                    tbody.appendChild(tr);
-                });
+                // 使用通用表格渲染器
+                renderGenericTable('roles-table', roles, [
+                    { key: 'id' },
+                    { key: 'name' },
+                    { key: 'description' },
+                    { key: 'permissions', render: (perms) => (perms || []).map(p => p.code).join(', ') || '-' }
+                ]);
             } catch (error) {
                 console.error('Failed to load roles:', error);
+                showToast('Failed to load roles: ' + error.message, 'error');
             }
         }
 
         async function loadPermissions() {
             try {
                 const permissions = await apiFetch(`${API_BASE}/rbac/permissions`);
-                const tbody = document.getElementById('permissions-table');
-                tbody.innerHTML = '';
-                permissions.forEach(perm => {
-                    const tr = document.createElement('tr');
 
-                    const tdId = document.createElement('td');
-                    tdId.textContent = perm.id;
-                    tr.appendChild(tdId);
-
-                    const tdCode = document.createElement('td');
-                    tdCode.textContent = perm.code;
-                    tr.appendChild(tdCode);
-
-                    const tdDesc = document.createElement('td');
-                    tdDesc.textContent = perm.description || '-';
-                    tr.appendChild(tdDesc);
-
-                    tbody.appendChild(tr);
-                });
+                // 使用通用表格渲染器
+                renderGenericTable('permissions-table', permissions, [
+                    { key: 'id' },
+                    { key: 'code' },
+                    { key: 'description' }
+                ]);
             } catch (error) {
                 console.error('Failed to load permissions:', error);
+                showToast('Failed to load permissions: ' + error.message, 'error');
             }
         }
 
@@ -646,7 +617,115 @@ body {
         // Initialize
         loadCurrentUser();
         switchPanel('dashboard');
+
+        // 调试面板初始化
+        const debugToggle = document.getElementById('debug-toggle');
+        if (debugToggle) {
+            debugToggle.addEventListener('change', (e) => {
+                toggleDebugPanel(e.target.checked);
+            });
+        }
     })();
     </script>
+
+    <!-- ====================================================== -->
+    <!-- 调试面板 - 显示 API 请求/响应日志                      -->
+    <!-- ====================================================== -->
+    <div id="debug-panel" class="debug-panel">
+        <div class="debug-header">
+            <span>🔌 API 通信日志</span>
+            <div>
+                <button class="btn-debug" onclick="clearDebugLogs()">清除</button>
+                <button class="btn-debug" onclick="toggleDebugPanel(false); document.getElementById('debug-toggle').checked = false;">关闭</button>
+            </div>
+        </div>
+        <div id="log-container" class="log-container">
+            <div class="log-entry" style="color: var(--text-muted);">
+                💡 提示：勾选右上角的"调试模式"开关即可查看 API 请求日志
+            </div>
+        </div>
+    </div>
+
+    <style>
+    /* 调试面板样式 */
+    .debug-panel {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 250px;
+        background: var(--bg-panel);
+        border-top: 2px solid var(--border);
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 12px;
+    }
+
+    .debug-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 16px;
+        background: var(--primary-light);
+        border-bottom: 1px solid var(--border);
+        font-weight: 600;
+        color: var(--text-heading);
+    }
+
+    .log-container {
+        height: calc(100% - 40px);
+        overflow-y: auto;
+        padding: 12px;
+        background: var(--bg-app);
+    }
+
+    .log-entry {
+        padding: 6px 0;
+        border-bottom: 1px solid var(--border);
+        line-height: 1.6;
+        color: var(--text-main);
+    }
+
+    .log-entry:last-child {
+        border-bottom: none;
+    }
+
+    .btn-debug {
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        padding: 4px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 8px;
+        color: var(--text-main);
+        font-size: 12px;
+    }
+
+    .btn-debug:hover {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    /* 调试开关样式 */
+    .debug-toggle-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: 16px;
+    }
+
+    .debug-toggle-container input[type="checkbox"] {
+        cursor: pointer;
+    }
+
+    .debug-toggle-container label {
+        cursor: pointer;
+        user-select: none;
+        font-size: 14px;
+    }
+    </style>
 </body>
 </html>

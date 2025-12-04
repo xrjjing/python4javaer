@@ -9,6 +9,7 @@
 | `index.html` | 学习导航主页，包含章节导航和在线 Python 执行器 |
 | `login.html` | RBAC 登录页面 |
 | `admin.html` | RBAC 管理后台（用户/角色/权限管理） |
+| `log-detective.html` | 日志侦探工具（日志分析与安全检测） |
 | `mock-data.js` | 模拟数据文件，用于前端独立开发 |
 | `mock-api.js` | Fetch 拦截器，实现模拟 API 响应 |
 
@@ -100,20 +101,27 @@ window.mockApiUtils.disableMock()
 
 前端页面默认请求同源 API。独立运行时需指定后端地址：
 
+### 推荐方式：使用 config.js（统一配置）
+
+编辑 `frontend/config.js` 文件：
+
+```javascript
+window.AppConfig = {
+    apiBaseUrl: 'http://127.0.0.1:8000',      // 网关服务
+    logApiBaseUrl: 'http://127.0.0.1:8002',   // 审计日志服务
+    enableMock: false
+};
+```
+
+### 兼容方式：使用全局变量（向后兼容）
+
 ```javascript
 // 在页面加载前设置（可在 <head> 中添加）
 window.API_BASE_URL = 'http://127.0.0.1:8000';
+window.LOG_API_BASE_URL = 'http://127.0.0.1:8002';
 ```
 
-或修改页面中的 `API_BASE` 变量：
-
-```javascript
-// 原代码
-const API_BASE = window.API_BASE_URL || '';
-
-// 改为
-const API_BASE = window.API_BASE_URL || 'http://127.0.0.1:8000';
-```
+**注意**：推荐使用 `config.js` 方式，全局变量方式仅为向后兼容保留。
 
 ## 默认账号
 
@@ -160,14 +168,23 @@ rbac_auth_service/app/static/
 ## 与后端服务的对应关系
 
 ```
-前端页面              后端 API
-─────────────────────────────────
-login.html      →    POST /auth/login
-admin.html      →    GET /auth/me
-                     GET/POST/PATCH /users
-                     GET/POST/PATCH /rbac/roles
-                     GET/POST /rbac/permissions
+前端页面                    后端服务                                API 路径
+──────────────────────────────────────────────────────────────────────────
+login.html            →    rbac_auth_service (8001)         →    POST /auth/login
+admin.html            →    rbac_auth_service (8001)         →    GET /auth/me
+                           log_audit_service (8002)         →    GET/POST/PATCH /users
+                                                                  GET/POST/PATCH /rbac/roles
+                                                                  GET/POST /rbac/permissions
+                                                                  GET /audit-logs
+log-detective.html    →    integration_gateway_service (8000) →  POST /gateway/log-detective/analyze
+                           ↓
+                           log_detective_service (9003)      →    POST /internal/log-detective/analyze
 ```
+
+**说明**：
+- `login.html` 和 `admin.html` 直接调用 RBAC 和审计日志服务
+- `log-detective.html` 通过网关调用日志侦探服务（演示网关转发模式）
+- 详细的服务说明见各服务目录下的 `09_项目说明.md`
 
 ## 常见问题
 

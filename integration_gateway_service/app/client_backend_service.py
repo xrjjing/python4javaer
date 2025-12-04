@@ -40,7 +40,7 @@ class BackendServiceClient:
     def get_user(self, user_id: int) -> Dict[str, Any]:
         """调用后端服务查询用户信息。"""
         url = f"{self.base_url}/api/users/{user_id}"
-        with httpx.Client() as client:
+        with httpx.Client(trust_env=False) as client:
             data = self._handle_response(client.get(url, timeout=5.0))
         return data
 
@@ -48,7 +48,7 @@ class BackendServiceClient:
         """调用后端服务创建订单并返回标准化结构。"""
         url = f"{self.base_url}/api/orders"
         payload = order_in.dict()
-        with httpx.Client() as client:
+        with httpx.Client(trust_env=False) as client:
             data = self._handle_response(client.post(url, json=payload, timeout=5.0))
         try:
             return OrderOut(**data)

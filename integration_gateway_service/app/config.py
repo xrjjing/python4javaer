@@ -26,6 +26,9 @@ class Settings(BaseSettings):
     log_audit_base_url: AnyHttpUrl | None = None
     """日志 / 审计服务基础地址，未配置则网关不上报审计日志。"""
 
+    log_detective_base_url: str = "http://localhost:9003"
+    """日志侦探服务基础地址"""
+
     class Config:
         env_prefix = "GATEWAY_"
         env_file = ".env"

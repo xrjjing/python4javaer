@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日志侦探 - Python学习平台</title>
+    <script src="config.js"></script>
+    <script src="common.js"></script>
+    <style>
+:root { --primary: #4f46e5; --bg: #f1f5f9; --panel: #fff; --border: #e2e8f0; --error: #ef4444; --warning: #f59e0b; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: sans-serif; background: var(--bg); padding: 2rem; }
+.container { max-width: 1200px; margin: 0 auto; }
+.header { background: var(--panel); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--border); }
+.input-section { background: var(--panel); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 2rem; }
+textarea { width: 100%; height: 150px; padding: 1rem; border: 1px solid var(--border); border-radius: 8px; font-family: monospace; }
+.btn { padding: 0.6rem 1.2rem; border-radius: 8px; border: none; cursor: pointer; font-weight: 500; }
+.btn-primary { background: var(--primary); color: white; }
+.action-bar { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem; }
+.results { display: none; }
+.results.active { display: block; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: var(--panel); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary); }
+.stat-value { font-size: 2rem; font-weight: 700; margin-top: 0.5rem; }
+.panel { background: var(--panel); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 2rem; }
+.panel-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); font-weight: 600; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕵️ 日志侦探</h1>
+            <p>端到端练习：前端 → 网关 → Python分析服务</p>
+        </div>
+        <div class="input-section">
+            <h2>提交日志</h2>
+            <textarea id="log-input" placeholder="粘贴服务器日志..."></textarea>
+            <div class="action-bar">
+                <button class="btn" onclick="loadSample()">加载示例</button>
+                <button class="btn btn-primary" id="analyze-btn" onclick="analyze()">分析日志</button>
+            </div>
+        </div>
+        <div id="results" class="results">
+            <div class="stats">
+                <div class="stat-card"><div>总行数</div><div class="stat-value" id="stat-lines">0</div></div>
+                <div class="stat-card"><div>错误</div><div class="stat-value" id="stat-errors">0</div></div>
+                <div class="stat-card"><div>警告</div><div class="stat-value" id="stat-warnings">0</div></div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">可疑IP</div>
+                <table><thead><tr><th>IP</th><th>次数</th><th>原因</th></tr></thead><tbody id="ip-table"></tbody></table>
+            </div>
+            <div class="panel">
+                <div class="panel-header">关键错误</div>
+                <table><thead><tr><th>级别</th><th>消息</th><th>行号</th></tr></thead><tbody id="error-table"></tbody></table>
+            </div>
+        </div>
+    </div>
+    <script>
+const API_BASE = window.AppConfig?.apiBaseUrl ?? window.API_BASE_URL ?? '';
+function loadSample() {
+    document.getElementById('log-input').value = '2023-10-27 10:00:01 [INFO] Service started\n2023-10-27 10:05:23 [WARN] High memory from 192.168.1.10\n2023-10-27 10:06:01 [ERROR] Database failed\n2023-10-27 10:07:12 [ERROR] Login failed from 203.0.113.42';
+}
+async function analyze() {
+    const input = document.getElementById('log-input').value;
+    if (!input.trim()) return alert('请输入日志');
+
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+        alert('请先登录后再使用日志侦探功能');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    const btn = document.getElementById('analyze-btn');
+    btn.disabled = true;
+    btn.textContent = '分析中...';
+    try {
+        const result = await apiClient(API_BASE + '/gateway/log-detective/analyze', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ log_text: input })
+        });
+        const data = result.data || result;
+        document.getElementById('stat-lines').textContent = data.summary?.total_lines || 0;
+        document.getElementById('stat-errors').textContent = data.summary?.error_lines || 0;
+        document.getElementById('stat-warnings').textContent = data.summary?.warn_lines || 0;
+
+        const ipTbody = document.getElementById('ip-table');
+        ipTbody.replaceChildren();
+        (data.suspicious_ips || []).forEach(ip => {
+            const tr = document.createElement('tr');
+            ['ip', 'count', 'reason'].forEach(key => {
+                const td = document.createElement('td');
+                td.textContent = String(ip[key] ?? '');
+                tr.appendChild(td);
+            });
+            ipTbody.appendChild(tr);
+        });
+
+        const errTbody = document.getElementById('error-table');
+        errTbody.replaceChildren();
+        (data.critical_errors || []).forEach(err => {
+            const tr = document.createElement('tr');
+            ['level', 'message', 'line_no'].forEach(key => {
+                const td = document.createElement('td');
+                td.textContent = String(err[key] ?? '');
+                tr.appendChild(td);
+            });
+            errTbody.appendChild(tr);
+        });
+
+        document.getElementById('results').classList.add('active');
+    } catch (error) {
+        alert('分析失败: ' + error.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '分析日志';
+    }
+}
+    </script>
+</body>
+</html>

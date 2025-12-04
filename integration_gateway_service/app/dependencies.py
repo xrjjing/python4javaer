@@ -13,6 +13,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 
 from .client_backend_service import BackendServiceClient
+from .log_detective_client import LogDetectiveClient
 from .config import settings
 
 
@@ -22,6 +23,11 @@ http_bearer_scheme = HTTPBearer(auto_error=False)
 def get_backend_client() -> BackendServiceClient:
     """注入通用后端服务客户端实例。"""
     return BackendServiceClient()
+
+
+def get_log_detective_client() -> LogDetectiveClient:
+    """注入日志侦探服务客户端实例。"""
+    return LogDetectiveClient()
 
 
 def get_current_user(

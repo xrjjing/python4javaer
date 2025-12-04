@@ -11,6 +11,10 @@
     <!-- localStorage.setItem('mockApi', 'true')                -->
     <!-- ====================================================== -->
     <script src="mock-data.js"></script>
+
+    <!-- 全局配置 -->
+    <script src="config.js"></script>
+
     <script src="mock-api.js"></script>
     <!-- ====================================================== -->
 
@@ -248,7 +252,7 @@ body {
     <script>
     (() => {
         // API Base URL - defaults to same origin for production, configurable for dev
-        const API_BASE = window.API_BASE_URL || '';
+        const API_BASE = window.AppConfig?.apiBaseUrl ?? window.API_BASE_URL ?? '';
 
         // Theme management (same as index.html)
         const htmlEl = document.documentElement;

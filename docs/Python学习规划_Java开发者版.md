@@ -2,6 +2,19 @@
 
 > 适用人群：有 Java 开发经验（尤其是后端 / Web），希望系统掌握 Python 作为第二语言，用于脚本、后端服务或数据相关工作。
 
+## 📖 必读：Java vs Python 速查对照表
+
+在开始学习前，**强烈建议先阅读** [`Java_vs_Python_CheatSheet.md`](./Java_vs_Python_CheatSheet.md)，它涵盖了：
+
+✅ **正则表达式对比**：转义规则、常用模式、高级特性
+✅ **并发模型对比**：GIL 详解、线程 vs 进程、asyncio vs CompletableFuture
+✅ **Web 框架对比**：Spring Boot vs FastAPI 功能映射
+
+所有示例代码均可直接运行，经过专业技术审查确保准确性。这将帮助你：
+- 快速建立准确的 Python 心智模型
+- 避免 Java 思维定式导致的常见错误
+- 理解 Python 与 Java 在设计哲学上的本质差异
+
 ---
 
 ## 🥅 一、整体学习目标（6~8 周可循环迭代）

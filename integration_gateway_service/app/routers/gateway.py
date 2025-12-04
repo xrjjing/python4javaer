@@ -9,10 +9,12 @@ from typing import Any, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 
-from ..dependencies import get_backend_client, CurrentUserPayload
+from ..dependencies import get_backend_client, get_log_detective_client, CurrentUserPayload
 from ..schemas import ApiResponse, OrderCreateIn, OrderOut
 from ..client_backend_service import BackendServiceClient, BackendServiceError
+from ..log_detective_client import LogDetectiveClient, LogDetectiveServiceError
 from ..log_audit_client import log_audit_client
+from ..config import settings
 
 
 router = APIRouter(prefix="/gateway", tags=["gateway"])
@@ -109,3 +111,36 @@ def proxy_create_order(
     )
 
     return ApiResponse(success=True, data=order_out.dict())
+
+
+@router.post("/log-detective/analyze", response_model=ApiResponse)
+async def analyze_logs(
+    request: Request,
+    current_user: CurrentUserPayload,
+    log_detective_client: LogDetectiveClient = Depends(get_log_detective_client),
+) -> ApiResponse:
+    """
+    转发日志分析请求到日志侦探服务。
+
+    教学用：演示网关转发模式
+    - 验证用户身份（JWT）
+    - 转发到日志侦探服务
+    - 统一错误处理和响应包装
+    """
+    body = await request.json()
+
+    try:
+        result = await log_detective_client.analyze_logs(body)
+    except LogDetectiveServiceError as exc:
+        # 根据错误类型返回不同的 HTTP 状态码
+        if "超时" in str(exc):
+            raise HTTPException(
+                status_code=status.HTTP_504_GATEWAY_TIMEOUT,
+                detail=str(exc),
+            ) from exc
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=str(exc),
+        ) from exc
+
+    return ApiResponse(success=True, data=result)
