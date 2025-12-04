@@ -6,6 +6,7 @@
     <title>FastAPI 深度专题 - 学习导航</title>
     <link rel="stylesheet" href="css/course.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <!-- 顶部导航栏 -->
@@ -49,15 +50,15 @@
                         </li>
                         <li class="nav-item">
                             <span class="status">○</span>
-                            <span class="disabled">03_数据模型与校验_Pydantic2</span>
+                            <a href="#" data-chapter="03">03_数据模型与校验_Pydantic2</a>
                         </li>
                         <li class="nav-item">
                             <span class="status">○</span>
-                            <span class="disabled">04_数据库与事务</span>
+                            <a href="#" data-chapter="04">04_数据库与事务</a>
                         </li>
                         <li class="nav-item">
                             <span class="status">○</span>
-                            <span class="disabled">05_认证与授权</span>
+                            <a href="#" data-chapter="05">05_认证与授权</a>
                         </li>
                     </ul>
                 </div>
@@ -68,19 +69,19 @@
                     <ul class="nav-list">
                         <li class="nav-item">
                             <span class="status">○</span>
-                            <span class="disabled">06_中间件与跨切面</span>
+                            <a href="#" data-chapter="06">06_中间件与跨切面</a>
                         </li>
                         <li class="nav-item">
                             <span class="status">○</span>
-                            <span class="disabled">07_异步与背景任务</span>
+                            <a href="#" data-chapter="07">07_异步与背景任务</a>
                         </li>
                         <li class="nav-item">
                             <span class="status">○</span>
-                            <span class="disabled">08_WebSocket与实时推送</span>
+                            <a href="#" data-chapter="08">08_WebSocket与实时推送</a>
                         </li>
                         <li class="nav-item">
                             <span class="status">○</span>
-                            <span class="disabled">09_测试与Mock</span>
+                            <a href="#" data-chapter="09">09_测试与Mock</a>
                         </li>
                     </ul>
                 </div>
@@ -95,19 +96,19 @@
                         </li>
                         <li class="nav-item">
                             <span class="status">○</span>
-                            <span class="disabled">lab02_dep_chain_override</span>
+                            <a href="#" data-lab="lab02">lab02_dep_chain_override</a>
                         </li>
                         <li class="nav-item">
                             <span class="status">○</span>
-                            <span class="disabled">lab03_async_sqlalchemy</span>
+                            <a href="#" data-lab="lab03">lab03_async_sqlalchemy</a>
                         </li>
                         <li class="nav-item">
                             <span class="status">○</span>
-                            <span class="disabled">lab04_websocket_chat</span>
+                            <a href="#" data-lab="lab04">lab04_websocket_chat</a>
                         </li>
                         <li class="nav-item">
                             <span class="status">○</span>
-                            <span class="disabled">lab05_jwt_rbac</span>
+                            <a href="#" data-lab="lab05">lab05_jwt_rbac</a>
                         </li>
                     </ul>
                 </div>
@@ -124,43 +125,59 @@
                 <span id="breadcrumbCurrent"></span>
             </div>
 
-            <!-- 内容显示区 -->
-            <article id="content" class="content">
-                <h1>欢迎来到 FastAPI 深度专题</h1>
+            <div class="main-columns">
+                <!-- 内容显示区（左） -->
+                <article id="content" class="content">
+                    <h1>欢迎来到 FastAPI 深度专题</h1>
 
-                <div class="welcome-section">
-                    <h2>📘 课程简介</h2>
-                    <p>本模块专为 <strong>Java 开发者</strong> 设计，帮助您系统深入地学习 FastAPI 框架。</p>
+                    <div class="welcome-section">
+                        <h2>📘 课程简介</h2>
+                        <p>本模块专为 <strong>Java 开发者</strong> 设计，帮助您系统深入地学习 FastAPI 框架。</p>
 
-                    <h3>🎯 学习目标</h3>
-                    <ul>
-                        <li>掌握 FastAPI 高级路由与依赖注入模式</li>
-                        <li>理解异步编程在 Web 框架中的应用</li>
-                        <li>熟练使用 Pydantic 进行数据校验</li>
-                        <li>掌握认证授权的最佳实践</li>
-                        <li>学会编写可测试、可维护的 FastAPI 应用</li>
-                    </ul>
+                        <h3>🎯 学习目标</h3>
+                        <ul>
+                            <li>掌握 FastAPI 高级路由与依赖注入模式</li>
+                            <li>理解异步编程在 Web 框架中的应用</li>
+                            <li>熟练使用 Pydantic 进行数据校验</li>
+                            <li>掌握认证授权的最佳实践</li>
+                            <li>学会编写可测试、可维护的 FastAPI 应用</li>
+                        </ul>
 
-                    <h3>📖 如何使用</h3>
-                    <ol>
-                        <li>从左侧菜单选择章节开始学习</li>
-                        <li>完成理论学习后，尝试对应的实验室练习</li>
-                        <li>使用 ✓ 标记已完成的内容</li>
-                        <li>查看进度条追踪学习进展</li>
-                    </ol>
+                        <h3>📖 如何使用</h3>
+                        <ol>
+                            <li>从左侧菜单选择章节开始学习</li>
+                            <li>完成理论学习后，尝试对应的实验室练习</li>
+                            <li>使用 ✓ 标记已完成的内容</li>
+                            <li>查看进度条追踪学习进展</li>
+                        </ol>
 
-                    <div class="info-box">
-                        <h4>💡 提示</h4>
-                        <p>每个章节都包含 <strong>Java vs Python</strong> 对比部分，帮助您快速建立心智模型。</p>
+                        <div class="info-box">
+                            <h4>💡 提示</h4>
+                            <p>每个章节都包含 <strong>Java vs Python</strong> 对比部分，帮助您快速建立心智模型。</p>
+                        </div>
+
+                        <div class="getting-started">
+                            <h3>🚀 快速开始</h3>
+                            <p>点击左侧菜单中的 <strong>"02_路由与依赖注入进阶"</strong> 开始第一课。</p>
+                            <p>或者直接动手尝试 <strong>"lab01_router_splitting"</strong> 实验。</p>
+                        </div>
                     </div>
+                </article>
 
-                    <div class="getting-started">
-                        <h3>🚀 快速开始</h3>
-                        <p>点击左侧菜单中的 <strong>"02_路由与依赖注入进阶"</strong> 开始第一课。</p>
-                        <p>或者直接动手尝试 <strong>"lab01_router_splitting"</strong> 实验。</p>
+                <!-- Markdown 预览区（右） -->
+                <aside class="preview-panel" id="previewPanel">
+                    <div class="preview-header">
+                        <div>
+                            <div class="preview-title">📄 Markdown 预览</div>
+                            <div class="preview-subtitle">点击左侧章节/实验后显示内容</div>
+                        </div>
+                        <button id="previewClose" class="btn-icon" title="关闭预览">✕</button>
                     </div>
-                </div>
-            </article>
+                    <div class="preview-body" id="previewBody">
+                        <p style="color: var(--text-secondary);">右侧空间将显示所选章节/实验的 Markdown 内容。</p>
+                    </div>
+                </aside>
+            </div>
         </main>
     </div>
 

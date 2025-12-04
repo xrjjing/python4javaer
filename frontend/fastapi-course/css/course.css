@@ -1,24 +1,27 @@
 /* FastAPI 深度专题课程样式 */
 
 :root {
-    --primary-color: #009688;
-    --primary-dark: #00796b;
+    --primary-color: #38bdf8; /* portal 风格蓝青 */
+    --primary-dark: #0ea5e9;
     --bg-color: #f5f5f5;
     --card-bg: #ffffff;
-    --text-color: #333333;
-    --text-secondary: #666666;
+    --text-color: #0f172a;
+    --text-secondary: #475569;
     --border-color: #e0e0e0;
-    --success-color: #4caf50;
+    --success-color: #22c55e;
     --sidebar-width: 280px;
     --header-height: 60px;
 }
 
 [data-theme="dark"] {
-    --bg-color: #1a1a1a;
-    --card-bg: #2d2d2d;
-    --text-color: #e0e0e0;
-    --text-secondary: #b0b0b0;
-    --border-color: #404040;
+    --bg-color: #0f172a;      /* portal 背景 */
+    --card-bg: #111827;       /* 卡片底色 */
+    --text-color: #e5e7eb;
+    --text-secondary: #94a3b8;
+    --border-color: #1f2937;
+    --primary-color: #38bdf8;
+    --primary-dark: #0ea5e9;
+    --success-color: #22c55e;
 }
 
 * {
@@ -35,6 +38,12 @@ body {
     line-height: 1.6;
 }
 
+[data-theme="dark"] body {
+    background: radial-gradient(circle at 20% 20%, rgba(56,189,248,0.12), transparent 25%),
+                radial-gradient(circle at 80% 0%, rgba(167,139,250,0.12), transparent 22%),
+                var(--bg-color);
+}
+
 /* 顶部导航栏 */
 .header {
     position: fixed;
@@ -46,6 +55,10 @@ body {
     border-bottom: 1px solid var(--border-color);
     z-index: 100;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+[data-theme="dark"] .header {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
 }
 
 .header-content {
@@ -60,7 +73,7 @@ body {
 
 .header h1 {
     font-size: 20px;
-    color: var(--primary-color);
+    color: var(--text-color);
 }
 
 .header-nav {
@@ -127,7 +140,7 @@ body {
 
 /* 进度条 */
 .progress-section {
-    background: var(--bg-color);
+    background: var(--card-bg);
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 20px;
@@ -187,6 +200,8 @@ body {
 .nav-item .status {
     margin-right: 8px;
     font-size: 16px;
+    width: 18px;
+    text-align: center;
 }
 
 .nav-item.completed .status {
@@ -215,7 +230,7 @@ body {
     flex: 1;
     margin-left: var(--sidebar-width);
     padding: 30px 40px;
-    max-width: 900px;
+    max-width: none;
 }
 
 /* 面包屑导航 */
@@ -244,6 +259,12 @@ body {
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+[data-theme="dark"] .content,
+[data-theme="dark"] .preview-panel,
+[data-theme="dark"] .sidebar {
+    box-shadow: 0 12px 32px rgba(0,0,0,0.35);
 }
 
 .content h1 {
@@ -294,6 +315,99 @@ body {
     border-radius: 5px;
     overflow-x: auto;
     margin: 15px 0;
+}
+
+/* 左右列布局 */
+.main-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.preview-panel {
+    position: sticky;
+    top: 20px;
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 18px 18px 22px;
+    min-height: 340px;
+    min-width: 440px;
+    max-height: calc(100vh - 120px);
+    overflow: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+}
+
+.preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.preview-title {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.preview-subtitle {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.preview-body {
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding-top: 12px;
+}
+
+.preview-body pre {
+    background: #0b1220;
+    border: 1px solid #1f2937;
+}
+
+.preview-body .md-body {
+    line-height: 1.75;
+    padding: 0 6px;
+}
+
+[data-theme="dark"] .preview-body pre {
+    background: #0b1220;
+    border: 1px solid #1f2937;
+}
+
+.preview-body .md-body p {
+    margin: 12px 0;
+}
+
+.preview-body .md-body h1,
+.preview-body .md-body h2,
+.preview-body .md-body h3,
+.preview-body .md-body h4 {
+    margin-top: 18px;
+    margin-bottom: 10px;
+}
+
+.preview-body .md-body code {
+    background: rgba(255,255,255,0.07);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+@media (max-width: 1100px) {
+    .main-columns {
+        grid-template-columns: 1fr;
+    }
+    .preview-panel {
+        position: relative;
+        max-height: none;
+        min-width: auto;
+    }
+}
+
+.nav-item.active {
+    background: rgba(99,102,241,0.12);
+    border-radius: 6px;
 }
 
 .content pre code {

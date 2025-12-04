@@ -4,6 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Python Learning Platform</title>
+    <style>
+    :root {
+        --bg: #f5f7fb;
+        --card: #ffffff;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --primary: #38bdf8;
+        --border: #e5e7eb;
+    }
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --bg: #0f172a;
+            --card: #111827;
+            --text: #e5e7eb;
+            --muted: #94a3b8;
+            --border: #1f2937;
+            --primary: #38bdf8;
+        }
+        body { background: radial-gradient(circle at 20% 20%, rgba(56,189,248,0.12), transparent 25%), radial-gradient(circle at 80% 0%, rgba(167,139,250,0.12), transparent 22%), var(--bg); }
+    }
+    body { background: var(--bg); color: var(--text); }
+    .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+    }
+    .card h1, .card p, label { color: var(--text); }
+    .card p { color: var(--muted); }
+    .input-group label { color: var(--muted); }
+    .btn-primary { background: var(--primary); border: none; color: #0b1120; }
+    .btn-primary:hover { filter: brightness(0.95); }
+    </style>
 
     <!-- ====================================================== -->
     <!-- 模拟 API 脚本 - 必须在其他脚本之前加载                 -->

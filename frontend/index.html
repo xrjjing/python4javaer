@@ -15,9 +15,9 @@
    1. RESET & VARIABLES (Gemini Design)
    ========================================= */
 :root {
-    --primary: #4f46e5;
-    --primary-hover: #4338ca;
-    --primary-light: #eef2ff;
+    --primary: #38bdf8;
+    --primary-hover: #0ea5e9;
+    --primary-light: #e0f2fe;
     --bg-app: #f1f5f9;
     --bg-panel: #ffffff;
     --text-main: #334155;
@@ -36,16 +36,16 @@
 
 /* DARK THEME OVERRIDES (Gemini Design) */
 [data-theme="dark"] {
-    --primary: #6366f1;
-    --primary-hover: #818cf8;
-    --primary-light: rgba(99, 102, 241, 0.15);
-    --bg-app: #020617;
-    --bg-panel: #0f172a;
-    --text-main: #cbd5e1;
+    --primary: #38bdf8;
+    --primary-hover: #67e8f9;
+    --primary-light: rgba(56,189,248,0.15);
+    --bg-app: #0f172a;
+    --bg-panel: #111827;
+    --text-main: #e5e7eb;
     --text-heading: #f8fafc;
     --text-muted: #94a3b8;
-    --border: #1e293b;
-    --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.25);
+    --border: #1f2937;
+    --shadow-elevated: 0 14px 36px rgba(0, 0, 0, 0.35);
     --code-bg: #1e293b;
     --code-text: #f1f5f9;
 }
@@ -73,6 +73,12 @@ body {
     height: 100vh;
     display: flex;
     overflow: hidden;
+}
+
+[data-theme="dark"] body {
+    background: radial-gradient(circle at 20% 20%, rgba(56,189,248,0.12), transparent 25%),
+                radial-gradient(circle at 80% 0%, rgba(167,139,250,0.12), transparent 22%),
+                var(--bg-app);
 }
 
 /* =========================================

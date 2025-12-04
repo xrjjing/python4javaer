@@ -5,6 +5,7 @@
 下游服务可以是任意语言实现的 HTTP 服务。
 """
 
+from datetime import datetime
 from typing import Any, Optional
 from pydantic import BaseModel, Field
 
@@ -23,6 +24,7 @@ class OrderOut(BaseModel):
     order_id: int = Field(..., description="订单 ID")
     status: str = Field(..., description="订单状态")
     message: Optional[str] = Field(None, description="额外说明信息")
+    created_at: datetime = Field(..., description="订单创建时间")
 
 
 class ApiResponse(BaseModel):

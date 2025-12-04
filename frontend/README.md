@@ -6,6 +6,7 @@
 
 | 文件 | 用途 |
 |------|------|
+| `portal.html` | 汇总入口，一站式链接全部前端页面与课程导航 |
 | `index.html` | 学习导航主页，包含章节导航和在线 Python 执行器 |
 | `login.html` | RBAC 登录页面 |
 | `admin.html` | RBAC 管理后台（用户/角色/权限管理） |
@@ -30,6 +31,7 @@ cd ../frontend
 python -m http.server 5500
 
 # 3. 访问前端页面
+# http://127.0.0.1:5500/portal.html   # 汇总入口（推荐）
 # http://127.0.0.1:5500/login.html
 # http://127.0.0.1:5500/admin.html
 
@@ -153,6 +155,7 @@ window.LOG_API_BASE_URL = 'http://127.0.0.1:8002';
 
 ```
 frontend/
+├── portal.html         # 前端入口汇总页
 ├── index.html          # 学习导航主页
 ├── login.html          # 登录页面
 ├── admin.html          # 管理后台

@@ -18,6 +18,8 @@ async def analyze_log_endpoint(request: LogDetectiveRequest):
     try:
         result = analyze_logs(request)
         return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"请求不合法: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"分析失败: {str(e)}")
 
