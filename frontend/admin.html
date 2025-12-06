@@ -394,9 +394,19 @@ body {
 
     <script>
     (() => {
-        // API Configuration - defaults to same origin for production
-        const API_BASE = window.AppConfig?.apiBaseUrl ?? window.API_BASE_URL ?? '';
-        const LOG_API_BASE = window.AppConfig?.logApiBaseUrl ?? window.LOG_API_BASE_URL ?? '';
+        // API 配置：
+        // - API_BASE：RBAC 认证与权限服务
+        // - LOG_API_BASE：审计日志服务
+        // 均优先从 config.js 中读取，必要时回退到旧的全局变量
+        const API_BASE =
+            window.AppConfig?.authApiBaseUrl ??
+            window.AppConfig?.apiBaseUrl ??
+            window.API_BASE_URL ??
+            '';
+        const LOG_API_BASE =
+            window.AppConfig?.logApiBaseUrl ??
+            window.LOG_API_BASE_URL ??
+            '';
 
         // Authentication check
         const token = localStorage.getItem('accessToken');

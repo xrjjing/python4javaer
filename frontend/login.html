@@ -282,8 +282,13 @@ body {
 
     <script>
     (() => {
-        // API Base URL - defaults to same origin for production, configurable for dev
-        const API_BASE = window.AppConfig?.apiBaseUrl ?? window.API_BASE_URL ?? '';
+        // RBAC 服务地址：优先使用 config.js 中的 authApiBaseUrl
+        // 其次回退到历史上的 apiBaseUrl / 全局变量，便于向后兼容
+        const API_BASE =
+            window.AppConfig?.authApiBaseUrl ??
+            window.AppConfig?.apiBaseUrl ??
+            window.API_BASE_URL ??
+            '';
 
         // Theme management (same as index.html)
         const htmlEl = document.documentElement;
@@ -357,7 +362,8 @@ body {
                 }
             } catch (error) {
                 console.error('Login Error:', error);
-                errorMessage.textContent = 'Connection error. Please ensure RBAC service is running on port 8000.';
+                errorMessage.textContent =
+                    'Connection error. Please ensure RBAC service is running (default http://127.0.0.1:8001) and matches frontend/config.js.';
                 errorMessage.style.display = 'block';
             } finally {
                 submitBtn.disabled = false;

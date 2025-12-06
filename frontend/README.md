@@ -21,22 +21,26 @@
 ### 方式一：配合后端服务（推荐）
 
 ```bash
-# 1. 启动 RBAC 后端服务
+# 1. 启动 RBAC 后端服务（认证与权限）
 cd ../rbac_auth_service
 python init_rbac_data.py  # 初始化数据（首次运行）
+uvicorn app.main:app --reload --port 8001
+
+# 2. 启动网关服务（integration_gateway_service）
+cd ../integration_gateway_service
 uvicorn app.main:app --reload --port 8000
 
-# 2. 在另一个终端启动前端静态服务
+# 3. 在另一个终端启动前端静态服务
 cd ../frontend
 python -m http.server 5500
 
-# 3. 访问前端页面
+# 4. 访问前端页面
 # http://127.0.0.1:5500/portal.html   # 汇总入口（推荐）
 # http://127.0.0.1:5500/login.html
 # http://127.0.0.1:5500/admin.html
 
-# 注意：旧版控制台已挂载到后端，访问：
-# http://127.0.0.1:8000/rbac-admin/rbac_admin.html
+# 注意：旧版控制台已挂载到 RBAC 后端，访问：
+# http://127.0.0.1:8001/rbac-admin/rbac_admin.html
 ```
 
 ### 方式二：独立运行
@@ -109,8 +113,18 @@ window.mockApiUtils.disableMock()
 
 ```javascript
 window.AppConfig = {
-    apiBaseUrl: 'http://127.0.0.1:8000',      // 网关服务
-    logApiBaseUrl: 'http://127.0.0.1:8002',   // 审计日志服务
+    // RBAC 认证与权限服务
+    authApiBaseUrl: 'http://127.0.0.1:8001',
+
+    // API 网关服务（integration_gateway_service）
+    gatewayApiBaseUrl: 'http://127.0.0.1:8000',
+
+    // 兼容旧版代码的基础地址（新页面优先使用上面两个）
+    apiBaseUrl: 'http://127.0.0.1:8000',
+
+    // 审计日志服务
+    logApiBaseUrl: 'http://127.0.0.1:8002',
+
     enableMock: false
 };
 ```
@@ -121,6 +135,8 @@ window.AppConfig = {
 // 在页面加载前设置（可在 <head> 中添加）
 window.API_BASE_URL = 'http://127.0.0.1:8000';
 window.LOG_API_BASE_URL = 'http://127.0.0.1:8002';
+// 如果需要，也可以显式指定 RBAC 的独立地址（新代码推荐使用 config.js）
+window.AUTH_API_BASE_URL = 'http://127.0.0.1:8001';
 ```
 
 **注意**：推荐使用 `config.js` 方式，全局变量方式仅为向后兼容保留。

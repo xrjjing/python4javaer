@@ -44,6 +44,20 @@ def say_hi():
     print("Hi")
 ```
 
+### 3. 高阶函数与 `functools.partial`
+
+- `map / filter / reduce / sorted` 常用组合：数据清洗 → 变换 → 聚合/排序。
+- `functools.partial`：预先填充部分参数，返回一个新函数，便于复用。
+
+```python
+from functools import partial, reduce
+from operator import mul
+
+price_with_vat = partial(apply_discount, tax_rate=0.13)
+black_friday_price = partial(price_with_vat, discount=0.20)
+total = reduce(mul, [2, 3, 5], 1)  # 累乘得到 30
+```
+
 ---
 
 ## 示例 demo：记录函数执行时间的装饰器
@@ -86,6 +100,15 @@ if __name__ == "__main__":
     result = slow_add(1_000_00)
     print("结果：", result)
 ```
+
+---
+
+## 新增示例：高阶函数与 `partial`
+
+参见 `demo_hof_partial.py`，涵盖：
+- filter + map + sorted 组合：过滤正数后平方并降序输出
+- reduce 累乘：`reduce(mul, [2, 3, 5], 1) -> 30`
+- partial 预设税率/折扣，生成复用函数：`price_with_vat`、`black_friday_price`
 
 ---
 
@@ -250,4 +273,3 @@ def unreliable_api_call(url):
 - 异常处理完善
 - 代码复用性高（DRY 原则）
 - 性能开销小
-

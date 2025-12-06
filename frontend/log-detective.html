@@ -73,7 +73,12 @@ th, td { text-align: left; padding: 0.75rem 1.5rem; border-bottom: 1px solid var
         </div>
     </div>
     <script>
-const API_BASE = window.AppConfig?.apiBaseUrl ?? window.API_BASE_URL ?? '';
+// 日志侦探前端只需要知道网关的地址，由网关转发到日志服务
+const API_BASE =
+    window.AppConfig?.gatewayApiBaseUrl ??
+    window.AppConfig?.apiBaseUrl ??
+    window.API_BASE_URL ??
+    '';
 function loadSample() {
     document.getElementById('log-input').value = '2023-10-27 10:00:01 [INFO] Service started\n2023-10-27 10:05:23 [WARN] High memory from 192.168.1.10\n2023-10-27 10:06:01 [ERROR] Database failed\n2023-10-27 10:07:12 [ERROR] Login failed from 203.0.113.42';
 }

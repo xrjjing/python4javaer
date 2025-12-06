@@ -4,6 +4,18 @@
 
 ---
 
+## 📑 文档导航（精简版）
+
+- `docs/快速开始与依赖.md`：唯一上手入口（环境、依赖、服务启动、常用脚本）
+- `docs/architecture.md`：微服务架构与调用关系
+- `docs/Python学习规划_Java开发者版.md`：学习路线与自检清单
+- `docs/Java_vs_Python_CheatSheet.md`：Java ↔ Python 对照速查
+- `docs/文档导航与精简说明.md`：保留/归档文档清单
+- `docs/查漏补缺清单.md`：对照廖雪峰教程的覆盖与缺口
+- 前端与服务说明：`frontend/README.md`、各服务 `09_项目说明.md`
+
+---
+
 ## 📂 仓库结构总览
 
 - `docs/`  
@@ -45,6 +57,8 @@
   - `06_自动化脚本_日志归档`：zip 归档 + 定时任务思路；
   - `07_监控数据处理_指标聚合与告警`：CSV 指标聚合 + 简单告警规则；
   - `08_系统对接_调用Java服务API`：Python 网关调用 Java 服务 API。
+  - `05_简单爬虫_新闻标题抓取`：基础版 requests+BS4 示例（教学用）。
+  - `09_新闻爬虫_Requests_BS4`：进阶版，含离线 sample、异步 httpx、限速/robots 检查。
 
 - `rbac_auth_service/`  
   独立的 RBAC 认证与权限服务示例（FastAPI + SQLAlchemy + JWT + Redis 可选）：

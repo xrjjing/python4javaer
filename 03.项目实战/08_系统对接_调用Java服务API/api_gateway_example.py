@@ -114,4 +114,4 @@ def proxy_create_order(
             detail="订单接口返回格式异常",
         ) from exc
 
-    return ApiResponse(code=0, message="ok", data=order.dict())
+    return ApiResponse(code=0, message="ok", data=order.model_dump())

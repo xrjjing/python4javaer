@@ -1009,12 +1009,14 @@ const chapters = [
         title: '09_面向对象入门',
         dir: '01.Python语言基础/09_面向对象入门',
         doc: '01.Python语言基础/09_面向对象入门/09_面向对象入门.md',
-        overview: '理解在 Python 中定义类和创建对象的方式，掌握 __init__、实例方法、继承等基础概念。',
+        overview: '理解类/实例/继承基础，并进一步掌握 @property、__slots__、可迭代协议与元类单例等高级特性。',
         demos: [
+            { name: 'advanced_oop.md', path: '01.Python语言基础/09_面向对象入门/advanced_oop.md', hint: 'OOP 高级特性说明' },
             { name: 'demo_oop.py', path: '01.Python语言基础/09_面向对象入门/demo_oop.py', hint: '面向对象示例' },
+            { name: 'demo_oop_advanced.py', path: '01.Python语言基础/09_面向对象入门/demo_oop_advanced.py', hint: '@property/__slots__/元类单例' },
             { name: 'practice_oop.py', path: '01.Python语言基础/09_面向对象入门/practice_oop.py', hint: 'OOP 练习' }
         ],
-        tags: ['类', '对象', '继承'],
+        tags: ['类', '对象', '继承', 'property', '__slots__', '元类'],
         snippets: []
     },
     {
@@ -1038,6 +1040,7 @@ const chapters = [
         overview: '掌握 lambda 匿名函数和装饰器的基本用法，理解高阶函数和代码复用的思想。',
         demos: [
             { name: 'demo_lambda_decorators.py', path: '01.Python语言基础/11_lambda表达式与装饰器/demo_lambda_decorators.py', hint: 'lambda 和装饰器示例' },
+            { name: 'demo_hof_partial.py', path: '01.Python语言基础/11_lambda表达式与装饰器/demo_hof_partial.py', hint: 'map/filter/reduce 与 partial' },
             { name: 'practice_lambda_decorators.py', path: '01.Python语言基础/11_lambda表达式与装饰器/practice_lambda_decorators.py', hint: '装饰器练习' }
         ],
         tags: ['lambda', '装饰器', '高阶函数'],
@@ -1084,9 +1087,21 @@ const chapters = [
         title: '15_进阶专题',
         dir: '01.Python语言基础/15_进阶专题',
         doc: '01.Python语言基础/15_进阶专题/15_进阶专题.md',
-        overview: '进阶主题：正则表达式、标准库模块、文件操作、序列化、网络编程、并发、异步等。',
-        demos: [],
-        tags: ['进阶', '正则', '并发', '异步'],
+        overview: '进阶主题：正则、标准库、文件/序列化、网络、并发、异步、调试性能工具链。',
+        demos: [
+            { name: '08_调试与性能分析.md', path: '01.Python语言基础/15_进阶专题/08_调试与性能分析/08_调试与性能分析.md', hint: 'pdb/logging/timeit/cProfile/pytest 覆盖率' },
+            { name: 'demo_debug_profiling.py', path: '01.Python语言基础/15_进阶专题/08_调试与性能分析/demo_debug_profiling.py', hint: '调试与性能分析示例' },
+            { name: 'demo_stdlib_adv.py', path: '01.Python语言基础/15_进阶专题/02_标准库常用模块/demo_stdlib_adv.py', hint: 'contextlib/hashlib/base64/itertools 新工具' },
+            { name: '09_IO扩展.md', path: '01.Python语言基础/15_进阶专题/09_IO扩展/09_IO扩展.md', hint: 'StringIO/BytesIO/struct/gzip/zipfile' },
+            { name: 'demo_io_ext.py', path: '01.Python语言基础/15_进阶专题/09_IO扩展/demo_io_ext.py', hint: 'IO 扩展示例' },
+            { name: '高级并发技巧.md', path: '01.Python语言基础/15_进阶专题/06_多线程与多进程/高级并发技巧.md', hint: 'threading.local 与进程池' },
+            { name: 'demo_concurrency_adv.py', path: '01.Python语言基础/15_进阶专题/06_多线程与多进程/demo_concurrency_adv.py', hint: '线程本地与进程池示例' },
+            { name: 'asyncio进阶.md', path: '01.Python语言基础/15_进阶专题/07_异步编程入门/asyncio进阶.md', hint: 'gather/超时/取消' },
+            { name: 'demo_asyncio_adv.py', path: '01.Python语言基础/15_进阶专题/07_异步编程入门/demo_asyncio_adv.py', hint: 'asyncio 进阶示例' },
+            { name: '网络客户端进阶.md', path: '01.Python语言基础/15_进阶专题/05_网络编程基础/网络客户端进阶.md', hint: 'urllib/requests/httpx Mock' },
+            { name: 'demo_network_clients.py', path: '01.Python语言基础/15_进阶专题/05_网络编程基础/demo_network_clients.py', hint: '网络客户端 Mock 示例' }
+        ],
+        tags: ['进阶', '正则', '并发', '异步', 'profiling', 'logging'],
         snippets: []
     },
     {
