@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RabbitMQ 消息队列实战 - Python 学习平台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --card: #1f2937;
+      --accent: #38bdf8;
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --success: #10b981;
+      --error: #ef4444;
+      --shadow: 0 12px 30px rgba(0,0,0,0.35);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Plus Jakarta Sans","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(56,189,248,0.12), transparent 25%),
+                  radial-gradient(circle at 80% 0%, rgba(167,139,250,0.12), transparent 22%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--card);
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 14px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+    .status-dot.connected { background: var(--success); }
+    .toggle {
+      display: flex;
+      background: var(--card);
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.1);
+      overflow: hidden;
+    }
+    .toggle-btn {
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .toggle-btn.active {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+    }
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .btn-primary:hover {
+      background: #0ea5e9;
+      transform: translateY(-1px);
+    }
+    .messages {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .message-item {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .message-time {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .message-body {
+      font-size: 14px;
+      word-break: break-word;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .stat-card {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+    }
+    @media (max-width: 1024px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">🐰 RabbitMQ 消息队列实战</div>
+      <div class="controls">
+        <a href="../frontend/portal.html" style="padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: var(--card); color: var(--text); text-decoration: none; font-size: 14px; cursor: pointer; transition: all 0.2s;">← 返回入口</a>
+        <div class="status">
+          <div class="status-dot" id="status-dot"></div>
+          <span id="status-text">未连接</span>
+        </div>
+        <div class="toggle">
+          <button class="toggle-btn active" data-mode="mock">Mock 模式</button>
+          <button class="toggle-btn" data-mode="real">真实连接</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">📤 生产者（发送消息）</div>
+        <form id="producer-form">
+          <div class="form-group">
+            <label class="form-label">队列名称</label>
+            <input type="text" class="form-input" id="queue-name" value="learning_queue" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">消息内容</label>
+            <textarea class="form-textarea" id="message-body" placeholder="输入要发送的消息..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">发送消息</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📥 消费者（接收消息）</div>
+        <div id="messages-container" class="messages">
+          <div class="empty-state">等待消息...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 队列监控</div>
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-label">队列中的消息数</div>
+          <div class="stat-value" id="message-count">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">消费者数量</div>
+          <div class="stat-value" id="consumer-count">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">已接收消息</div>
+          <div class="stat-value" id="received-count">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:8000/api';
+    let currentMode = 'mock';
+    let receivedCount = 0;
+    let pollInterval = null;
+    let mockQueue = [];
+
+    // 模式切换
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentMode = btn.dataset.mode;
+        updateStatus();
+        if (currentMode === 'real') {
+          startPolling();
+        } else {
+          startPolling(); // Mock 模式也需要轮询来消费消息
+        }
+      });
+    });
+
+    // 更新连接状态
+    function updateStatus() {
+      const dot = document.getElementById('status-dot');
+      const text = document.getElementById('status-text');
+      if (currentMode === 'mock') {
+        dot.classList.remove('connected');
+        text.textContent = 'Mock 模式';
+      } else {
+        dot.classList.add('connected');
+        text.textContent = '已连接';
+      }
+    }
+
+    // 发送消息
+    document.getElementById('producer-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const queueName = document.getElementById('queue-name').value;
+      const body = document.getElementById('message-body').value;
+
+      if (currentMode === 'mock') {
+        // Mock 模式
+        mockQueue.push({
+          body,
+          timestamp: new Date().toISOString()
+        });
+        document.getElementById('message-body').value = '';
+        updateStats();
+        showToast('消息已发送（Mock）');
+      } else {
+        // 真实模式
+        try {
+          const response = await fetch(`${API_BASE}/queues/${queueName}/messages`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ body })
+          });
+          if (response.ok) {
+            document.getElementById('message-body').value = '';
+            showToast('消息已发送');
+            fetchStats(queueName);
+          } else {
+            showToast('发送失败', 'error');
+          }
+        } catch (error) {
+          showToast('连接失败', 'error');
+        }
+      }
+    });
+
+    // 轮询消息
+    function startPolling() {
+      if (pollInterval) return;
+      pollInterval = setInterval(() => {
+        const queueName = document.getElementById('queue-name').value;
+        fetchMessages(queueName);
+        fetchStats(queueName);
+      }, 2000);
+    }
+
+    function stopPolling() {
+      if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+      }
+    }
+
+    // 获取消息
+    async function fetchMessages(queueName) {
+      if (currentMode === 'mock') {
+        if (mockQueue.length > 0) {
+          const msg = mockQueue.shift();
+          addMessage(msg);
+          updateStats();
+        }
+      } else {
+        try {
+          const response = await fetch(`${API_BASE}/queues/${queueName}/messages?limit=10`);
+          if (response.ok) {
+            const data = await response.json();
+            data.messages.forEach(msg => addMessage(msg));
+          }
+        } catch (error) {
+          console.error('获取消息失败:', error);
+        }
+      }
+    }
+
+    // 获取统计
+    async function fetchStats(queueName) {
+      if (currentMode === 'mock') {
+        updateStats();
+      } else {
+        try {
+          const response = await fetch(`${API_BASE}/queues/${queueName}/stats`);
+          if (response.ok) {
+            const data = await response.json();
+            document.getElementById('message-count').textContent = data.message_count;
+            document.getElementById('consumer-count').textContent = data.consumer_count;
+          }
+        } catch (error) {
+          console.error('获取统计失败:', error);
+        }
+      }
+    }
+
+    // 更新统计（Mock）
+    function updateStats() {
+      document.getElementById('message-count').textContent = mockQueue.length;
+      document.getElementById('consumer-count').textContent = 0;
+      document.getElementById('received-count').textContent = receivedCount;
+    }
+
+    // 添加消息到列表
+    function addMessage(msg) {
+      const container = document.getElementById('messages-container');
+      if (container.querySelector('.empty-state')) {
+        container.innerHTML = '';
+      }
+
+      const item = document.createElement('div');
+      item.className = 'message-item';
+      item.innerHTML = `
+        <div class="message-time">${new Date(msg.timestamp).toLocaleString('zh-CN')}</div>
+        <div class="message-body">${msg.body}</div>
+      `;
+      container.insertBefore(item, container.firstChild);
+      receivedCount++;
+      document.getElementById('received-count').textContent = receivedCount;
+    }
+
+    // 提示消息
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        background: ${type === 'success' ? '#10b981' : '#ef4444'};
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 9999;
+        animation: slideIn 0.3s ease;
+      `;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // 初始化
+    updateStatus();
+  </script>
+</body>
+</html>

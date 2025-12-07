@@ -43,17 +43,18 @@ python -m http.server 5500
 # http://127.0.0.1:8001/rbac-admin/rbac_admin.html
 ```
 
-### 方式二：独立运行
+### 方式二：独立运行（含文档浏览，推荐）
 
 ```bash
-# 使用 Python 内置 HTTP 服务器
-cd frontend
+# 在仓库根目录启动静态服务器
 python -m http.server 5500
 
-# 访问 http://127.0.0.1:5500/index.html
+# 入口
+# http://127.0.0.1:5500/frontend/portal.html   # 汇总入口 + 文档查看器
+# http://127.0.0.1:5500/frontend/index.html    # 旧主页
 ```
 
-> 独立运行时需配置 API 地址，见下方「API 配置」。
+> 只打开文件（file://）也可以查看文档，doc-viewer 会自动回退为 iframe；但为获得完整 UI 与更稳的加载体验，推荐用上面的 http 方式。
 
 ### 方式三：模拟数据模式（无需后端）
 

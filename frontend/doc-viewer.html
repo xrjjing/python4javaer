@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文档查看 - Python 学习平台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --card: #1f2937;
+      --accent: #38bdf8;
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --shadow: 0 12px 30px rgba(0,0,0,0.35);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Plus Jakarta Sans","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(56,189,248,0.12), transparent 25%),
+                  radial-gradient(circle at 80% 0%, rgba(167,139,250,0.12), transparent 22%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 28px 22px 60px;
+    }
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .subtitle {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 15px;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: var(--card);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      border-color: var(--accent);
+      background: rgba(56,189,248,0.1);
+    }
+    .content {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+    }
+    .markdown-body {
+      line-height: 1.7;
+      color: var(--text);
+    }
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4,
+    .markdown-body h5,
+    .markdown-body h6 {
+      margin-top: 24px;
+      margin-bottom: 16px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    .markdown-body h1 { font-size: 32px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+    .markdown-body h2 { font-size: 24px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+    .markdown-body h3 { font-size: 20px; }
+    .markdown-body h4 { font-size: 18px; }
+    .markdown-body p {
+      margin: 16px 0;
+    }
+    .markdown-body ul,
+    .markdown-body ol {
+      padding-left: 24px;
+      margin: 16px 0;
+    }
+    .markdown-body li {
+      margin: 8px 0;
+    }
+    .markdown-body code {
+      background: rgba(15,23,42,0.9);
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-family: "JetBrains Mono",Consolas,monospace;
+      font-size: 13px;
+      color: #67e8f9;
+    }
+    .markdown-body pre {
+      background: #020617;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      border: 1px solid rgba(56,189,248,0.2);
+      margin: 16px 0;
+    }
+    .markdown-body pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+    }
+    .markdown-body a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .markdown-body a:hover {
+      text-decoration: underline;
+    }
+    .markdown-body blockquote {
+      border-left: 4px solid var(--accent);
+      padding-left: 16px;
+      margin: 16px 0;
+      color: var(--muted);
+    }
+    .markdown-body table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 16px 0;
+    }
+    .markdown-body th,
+    .markdown-body td {
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .markdown-body th {
+      background: rgba(56,189,248,0.1);
+      font-weight: 600;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+    }
+    .error {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 8px;
+      padding: 16px;
+      color: #fca5a5;
+      margin: 16px 0;
+    }
+    @media (max-width: 640px) {
+      body { padding: 16px; }
+      .header { flex-direction: column; align-items: flex-start; }
+      .content { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <div class="title">文档查看</div>
+        <div class="subtitle" id="doc-path"></div>
+      </div>
+      <div class="actions">
+        <a id="view-raw-btn" href="#" target="_blank" class="btn" style="display:none">查看源码</a>
+        <a href="portal.html" class="btn">返回入口</a>
+      </div>
+    </div>
+    <div class="content">
+      <div id="loading" class="loading">正在加载文档...</div>
+      <div id="markdown-content" class="markdown-body" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const fileParam = params.get('file');
+    const docPathEl = document.getElementById('doc-path');
+    const viewRawBtn = document.getElementById('view-raw-btn');
+    const loadingEl = document.getElementById('loading');
+    const contentEl = document.getElementById('markdown-content');
+
+    async function loadMarkdown() {
+      if (!fileParam) {
+        loadingEl.innerHTML = '<div class="error">未指定要加载的文档文件，请从入口页重新打开。</div>';
+        return;
+      }
+
+      try {
+        const decoded = decodeURIComponent(fileParam);
+        docPathEl.textContent = decoded;
+        if (viewRawBtn) {
+            viewRawBtn.href = decoded;
+            viewRawBtn.style.display = 'inline-flex';
+        }
+
+        const response = await fetch(decoded);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const markdown = await response.text();
+        const html = marked.parse(markdown);
+
+        contentEl.innerHTML = html;
+        loadingEl.style.display = 'none';
+        contentEl.style.display = 'block';
+
+        // 代码高亮
+        contentEl.querySelectorAll('pre code').forEach((block) => {
+          hljs.highlightElement(block);
+        });
+      } catch (error) {
+        let helpMsg = '';
+        if (window.location.protocol === 'file:') {
+            helpMsg = `<br><br><strong>提示：</strong> 检测到您正在使用 <code>file://</code> 协议直接打开页面。现代浏览器出于安全考虑，通常禁止在此模式下请求本地文件 (CORS)。<br>建议：<br>1. 使用本地服务器 (如 <code>python -m http.server</code>)<br>2. 或直接点击上方"查看源码"按钮`;
+        }
+
+        loadingEl.innerHTML = `<div class="error">
+            <strong>加载文档失败</strong><br>${error.message}
+            ${helpMsg}
+            <div style="margin-top:12px">
+                <a href="${decodeURIComponent(fileParam || '#')}" target="_blank" style="color: inherit; text-decoration: underline;">尝试直接打开原始文件</a>
+            </div>
+        </div>`;
+      }
+    }
+
+    loadMarkdown();
+  </script>
+</body>
+</html>
