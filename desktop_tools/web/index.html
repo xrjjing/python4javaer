@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本地工具箱</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <nav class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">◈</span>
+                <span class="logo-text">工具箱</span>
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item active" data-page="credentials">
+                    <span class="nav-icon">🔑</span>
+                    <span class="nav-text">密码管理</span>
+                </li>
+                <li class="nav-item" data-page="commands">
+                    <span class="nav-icon">⌨️</span>
+                    <span class="nav-text">命令管理</span>
+                </li>
+                <li class="nav-item" data-page="converter">
+                    <span class="nav-icon">⚡</span>
+                    <span class="nav-text">节点转换</span>
+                </li>
+                <li class="nav-item" data-page="nodes">
+                    <span class="nav-icon">🌐</span>
+                    <span class="nav-text">节点管理</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </nav>
+
+        <main class="content">
+            <!-- 密码管理页面 -->
+            <section id="page-credentials" class="page active">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>密码管理</h1>
+                        <p class="subtitle">安全存储你的账号凭证</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-ghost" onclick="showImportModal('credentials')">
+                            <span class="btn-icon">📥</span>批量导入
+                        </button>
+                        <button class="btn btn-primary" onclick="showCredentialModal()">
+                            <span class="btn-icon">+</span>添加记录
+                        </button>
+                    </div>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="credential-search" placeholder="搜索服务名、账号..." oninput="filterCredentials()">
+                </div>
+                <div id="credentials-list" class="credentials-grid"></div>
+            </section>
+
+            <!-- 命令管理页面 -->
+            <section id="page-commands" class="page">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>命令管理</h1>
+                        <p class="subtitle">管理常用的命令组合</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-ghost" onclick="showTabModal()">
+                            <span class="btn-icon">📁</span>管理页签
+                        </button>
+                        <button class="btn btn-ghost" onclick="showImportModal('commands')">
+                            <span class="btn-icon">📥</span>批量导入
+                        </button>
+                        <button class="btn btn-primary" onclick="showCommandModal()">
+                            <span class="btn-icon">+</span>添加命令
+                        </button>
+                    </div>
+                </div>
+                <div class="tabs-bar" id="command-tabs">
+                    <!-- 页签将由JS动态渲染 -->
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="command-search" placeholder="搜索命令标题..." oninput="filterCommands()">
+                </div>
+                <div id="commands-list" class="commands-grid"></div>
+            </section>
+
+            <!-- 节点转换页面 -->
+            <section id="page-converter" class="page">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>节点转换</h1>
+                        <p class="subtitle">将订阅链接转换为 Clash/Mihomo YAML</p>
+                    </div>
+                </div>
+                <div class="converter-layout">
+                    <div class="converter-panel">
+                        <div class="panel-header">
+                            <h3>输入</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>订阅链接（可选）</label>
+                                <div class="input-with-btn">
+                                    <input type="text" id="subscription-url" placeholder="https://...">
+                                    <button class="btn btn-secondary" onclick="fetchSubscription()">拉取</button>
+                                </div>
+                            </div>
+                            <div class="form-group flex-1">
+                                <label>节点链接（每行一个）</label>
+                                <textarea id="links-input" placeholder="vless://...&#10;hysteria2://...&#10;ss://..."></textarea>
+                            </div>
+                            <button class="btn btn-primary btn-block" onclick="convertLinks()">
+                                <span class="btn-icon">⚡</span>转换为 YAML
+                            </button>
+                        </div>
+                    </div>
+                    <div class="converter-panel">
+                        <div class="panel-header">
+                            <h3>输出</h3>
+                            <div class="panel-actions">
+                                <button class="btn btn-sm btn-ghost" onclick="copyYaml()">复制</button>
+                                <button class="btn btn-sm btn-primary" onclick="saveConvertedNodes()">保存</button>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <textarea id="yaml-output" readonly placeholder="转换结果..."></textarea>
+                            <div id="convert-errors" class="error-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 节点管理页面 -->
+            <section id="page-nodes" class="page">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>节点管理</h1>
+                        <p class="subtitle">管理已保存的代理节点</p>
+                    </div>
+                </div>
+                <div id="nodes-list" class="nodes-grid"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 凭证编辑弹窗 -->
+    <div id="credential-modal" class="modal">
+        <div class="modal-overlay" onclick="closeModal('credential-modal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="credential-modal-title">添加记录</h2>
+                <button class="close-btn" onclick="closeModal('credential-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="credential-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>服务名称 <span class="required">*</span></label>
+                        <input type="text" id="credential-service" placeholder="如：阿里云">
+                    </div>
+                    <div class="form-group">
+                        <label>URL</label>
+                        <input type="text" id="credential-url" placeholder="https://...">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>账号</label>
+                        <input type="text" id="credential-account" placeholder="账号/用户名">
+                    </div>
+                    <div class="form-group">
+                        <label>密码</label>
+                        <input type="text" id="credential-password" placeholder="密码/密钥">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>附加信息（每行一条）</label>
+                    <textarea id="credential-extra" rows="3" placeholder="其他说明..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('credential-modal')">取消</button>
+                <button class="btn btn-primary" onclick="saveCredential()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 命令编辑弹窗 -->
+    <div id="command-modal" class="modal">
+        <div class="modal-overlay" onclick="closeModal('command-modal')"></div>
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2 id="command-modal-title">添加命令</h2>
+                <button class="close-btn" onclick="closeModal('command-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="command-id">
+                <input type="hidden" id="command-tab-id">
+                <div class="form-row">
+                    <div class="form-group flex-2">
+                        <label>标题 <span class="required">*</span></label>
+                        <input type="text" id="command-title" placeholder="如：Docker 部署流程">
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>所属页签</label>
+                        <select id="command-tab-select"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>描述</label>
+                    <input type="text" id="command-description" placeholder="简要描述这组命令的用途">
+                </div>
+                <div class="form-group flex-1">
+                    <label>命令（每行一条）</label>
+                    <textarea id="command-content" placeholder="docker ps -a&#10;docker logs -f container"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('command-modal')">取消</button>
+                <button class="btn btn-primary" onclick="saveCommand()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页签管理弹窗 -->
+    <div id="tab-modal" class="modal">
+        <div class="modal-overlay" onclick="closeModal('tab-modal')"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>管理页签</h2>
+                <button class="close-btn" onclick="closeModal('tab-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>新建页签</label>
+                    <div class="input-with-btn">
+                        <input type="text" id="new-tab-name" placeholder="页签名称">
+                        <button class="btn btn-primary" onclick="addTab()">添加</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>现有页签（拖动排序）</label>
+                    <div id="tabs-manage-list" class="tabs-manage-list"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('tab-modal')">完成</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 移动命令弹窗 -->
+    <div id="move-command-modal" class="modal">
+        <div class="modal-overlay" onclick="closeModal('move-command-modal')"></div>
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h2>移动到页签</h2>
+                <button class="close-btn" onclick="closeModal('move-command-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="move-command-id">
+                <div id="move-tab-options" class="move-tab-options"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 批量导入弹窗 -->
+    <div id="import-modal" class="modal">
+        <div class="modal-overlay" onclick="closeModal('import-modal')"></div>
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2 id="import-modal-title">批量导入</h2>
+                <button class="close-btn" onclick="closeModal('import-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="import-type">
+                <div class="import-hint" id="import-hint"></div>
+                <div class="form-group flex-1">
+                    <textarea id="import-content" placeholder="粘贴内容..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('import-modal')">取消</button>
+                <button class="btn btn-primary" onclick="doImport()">导入</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -41,3 +41,10 @@ htmlcov/
 /.roo/
 /.claude/
 /.snow/
+
+# 桌面工具数据文件（含敏感信息）
+desktop_tools/电脑使用/credentials.json
+desktop_tools/电脑使用/commands.json
+desktop_tools/电脑使用/command_tabs.json
+desktop_tools/转化节点/nodes.md
+desktop_tools/.backup_old_data/

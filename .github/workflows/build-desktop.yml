@@ -1,0 +1,49 @@
+name: Build Desktop App
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            artifact: 本地工具箱-mac
+          - os: windows-latest
+            artifact: 本地工具箱-win
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller pywebview
+
+      - name: Build (macOS)
+        if: runner.os == 'macOS'
+        working-directory: desktop_tools
+        run: |
+          pyinstaller --onedir --windowed --name "本地工具箱" --add-data "web:web" main.py
+
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        working-directory: desktop_tools
+        run: |
+          pyinstaller --onedir --windowed --name "本地工具箱" --add-data "web;web" main.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: desktop_tools/dist/
