@@ -323,6 +323,30 @@ body {
     box-shadow: var(--shadow-sm);
 }
 
+.credential-extra-toggle {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.credential-card.dragging {
+    opacity: 0.5;
+    transform: scale(0.98);
+}
+
+.credential-card.drag-over {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.credential-card[draggable="true"] {
+    cursor: grab;
+}
+
+.credential-card[draggable="true"]:active {
+    cursor: grabbing;
+}
+
 .credential-header {
     display: flex;
     justify-content: space-between;
@@ -432,6 +456,11 @@ body {
     margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid var(--border);
+    display: none;
+}
+
+.credential-extra.expanded {
+    display: block;
 }
 
 .credential-extra-item {

@@ -4,6 +4,7 @@ let allCommands = [];
 let allTabs = [];
 let currentTabId = null;
 let convertedNodes = [];
+let expandedCredentialIds = new Set(); // 凭证附加信息展开状态
 
 // 初始化
 document.addEventListener('DOMContentLoaded', async () => {
@@ -77,7 +78,11 @@ function renderCredentials(credentials) {
     }
 
     container.innerHTML = credentials.map(cred => `
-        <div class="credential-card">
+        <div class="credential-card" data-cred-id="${cred.id}" draggable="true"
+             ondragstart="onCredentialDragStart(event)"
+             ondragover="onCredentialDragOver(event)"
+             ondrop="onCredentialDrop(event)"
+             ondragend="onCredentialDragEnd(event)">
             <div class="credential-header">
                 <div class="credential-title-area">
                     <div class="credential-service">${escapeHtml(cred.service)}</div>
@@ -103,7 +108,12 @@ function renderCredentials(credentials) {
                 </div>` : ''}
             </div>
             ${cred.extra && cred.extra.length ? `
-            <div class="credential-extra">
+            <div class="credential-extra-toggle">
+                <button class="btn btn-sm btn-ghost" onclick="toggleCredentialExtra('${cred.id}', event)">
+                    ${expandedCredentialIds.has(cred.id) ? '收起附加信息' : '展开附加信息'}
+                </button>
+            </div>
+            <div class="credential-extra ${expandedCredentialIds.has(cred.id) ? 'expanded' : ''}">
                 ${cred.extra.map(e => `<div class="credential-extra-item">${escapeHtml(e)}</div>`).join('')}
             </div>` : ''}
         </div>
@@ -163,6 +173,81 @@ async function deleteCredential(id) {
         await pywebview.api.delete_credential(id);
         loadCredentials();
     }
+}
+
+function toggleCredentialExtra(id, e) {
+    if (e) e.stopPropagation();
+    if (expandedCredentialIds.has(id)) {
+        expandedCredentialIds.delete(id);
+    } else {
+        expandedCredentialIds.add(id);
+    }
+    // 重新渲染以更新展开状态与按钮文案
+    const keyword = document.getElementById('credential-search').value.toLowerCase();
+    const filtered = allCredentials.filter(c =>
+        c.service.toLowerCase().includes(keyword) ||
+        c.account.toLowerCase().includes(keyword) ||
+        c.url.toLowerCase().includes(keyword)
+    );
+    renderCredentials(keyword ? filtered : allCredentials);
+}
+
+// 凭证拖拽排序
+let draggedCredentialId = null;
+
+function onCredentialDragStart(e) {
+    const card = e.target.closest('.credential-card');
+    if (!card) return;
+    draggedCredentialId = card.dataset.credId;
+    card.classList.add('dragging');
+    if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'move';
+    }
+}
+
+function onCredentialDragOver(e) {
+    e.preventDefault();
+    const target = e.target.closest('.credential-card');
+    if (target && target.dataset.credId !== draggedCredentialId) {
+        target.classList.add('drag-over');
+    }
+}
+
+async function onCredentialDrop(e) {
+    e.preventDefault();
+    const target = e.target.closest('.credential-card');
+    if (target && draggedCredentialId && target.dataset.credId !== draggedCredentialId) {
+        await reorderCredentials(draggedCredentialId, target.dataset.credId);
+    }
+    document.querySelectorAll('.credential-card').forEach(el => el.classList.remove('drag-over'));
+}
+
+function onCredentialDragEnd() {
+    draggedCredentialId = null;
+    document.querySelectorAll('.credential-card').forEach(el => {
+        el.classList.remove('dragging', 'drag-over');
+    });
+}
+
+async function reorderCredentials(draggedId, targetId) {
+    const draggedIdx = allCredentials.findIndex(c => c.id === draggedId);
+    const targetIdx = allCredentials.findIndex(c => c.id === targetId);
+    if (draggedIdx === -1 || targetIdx === -1) return;
+
+    const [dragged] = allCredentials.splice(draggedIdx, 1);
+    allCredentials.splice(targetIdx, 0, dragged);
+
+    const keyword = document.getElementById('credential-search').value.toLowerCase();
+    const displayList = keyword
+        ? allCredentials.filter(c =>
+            c.service.toLowerCase().includes(keyword) ||
+            c.account.toLowerCase().includes(keyword) ||
+            c.url.toLowerCase().includes(keyword)
+        )
+        : allCredentials;
+
+    renderCredentials(displayList);
+    await pywebview.api.reorder_credentials(allCredentials.map(c => c.id));
 }
 
 // ==================== 页签管理 ====================

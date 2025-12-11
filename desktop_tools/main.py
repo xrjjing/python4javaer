@@ -1,20 +1,25 @@
 #!/usr/bin/env python3
 """桌面工具 - 主入口"""
+
 import sys
-import os
 from pathlib import Path
 
 import webview
 
+from api import Api
+
+
 # 判断是否为打包环境
 def is_bundled():
-    return getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
+    return getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS")
+
 
 def get_base_path():
     """获取程序基础路径"""
     if is_bundled():
         return Path(sys._MEIPASS)
     return Path(__file__).parent
+
 
 def get_data_dir():
     """获取数据存储目录"""
@@ -28,18 +33,13 @@ def get_data_dir():
         # 开发环境使用项目目录
         return Path(__file__).parent
 
-# 确保可以导入 services 模块
-sys.path.insert(0, str(get_base_path()))
-
-from api import Api
-
 
 def main():
     data_dir = get_data_dir()
     api = Api(data_dir)
 
     web_dir = get_base_path() / "web"
-    window = webview.create_window(
+    webview.create_window(
         title="本地工具箱",
         url=str(web_dir / "index.html"),
         js_api=api,

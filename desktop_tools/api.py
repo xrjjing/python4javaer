@@ -10,6 +10,10 @@ class Api:
         self.computer_usage = ComputerUsageService(data_dir / "电脑使用")
         self.node_converter = NodeConverterService(data_dir / "转化节点")
 
+    def __dir__(self):
+        """限制暴露成员，避免 pywebview 深度遍历内部 Path 导致噪声日志"""
+        return [name for name, val in self.__class__.__dict__.items() if callable(val)]
+
     # ========== 页签管理 ==========
     def get_tabs(self):
         return self.computer_usage.get_tabs()
@@ -63,6 +67,9 @@ class Api:
 
     def import_credentials(self, text: str):
         return self.computer_usage.import_credentials_txt(text)
+
+    def reorder_credentials(self, credential_ids: List[str]):
+        return self.computer_usage.reorder_credentials(credential_ids)
 
     # ========== 节点转换 ==========
     def convert_links(self, links_text: str):

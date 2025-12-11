@@ -37,6 +37,7 @@ class Credential:
     account: str
     password: str
     extra: List[str] = field(default_factory=list)
+    order: int = 0
 
 
 class ComputerUsageService:
@@ -236,6 +237,10 @@ class ComputerUsageService:
     # ========== 凭证管理 ==========
     def _load_credentials(self) -> List[Credential]:
         data = json.loads(self.credentials_file.read_text(encoding="utf-8"))
+        for idx, item in enumerate(data):
+            # 兼容旧数据：补齐排序字段
+            if "order" not in item:
+                item["order"] = idx
         return [Credential(**item) for item in data]
 
     def _save_credentials(self, credentials: List[Credential]):
@@ -243,12 +248,22 @@ class ComputerUsageService:
         self.credentials_file.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def get_credentials(self) -> List[Dict]:
-        return [asdict(c) for c in self._load_credentials()]
+        creds = self._load_credentials()
+        return sorted([asdict(c) for c in creds], key=lambda x: x["order"])
 
     def add_credential(self, service: str, url: str, account: str, password: str, extra: List[str] = None) -> Dict:
         all_creds = self._load_credentials()
         new_id = str(max((int(c.id) for c in all_creds), default=0) + 1)
-        new_cred = Credential(id=new_id, service=service, url=url, account=account, password=password, extra=extra or [])
+        max_order = max((c.order for c in all_creds), default=-1) + 1
+        new_cred = Credential(
+            id=new_id,
+            service=service,
+            url=url,
+            account=account,
+            password=password,
+            extra=extra or [],
+            order=max_order,
+        )
         all_creds.append(new_cred)
         self._save_credentials(all_creds)
         return asdict(new_cred)
@@ -257,7 +272,15 @@ class ComputerUsageService:
         all_creds = self._load_credentials()
         for i, cred in enumerate(all_creds):
             if cred.id == id:
-                all_creds[i] = Credential(id=id, service=service, url=url, account=account, password=password, extra=extra or [])
+                all_creds[i] = Credential(
+                    id=id,
+                    service=service,
+                    url=url,
+                    account=account,
+                    password=password,
+                    extra=extra or [],
+                    order=cred.order,
+                )
                 self._save_credentials(all_creds)
                 return asdict(all_creds[i])
         return None
@@ -295,6 +318,26 @@ class ComputerUsageService:
             imported += 1
 
         return {"imported": imported, "credentials": credentials}
+
+    def reorder_credentials(self, credential_ids: List[str]) -> bool:
+        """根据前端传入的ID顺序重排"""
+        creds = self._load_credentials()
+        cred_map = {c.id: c for c in creds}
+
+        # 先按传入顺序设置排序值
+        for order, cid in enumerate(credential_ids):
+            if cid in cred_map:
+                cred_map[cid].order = order
+
+        # 未出现在列表中的旧数据继续排在后面，保持原相对顺序
+        current_order = len(credential_ids)
+        for cred in sorted(cred_map.values(), key=lambda c: c.order):
+            if cred.id not in credential_ids:
+                cred.order = current_order
+                current_order += 1
+
+        self._save_credentials(list(cred_map.values()))
+        return True
 
     def _split_blocks(self, text: str) -> List[List[str]]:
         """按空行切分文本块"""

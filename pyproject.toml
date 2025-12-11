@@ -78,6 +78,9 @@ extend-exclude = '''
   | dist
 )/
 '''
+# ruff配置
+[tool.ruff]
+line-length = 100
 
 # isort配置
 [tool.isort]
