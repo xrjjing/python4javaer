@@ -65,12 +65,55 @@
                 </li>
             </ul>
             <div class="sidebar-footer">
-                <button class="theme-toggle" onclick="toggleDarkMode()">
-                    <span id="theme-icon">🌙</span>
-                    <span id="theme-text">深色</span>
-                </button>
+                <!-- 主题选择器 -->
+                <div class="theme-selector-wrapper">
+                    <div class="theme-popup-menu" id="themeMenu">
+                        <div class="theme-group-label">亮色系</div>
+                        <div class="theme-grid">
+                            <button class="theme-item" data-theme="light" onclick="selectTheme('light')">
+                                <span class="emoji">☀️</span>
+                                <span class="label">亮色</span>
+                            </button>
+                            <button class="theme-item" data-theme="cute" onclick="selectTheme('cute')">
+                                <span class="emoji">🐱</span>
+                                <span class="label">可爱</span>
+                            </button>
+                            <button class="theme-item" data-theme="office" onclick="selectTheme('office')">
+                                <span class="emoji">📊</span>
+                                <span class="label">办公</span>
+                            </button>
+                            <button class="theme-item" data-theme="neon-light" onclick="selectTheme('neon-light')">
+                                <span class="emoji">🌊</span>
+                                <span class="label">极光</span>
+                            </button>
+                            <button class="theme-item" data-theme="cyberpunk-light" onclick="selectTheme('cyberpunk-light')">
+                                <span class="emoji">🌸</span>
+                                <span class="label">赛博</span>
+                            </button>
+                        </div>
+                        <div class="theme-divider"></div>
+                        <div class="theme-group-label">暗色系</div>
+                        <div class="theme-grid">
+                            <button class="theme-item" data-theme="dark" onclick="selectTheme('dark')">
+                                <span class="emoji">🌙</span>
+                                <span class="label">暗色</span>
+                            </button>
+                            <button class="theme-item" data-theme="neon" onclick="selectTheme('neon')">
+                                <span class="emoji">🌃</span>
+                                <span class="label">霓虹</span>
+                            </button>
+                            <button class="theme-item" data-theme="cyberpunk" onclick="selectTheme('cyberpunk')">
+                                <span class="emoji">🤖</span>
+                                <span class="label">赛博</span>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="theme-main-btn" id="themeToggleBtn" onclick="toggleThemeMenu()">
+                        <span class="current-icon" id="currentThemeIcon">🐱</span>
+                    </button>
+                </div>
                 <button class="btn btn-ghost btn-sm" onclick="showExportModal()">📤 导出</button>
-                <span class="version">v2.2</span>
+                <span class="version">v2.3</span>
             </div>
         </nav>
 

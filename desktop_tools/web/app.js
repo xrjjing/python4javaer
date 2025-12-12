@@ -41,8 +41,15 @@ function initNavigation() {
 
 // 主题切换
 const THEME_ICONS = {
-    'light': '☀️', 'cute': '🐶', 'office': '💼',
-    'dark': '🌙', 'neon': '⚡', 'cyberpunk': '🤖'
+    'light': '☀️', 'cute': '🐶', 'office': '📊',
+    'neon-light': '🌊', 'cyberpunk-light': '🌸',
+    'dark': '🌙', 'neon': '🌈', 'cyberpunk': '🤖'
+};
+
+const THEME_MASCOTS = {
+    'light': '☀️', 'cute': '🐶', 'office': '📊',
+    'neon-light': '🌊', 'cyberpunk-light': '🌸',
+    'dark': '🌙', 'neon': '🌈', 'cyberpunk': '🤖'
 };
 
 function initTheme() {
@@ -83,6 +90,11 @@ function updateThemeIcon(theme) {
     if (iconEl && THEME_ICONS[theme]) {
         iconEl.textContent = THEME_ICONS[theme];
     }
+    // 更新侧边栏吉祥物
+    const mascotEl = document.getElementById('themeMascot');
+    if (mascotEl && THEME_MASCOTS[theme]) {
+        mascotEl.textContent = THEME_MASCOTS[theme];
+    }
 }
 
 function updateThemeSelector(activeTheme) {
@@ -121,7 +133,7 @@ function renderCredentials(credentials) {
                 </div>
                 <div class="credential-actions">
                     <button class="btn btn-sm btn-ghost" onclick="editCredential('${cred.id}')">编辑</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteCredential('${cred.id}')">删除</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteCredential('${cred.id}')" title="删除"><span class="btn-icon">🗑️</span></button>
                 </div>
             </div>
             <div class="credential-body">
@@ -499,7 +511,7 @@ function renderCommands(commands) {
                 <div class="command-actions">
                     <button class="btn btn-sm btn-ghost" onclick="showMoveCommandModal('${cmd.id}')" title="移动">📁</button>
                     <button class="btn btn-sm btn-ghost" onclick="editCommand('${cmd.id}')">编辑</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteCommand('${cmd.id}')">删除</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteCommand('${cmd.id}')" title="删除"><span class="btn-icon">🗑️</span></button>
                 </div>
             </div>
             <div class="command-body">
@@ -788,7 +800,7 @@ async function loadNodes() {
                 <span class="node-name">${escapeHtml(node.name)}</span>
                 <div style="display:flex;gap:8px;align-items:center">
                     <span class="node-type">${escapeHtml(node.type)}</span>
-                    <button class="btn btn-sm btn-danger" onclick="deleteNode('${node.id}')">删除</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteNode('${node.id}')" title="删除"><span class="btn-icon">🗑️</span></button>
                 </div>
             </div>
             <div class="node-info">

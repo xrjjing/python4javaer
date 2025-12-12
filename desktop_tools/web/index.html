@@ -10,8 +10,20 @@
     <div class="app">
         <nav class="sidebar">
             <div class="logo">
-                <span class="logo-icon">◈</span>
-                <span class="logo-text">工具箱</span>
+                <div class="dog-logo">
+                    <div class="dog-ear left"></div>
+                    <div class="dog-ear right"></div>
+                    <div class="dog-face">
+                        <div class="dog-eye left"></div>
+                        <div class="dog-eye right"></div>
+                        <div class="dog-nose"></div>
+                        <div class="dog-tongue"></div>
+                    </div>
+                </div>
+                <div class="logo-info">
+                    <span class="logo-text">工具箱</span>
+                    <span class="logo-subtitle">Desktop Kit</span>
+                </div>
             </div>
             <ul class="nav-list">
                 <li class="nav-item active" data-page="credentials">
@@ -46,8 +58,16 @@
                                     <span class="label">可爱</span>
                                 </button>
                                 <button class="theme-item" data-theme="office" onclick="selectTheme('office')">
-                                    <span class="emoji">💼</span>
+                                    <span class="emoji">📊</span>
                                     <span class="label">办公</span>
+                                </button>
+                                <button class="theme-item" data-theme="neon-light" onclick="selectTheme('neon-light')">
+                                    <span class="emoji">🌊</span>
+                                    <span class="label">极光</span>
+                                </button>
+                                <button class="theme-item" data-theme="cyberpunk-light" onclick="selectTheme('cyberpunk-light')">
+                                    <span class="emoji">🌸</span>
+                                    <span class="label">赛博</span>
                                 </button>
                             </div>
                         </div>
@@ -60,8 +80,8 @@
                                     <span class="label">暗色</span>
                                 </button>
                                 <button class="theme-item" data-theme="neon" onclick="selectTheme('neon')">
-                                    <span class="emoji">⚡</span>
-                                    <span class="label">霓虹</span>
+                                    <span class="emoji">🌈</span>
+                                    <span class="label">极光</span>
                                 </button>
                                 <button class="theme-item" data-theme="cyberpunk" onclick="selectTheme('cyberpunk')">
                                     <span class="emoji">🤖</span>

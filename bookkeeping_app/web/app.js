@@ -51,6 +51,7 @@ function cancelPendingChartRAF() {
 document.addEventListener('DOMContentLoaded', async () => {
     await waitForApi();
     initNavigation();
+    initTheme();
     initAddForm();
     initFilters();
     initStatsTabs();
@@ -59,6 +60,60 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadInitialData();
     updateGreeting();
 });
+
+// ===== 主题系统 =====
+const THEME_ICONS = {
+    'light': '☀️', 'cute': '🐱', 'office': '📊',
+    'neon-light': '🌊', 'cyberpunk-light': '🌸',
+    'dark': '🌙', 'neon': '🌃', 'cyberpunk': '🤖'
+};
+
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'cute';
+    setTheme(savedTheme);
+
+    // 点击外部关闭菜单
+    window.addEventListener('click', (e) => {
+        const menu = document.getElementById('themeMenu');
+        const btn = document.getElementById('themeToggleBtn');
+        if (menu && btn && menu.classList.contains('active')) {
+            if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        }
+    });
+}
+
+function toggleThemeMenu() {
+    const menu = document.getElementById('themeMenu');
+    menu.classList.toggle('active');
+}
+
+function selectTheme(theme) {
+    setTheme(theme);
+    document.getElementById('themeMenu').classList.remove('active');
+}
+
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    updateThemeIcon(theme);
+    updateThemeSelector(theme);
+}
+
+function updateThemeIcon(theme) {
+    const iconEl = document.getElementById('currentThemeIcon');
+    if (iconEl && THEME_ICONS[theme]) {
+        iconEl.textContent = THEME_ICONS[theme];
+    }
+}
+
+function updateThemeSelector(activeTheme) {
+    document.querySelectorAll('.theme-item').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.theme === activeTheme);
+    });
+}
 
 async function waitForApi() {
     while (!window.pywebview?.api) {
@@ -1729,31 +1784,4 @@ function showToast(msg, isError = false) {
     setTimeout(() => toast.classList.add('hidden'), 2500);
 }
 
-// ===== 深色模式 =====
-function toggleDarkMode() {
-    const isDark = document.body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', isDark ? 'true' : 'false');
-    updateThemeButton(isDark);
-}
-
-function updateThemeButton(isDark) {
-    const icon = document.getElementById('theme-icon');
-    const text = document.getElementById('theme-text');
-    if (icon && text) {
-        icon.textContent = isDark ? '☀️' : '🌙';
-        text.textContent = isDark ? '浅色' : '深色';
-    }
-}
-
-function initDarkMode() {
-    const saved = localStorage.getItem('darkMode');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = saved === 'true' || (saved === null && prefersDark);
-    if (isDark) {
-        document.body.classList.add('dark-mode');
-    }
-    updateThemeButton(isDark);
-}
-
-// 初始化时加载深色模式设置
-initDarkMode();
+// 旧的深色模式代码已被多主题系统替代 (initTheme)

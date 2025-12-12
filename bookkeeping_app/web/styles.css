@@ -1,4 +1,13 @@
+/* ========== 🐱 喵喵记账 - 多主题系统 ========== */
+
 :root {
+    /* 布局常量 */
+    --sidebar-width: 200px;
+    --bottom-nav-height: 64px;
+}
+
+/* 默认主题 (Cute - 糖果色) */
+body {
     /* 糖果色调色板 */
     --pink: #FFB7B2;
     --pink-light: #FFE5E2;
@@ -20,12 +29,273 @@
     --white: #fff;
     --border: #F0E8E8;
 
-    /* 布局 */
-    --sidebar-width: 200px;
+    /* UI形状 */
     --radius: 16px;
     --radius-sm: 10px;
     --shadow: 0 4px 20px rgba(255, 183, 178, 0.15);
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+
+    /* 主题特有 */
+    --accent: var(--pink);
+    --accent-light: var(--pink-light);
+    --sidebar-bg: var(--white);
+    --content-gradient: linear-gradient(135deg, var(--bg) 0%, #FFF5F5 100%);
+}
+
+/* ========== 1. Light 主题 - 清爽日间 ☀️ ========== */
+[data-theme="light"] {
+    --pink: #60a5fa;
+    --pink-light: #dbeafe;
+    --peach: #fde68a;
+    --mint: #86efac;
+    --mint-dark: #22c55e;
+    --blue: #93c5fd;
+    --blue-light: #eff6ff;
+    --lavender: #c4b5fd;
+    --yellow: #fef9c3;
+    --yellow-warm: #facc15;
+
+    --positive: #22c55e;
+    --negative: #ef4444;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --border: #e2e8f0;
+
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 20px rgba(100, 116, 139, 0.1);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+
+    --accent: #3b82f6;
+    --accent-light: #dbeafe;
+    --sidebar-bg: #ffffff;
+    --content-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+/* ========== 2. Cute 主题 - 糖果可爱 🐱 (默认) ========== */
+[data-theme="cute"] {
+    --pink: #FFB7B2;
+    --pink-light: #FFE5E2;
+    --peach: #FFDAC1;
+    --mint: #B5EAD7;
+    --mint-dark: #7DCEA0;
+    --blue: #C7CEEA;
+    --blue-light: #E8EBFA;
+    --lavender: #E0BBE4;
+    --yellow: #FFFFD8;
+    --yellow-warm: #FFD93D;
+
+    --positive: #52B788;
+    --negative: #E07A5F;
+    --text: #4A4A4A;
+    --text-light: #888;
+    --bg: #FFF9F9;
+    --white: #fff;
+    --border: #F0E8E8;
+
+    --radius: 20px;
+    --radius-sm: 14px;
+    --shadow: 0 4px 20px rgba(255, 183, 178, 0.25);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+
+    --accent: #FFB7B2;
+    --accent-light: #FFE5E2;
+    --sidebar-bg: #ffffff;
+    --content-gradient: linear-gradient(135deg, #FFF9F9 0%, #FFF5F5 100%);
+}
+
+/* ========== 3. Office 主题 - 专业办公 📊 ========== */
+[data-theme="office"] {
+    --pink: #1e40af;
+    --pink-light: #dbeafe;
+    --peach: #fef3c7;
+    --mint: #d1fae5;
+    --mint-dark: #059669;
+    --blue: #bfdbfe;
+    --blue-light: #eff6ff;
+    --lavender: #e0e7ff;
+    --yellow: #fef9c3;
+    --yellow-warm: #eab308;
+
+    --positive: #059669;
+    --negative: #dc2626;
+    --text: #111827;
+    --text-light: #6b7280;
+    --bg: #f3f4f6;
+    --white: #ffffff;
+    --border: #d1d5db;
+
+    --radius: 4px;
+    --radius-sm: 2px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+
+    --accent: #1e40af;
+    --accent-light: #dbeafe;
+    --sidebar-bg: #ffffff;
+    --content-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+}
+
+/* ========== 4. Neon Light 主题 - 日间极光 🌊 ========== */
+[data-theme="neon-light"] {
+    --pink: #14b8a6;
+    --pink-light: #ccfbf1;
+    --peach: #fef3c7;
+    --mint: #a7f3d0;
+    --mint-dark: #10b981;
+    --blue: #a5f3fc;
+    --blue-light: #ecfeff;
+    --lavender: #c4b5fd;
+    --yellow: #fef9c3;
+    --yellow-warm: #fbbf24;
+
+    --positive: #10b981;
+    --negative: #f43f5e;
+    --text: #134e4a;
+    --text-light: #5eead4;
+    --bg: #f0fdfa;
+    --white: rgba(255, 255, 255, 0.95);
+    --border: #99f6e4;
+
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 8px 32px rgba(45, 212, 191, 0.15);
+    --shadow-sm: 0 4px 12px rgba(45, 212, 191, 0.1);
+
+    --accent: #14b8a6;
+    --accent-light: #ccfbf1;
+    --sidebar-bg: linear-gradient(160deg, hsl(180, 60%, 85%) 0%, hsl(160, 55%, 82%) 100%);
+    --content-gradient: linear-gradient(160deg, #f0fdfa 0%, #ecfeff 50%, #f0fdf4 100%);
+}
+
+/* ========== 5. Cyberpunk Light 主题 - 日间赛博 🌸 ========== */
+[data-theme="cyberpunk-light"] {
+    --pink: #d946ef;
+    --pink-light: #fae8ff;
+    --peach: #fef3c7;
+    --mint: #d9f99d;
+    --mint-dark: #84cc16;
+    --blue: #a5f3fc;
+    --blue-light: #f0f9ff;
+    --lavender: #f0abfc;
+    --yellow: #fef9c3;
+    --yellow-warm: #facc15;
+
+    --positive: #22c55e;
+    --negative: #db2777;
+    --text: #4a044e;
+    --text-light: #a21caf;
+    --bg: #fdf4ff;
+    --white: rgba(255, 255, 255, 0.95);
+    --border: #f0abfc;
+
+    --radius: 0px;
+    --radius-sm: 0px;
+    --shadow: 4px 4px 0px rgba(217, 70, 239, 0.2);
+    --shadow-sm: 2px 2px 0px rgba(217, 70, 239, 0.15);
+
+    --accent: #d946ef;
+    --accent-light: #fae8ff;
+    --sidebar-bg: linear-gradient(135deg, hsl(280, 60%, 80%) 0%, hsl(220, 70%, 80%) 50%, hsl(190, 70%, 78%) 100%);
+    --content-gradient: linear-gradient(135deg, #fdf4ff 0%, #fce7f3 50%, #f0f9ff 100%);
+}
+
+/* ========== 6. Dark 主题 - 午夜深邃 🌙 ========== */
+[data-theme="dark"] {
+    --pink: #818cf8;
+    --pink-light: #312e81;
+    --peach: #fcd34d;
+    --mint: #34d399;
+    --mint-dark: #10b981;
+    --blue: #60a5fa;
+    --blue-light: #1e3a5f;
+    --lavender: #a78bfa;
+    --yellow: #3d3d00;
+    --yellow-warm: #fbbf24;
+
+    --positive: #34d399;
+    --negative: #f87171;
+    --text: #f1f5f9;
+    --text-light: #94a3b8;
+    --bg: #0f172a;
+    --white: #1e293b;
+    --border: #334155;
+
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+    --accent: #818cf8;
+    --accent-light: #312e81;
+    --sidebar-bg: #1e293b;
+    --content-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+/* ========== 7. Neon 主题 - 霓虹夜城 🌃 ========== */
+[data-theme="neon"] {
+    --pink: #2dd4bf;
+    --pink-light: #134e4a;
+    --peach: #fcd34d;
+    --mint: #00ff9d;
+    --mint-dark: #10b981;
+    --blue: #00ccff;
+    --blue-light: #0c4a6e;
+    --lavender: #d946ef;
+    --yellow: #1a1a00;
+    --yellow-warm: #facc15;
+
+    --positive: #00ff9d;
+    --negative: #ff0055;
+    --text: #e2e8f0;
+    --text-light: #2dd4bf;
+    --bg: #020617;
+    --white: #0f172a;
+    --border: #1e293b;
+
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 0 30px rgba(45, 212, 191, 0.15);
+    --shadow-sm: 0 0 15px rgba(45, 212, 191, 0.1);
+
+    --accent: #2dd4bf;
+    --accent-light: #134e4a;
+    --sidebar-bg: linear-gradient(180deg, #0f172a 0%, #134e4a 50%, #0f172a 100%);
+    --content-gradient: linear-gradient(135deg, #020617 0%, #0c4a6e 50%, #020617 100%);
+}
+
+/* ========== 8. Cyberpunk 主题 - 赛博朋克 🤖 ========== */
+[data-theme="cyberpunk"] {
+    --pink: #facc15;
+    --pink-light: #3d3d00;
+    --peach: #fcd34d;
+    --mint: #84cc16;
+    --mint-dark: #65a30d;
+    --blue: #22d3ee;
+    --blue-light: #164e63;
+    --lavender: #e879f9;
+    --yellow: #1a1a00;
+    --yellow-warm: #facc15;
+
+    --positive: #84cc16;
+    --negative: #ef4444;
+    --text: #fef2f2;
+    --text-light: #71717a;
+    --bg: #050505;
+    --white: #121212;
+    --border: #3f3f46;
+
+    --radius: 2px;
+    --radius-sm: 0px;
+    --shadow: 4px 4px 0px #facc15;
+    --shadow-sm: 2px 2px 0px #facc15;
+
+    --accent: #facc15;
+    --accent-light: #3d3d00;
+    --sidebar-bg: linear-gradient(160deg, #121212 0%, #1a1a2e 50%, #121212 100%);
+    --content-gradient: linear-gradient(135deg, #050505 0%, #1a1a2e 50%, #050505 100%);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,12 +316,13 @@ body {
 /* ===== 侧边栏 ===== */
 .sidebar {
     width: var(--sidebar-width);
-    background: var(--white);
+    background: var(--sidebar-bg);
     padding: 20px 12px;
     display: flex;
     flex-direction: column;
     box-shadow: var(--shadow);
     z-index: 10;
+    transition: background 0.3s ease;
 }
 
 .logo {
@@ -176,7 +447,8 @@ body {
     flex: 1;
     padding: 24px 30px;
     overflow-y: auto;
-    background: linear-gradient(135deg, var(--bg) 0%, #FFF5F5 100%);
+    background: var(--content-gradient);
+    transition: background 0.3s ease;
 }
 
 .page {
@@ -303,6 +575,14 @@ body {
     height: 100% !important;
 }
 
+/* 饼图容器保持正方形 */
+.pie-chart .chart-container {
+    height: 200px;
+    max-width: 200px;
+    margin: 0 auto;
+    aspect-ratio: 1 / 1;
+}
+
 /* ===== 记录列表 ===== */
 .records-list {
     max-height: 280px;
@@ -364,6 +644,10 @@ body {
     font-size: 3rem;
     display: block;
     margin-bottom: 12px;
+}
+
+.empty-state p {
+    margin-bottom: 16px;
 }
 
 /* ===== 记一笔表单 ===== */
@@ -433,6 +717,10 @@ body {
 
 .amount-input:focus {
     border-color: var(--pink);
+}
+
+.amount-input:focus::placeholder {
+    color: transparent;
 }
 
 /* ===== 分类网格 ===== */
@@ -1889,4 +2177,281 @@ body.dark-mode .content {
     .summary-cards {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+/* ========== 主题选择器组件 ========== */
+.theme-selector-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 0;
+    margin-top: 8px;
+}
+
+.theme-main-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+}
+
+.theme-main-btn .current-icon {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.theme-main-btn:hover {
+    transform: translateY(-2px) scale(1.08);
+    box-shadow: var(--shadow);
+    border-color: var(--accent);
+}
+
+.theme-popup-menu {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    width: 220px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    box-shadow: var(--shadow);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.theme-popup-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+    pointer-events: auto;
+}
+
+.theme-group-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    padding-left: 4px;
+}
+
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+
+.theme-item {
+    background: transparent;
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+}
+
+.theme-item:hover {
+    background: var(--bg);
+    transform: translateY(-2px);
+}
+
+.theme-item.active {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+
+.theme-item .emoji {
+    font-size: 20px;
+    margin-bottom: 2px;
+}
+
+.theme-item .label {
+    font-size: 9px;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.theme-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 10px 4px;
+    opacity: 0.5;
+}
+
+/* ========== 各主题小猫适配 ========== */
+/* Light - 蓝色小猫 */
+[data-theme="light"] .cat-face { background: #60a5fa; }
+[data-theme="light"] .cat-ear { border-bottom-color: #60a5fa; }
+[data-theme="light"] .cat-ear::after { border-bottom-color: #dbeafe; }
+
+/* Office - 深蓝方正小猫 */
+[data-theme="office"] .cat-face {
+    background: #1e40af;
+    border-radius: 30% 30% 40% 40%;
+}
+[data-theme="office"] .cat-ear { border-bottom-color: #1e40af; }
+[data-theme="office"] .cat-ear::after { border-bottom-color: #dbeafe; }
+
+/* Neon Light - 青色发光小猫 */
+[data-theme="neon-light"] .cat-face {
+    background: #14b8a6;
+    box-shadow: 0 0 15px rgba(20, 184, 166, 0.3);
+}
+[data-theme="neon-light"] .cat-ear { border-bottom-color: #14b8a6; }
+[data-theme="neon-light"] .cat-ear::after { border-bottom-color: #ccfbf1; }
+
+/* Cyberpunk Light - 紫色切角小猫 */
+[data-theme="cyberpunk-light"] .cat-face {
+    background: linear-gradient(135deg, #d946ef, #0ea5e9);
+    border-radius: 40% 40% 30% 30%;
+}
+[data-theme="cyberpunk-light"] .cat-ear { border-bottom-color: #d946ef; }
+[data-theme="cyberpunk-light"] .cat-ear::after { border-bottom-color: #fae8ff; }
+
+/* Dark - 紫色小猫 */
+[data-theme="dark"] .cat-face { background: #818cf8; }
+[data-theme="dark"] .cat-ear { border-bottom-color: #818cf8; }
+[data-theme="dark"] .cat-ear::after { border-bottom-color: #312e81; }
+
+/* Neon - 霓虹发光小猫 */
+[data-theme="neon"] .cat-face {
+    background: #2dd4bf;
+    box-shadow: 0 0 20px rgba(45, 212, 191, 0.5);
+}
+[data-theme="neon"] .cat-ear { border-bottom-color: #2dd4bf; }
+[data-theme="neon"] .cat-ear::after { border-bottom-color: #134e4a; }
+[data-theme="neon"] .cat-eye {
+    background: #ff0055;
+    box-shadow: 0 0 8px #ff0055;
+}
+
+/* Cyberpunk - 赛博黄色机械猫 */
+[data-theme="cyberpunk"] .cat-face {
+    background: #facc15;
+    border-radius: 20% 20% 40% 40%;
+    box-shadow: 3px 3px 0px #e879f9;
+}
+[data-theme="cyberpunk"] .cat-ear { border-bottom-color: #facc15; }
+[data-theme="cyberpunk"] .cat-ear::after { border-bottom-color: #3d3d00; }
+[data-theme="cyberpunk"] .cat-eye {
+    background: #ef4444;
+    width: 8px;
+    height: 4px;
+    border-radius: 0;
+}
+
+/* ========== 各主题导航适配 ========== */
+/* 渐变侧边栏主题的导航项颜色 */
+[data-theme="neon-light"] .nav-item,
+[data-theme="cyberpunk-light"] .nav-item {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="neon-light"] .nav-item:hover,
+[data-theme="cyberpunk-light"] .nav-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+[data-theme="neon-light"] .nav-item.active,
+[data-theme="cyberpunk-light"] .nav-item.active {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+    box-shadow: none;
+}
+
+[data-theme="neon-light"] .logo-text,
+[data-theme="cyberpunk-light"] .logo-text {
+    color: white;
+}
+
+/* Neon 主题导航 */
+[data-theme="neon"] .nav-item {
+    color: var(--text-light);
+}
+
+[data-theme="neon"] .nav-item:hover {
+    background: rgba(45, 212, 191, 0.1);
+    color: #2dd4bf;
+}
+
+[data-theme="neon"] .nav-item.active {
+    background: rgba(45, 212, 191, 0.15);
+    color: #2dd4bf;
+    box-shadow: 0 0 15px rgba(45, 212, 191, 0.2);
+}
+
+/* Cyberpunk 主题导航 */
+[data-theme="cyberpunk"] .nav-item {
+    color: var(--text-light);
+    border-radius: 0;
+}
+
+[data-theme="cyberpunk"] .nav-item:hover {
+    background: rgba(250, 204, 21, 0.1);
+    color: #facc15;
+}
+
+[data-theme="cyberpunk"] .nav-item.active {
+    background: rgba(250, 204, 21, 0.15);
+    color: #facc15;
+    box-shadow: 2px 2px 0px #facc15;
+}
+
+/* ========== 各主题按钮适配 ========== */
+[data-theme="office"] .btn,
+[data-theme="cyberpunk"] .btn,
+[data-theme="cyberpunk-light"] .btn {
+    border-radius: var(--radius-sm);
+}
+
+[data-theme="cute"] .btn {
+    border-radius: 20px;
+}
+
+/* Neon 主题按钮发光 */
+[data-theme="neon"] .btn-primary {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 10px rgba(45, 212, 191, 0.3);
+}
+
+[data-theme="neon"] .btn-primary:hover {
+    background: rgba(45, 212, 191, 0.1);
+    box-shadow: 0 0 20px rgba(45, 212, 191, 0.5);
+}
+
+/* Cyberpunk 主题按钮硬阴影 */
+[data-theme="cyberpunk"] .btn-primary {
+    background: #facc15;
+    color: #000;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0px #e879f9;
+    font-weight: 700;
+}
+
+[data-theme="cyberpunk"] .btn-primary:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #e879f9;
 }

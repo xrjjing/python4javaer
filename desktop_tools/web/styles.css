@@ -5,47 +5,52 @@
 }
 
 :root {
-    --bg-primary: #0f0f1a;
-    --bg-secondary: #161625;
-    --bg-card: #1c1c2e;
-    --bg-hover: #252538;
-    --bg-input: #12121f;
-    --text-primary: #f0f0f5;
-    --text-secondary: #8888a0;
-    --text-muted: #555566;
-    --accent: #6366f1;
-    --accent-hover: #818cf8;
-    --accent-glow: rgba(99, 102, 241, 0.15);
-    --success: #22c55e;
-    --danger: #ef4444;
-    --danger-hover: #dc2626;
-    --warning: #f59e0b;
-    --border: #2a2a40;
-    --border-light: #3a3a55;
+    /* 默认暗色主题 - 深灰而非纯黑，保护视力 */
+    --bg-primary: hsl(220, 15%, 14%);
+    --bg-secondary: hsl(220, 15%, 11%);
+    --bg-card: hsl(220, 15%, 18%);
+    --bg-hover: hsl(220, 15%, 22%);
+    --bg-input: hsl(220, 15%, 12%);
+    --text-primary: hsl(220, 10%, 85%);
+    --text-secondary: hsl(220, 10%, 60%);
+    --text-muted: hsl(220, 10%, 45%);
+    --accent: hsl(220, 80%, 65%);
+    --accent-hover: hsl(220, 80%, 70%);
+    --accent-glow: hsla(220, 80%, 65%, 0.15);
+    --success: hsl(145, 60%, 45%);
+    --danger: hsl(0, 70%, 55%);
+    --danger-hover: hsl(0, 70%, 45%);
+    --warning: hsl(40, 90%, 55%);
+    --border: hsl(220, 15%, 22%);
+    --border-light: hsl(220, 15%, 28%);
     --radius: 12px;
     --radius-sm: 8px;
-    --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow: 0 4px 24px hsla(0, 0%, 0%, 0.3);
+    --shadow-sm: 0 2px 8px hsla(0, 0%, 0%, 0.2);
+    --sidebar-gradient: none;
+    --title-gradient: linear-gradient(135deg, var(--accent), var(--accent-hover));
 }
 
-/* 亮色主题 */
+/* ========== 亮色主题 (Light) - 清爽日间 ========== */
 [data-theme="light"] {
-    --bg-primary: #f5f5f7;
-    --bg-secondary: #ffffff;
-    --bg-card: #ffffff;
-    --bg-hover: #f0f0f2;
-    --bg-input: #f5f5f7;
-    --text-primary: #1a1a2e;
-    --text-secondary: #666680;
-    --text-muted: #999999;
-    --accent: #5558e8;
-    --accent-hover: #6366f1;
-    --accent-glow: rgba(99, 102, 241, 0.1);
-    --success: #16a34a;
-    --border: #e0e0e5;
-    --border-light: #d0d0d8;
-    --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --bg-primary: hsl(210, 20%, 98%);
+    --bg-secondary: hsl(0, 0%, 100%);
+    --bg-card: hsl(0, 0%, 100%);
+    --bg-hover: hsl(210, 15%, 95%);
+    --bg-input: hsl(210, 15%, 97%);
+    --text-primary: hsl(210, 15%, 25%);
+    --text-secondary: hsl(210, 10%, 45%);
+    --text-muted: hsl(210, 10%, 60%);
+    --accent: hsl(210, 90%, 50%);
+    --accent-hover: hsl(210, 90%, 55%);
+    --accent-glow: hsla(210, 90%, 50%, 0.12);
+    --success: hsl(145, 55%, 42%);
+    --border: hsl(210, 20%, 90%);
+    --border-light: hsl(210, 20%, 85%);
+    --shadow: 0 4px 24px hsla(210, 10%, 80%, 0.15);
+    --shadow-sm: 0 2px 8px hsla(210, 10%, 80%, 0.1);
+    --sidebar-gradient: none;
+    --title-gradient: linear-gradient(135deg, hsl(210, 90%, 50%), hsl(210, 90%, 60%));
 }
 
 body {
@@ -73,24 +78,129 @@ body {
 }
 
 .logo {
-    padding: 24px 20px;
+    padding: 20px 16px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     border-bottom: 1px solid var(--border);
 }
 
-.logo-icon {
-    font-size: 24px;
-    color: var(--accent);
+/* ===== 狗狗吉祥物 ===== */
+.dog-logo {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.dog-logo:hover {
+    transform: scale(1.1);
+}
+
+.dog-logo:hover .dog-tongue {
+    height: 8px;
+}
+
+.dog-face {
+    width: 38px;
+    height: 34px;
+    background: var(--primary);
+    border-radius: 50% 50% 45% 45%;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dog-ear {
+    position: absolute;
+    width: 16px;
+    height: 22px;
+    background: var(--primary);
+    border-radius: 50% 50% 30% 30%;
+    top: 2px;
+    transition: background 0.3s ease;
+}
+
+.dog-ear.left {
+    left: 2px;
+    transform: rotate(-15deg);
+}
+
+.dog-ear.right {
+    right: 2px;
+    transform: rotate(15deg);
+}
+
+.dog-eye {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #1a1a2e;
+    border-radius: 50%;
+    top: 10px;
+    transition: all 0.3s ease;
+}
+
+.dog-eye.left { left: 8px; }
+.dog-eye.right { right: 8px; }
+
+.dog-eye::after {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    top: 1px;
+    left: 1px;
+}
+
+.dog-nose {
+    position: absolute;
+    width: 10px;
+    height: 8px;
+    background: #2d2d2d;
+    border-radius: 50% 50% 40% 40%;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.dog-tongue {
+    position: absolute;
+    width: 8px;
+    height: 0;
+    background: #ff6b8a;
+    border-radius: 0 0 50% 50%;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: height 0.2s ease;
+    overflow: hidden;
+}
+
+.logo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .logo-text {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 600;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    background: var(--title-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.logo-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
 }
 
 .nav-list {
@@ -283,13 +393,35 @@ body {
     color: var(--text-primary);
 }
 
+/* ========== 删除按钮 - 安全设计 ========== */
+/* 默认低调，悬停时才显示危险感，防止误点 */
 .btn-danger {
-    background: var(--danger);
-    color: white;
+    position: relative;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-danger:hover {
-    background: var(--danger-hover);
+    background: var(--danger);
+    border-color: var(--danger);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px hsla(0, 70%, 50%, 0.25);
+}
+
+.btn-danger:hover .btn-icon,
+.btn-danger:hover::before {
+    animation: trash-shake 0.4s ease-in-out;
+}
+
+@keyframes trash-shake {
+    0%, 100% { transform: rotate(0deg); }
+    20% { transform: rotate(-12deg); }
+    40% { transform: rotate(12deg); }
+    60% { transform: rotate(-8deg); }
+    80% { transform: rotate(8deg); }
 }
 
 .btn-sm {
@@ -1168,101 +1300,828 @@ select option {
     padding: 8px;
 }
 
-/* ========== 可爱主题 (Cute/Kawaii) ========== */
+/* ========== 可爱主题 (Cute) - 棉花糖触感 🐶 ========== */
 [data-theme="cute"] {
-    --bg-primary: #f4f9f9;
-    --bg-secondary: #e0f2f1;
-    --bg-card: #ffffff;
-    --bg-hover: #e6fffa;
-    --bg-input: #ffffff;
-    --text-primary: #5d4037;
-    --text-secondary: #8d6e63;
-    --text-muted: #bcaaa4;
-    --accent: #4db6ac;
-    --accent-hover: #26a69a;
-    --accent-glow: rgba(77, 182, 172, 0.25);
-    --success: #aed581;
-    --danger: #ef9a9a;
-    --warning: #ffe082;
-    --border: #b2dfdb;
-    --border-light: #e0f2f1;
+    --bg-primary: hsl(30, 30%, 97%);
+    --bg-secondary: hsl(30, 40%, 94%);
+    --bg-card: hsl(0, 0%, 100%);
+    --bg-hover: hsl(30, 35%, 96%);
+    --bg-input: hsl(0, 0%, 100%);
+    --text-primary: hsl(15, 20%, 35%);
+    --text-secondary: hsl(15, 15%, 50%);
+    --text-muted: hsl(15, 10%, 65%);
+    --accent: hsl(340, 70%, 65%);
+    --accent-hover: hsl(340, 70%, 60%);
+    --accent-glow: hsla(340, 70%, 65%, 0.15);
+    --success: hsl(145, 50%, 55%);
+    --danger: hsl(0, 60%, 65%);
+    --warning: hsl(40, 80%, 60%);
+    --border: hsl(30, 25%, 88%);
+    --border-light: hsl(30, 20%, 92%);
+    --shadow: 0 4px 20px hsla(340, 50%, 70%, 0.15);
+    --shadow-sm: 0 2px 10px hsla(340, 50%, 70%, 0.1);
+    --radius: 20px;
+    --radius-sm: 14px;
+    --sidebar-gradient: none;
+    --title-gradient: linear-gradient(135deg, hsl(340, 70%, 65%), hsl(20, 80%, 65%));
 }
 
-/* ========== 霓虹主题 (Neon) ========== */
+[data-theme="cute"] .theme-mascot-wrapper {
+    background: linear-gradient(135deg, hsl(340, 60%, 92%), hsl(30, 50%, 95%));
+    border-color: hsl(340, 50%, 85%);
+}
+
+[data-theme="cute"] .theme-mascot {
+    animation: cute-bounce 2s infinite ease-in-out;
+}
+
+@keyframes cute-bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-3px) rotate(-3deg); }
+    75% { transform: translateY(-3px) rotate(3deg); }
+}
+
+/* ========== 办公主题 (Office) - 冷静专注 📊 ========== */
+[data-theme="office"] {
+    --bg-primary: hsl(220, 10%, 94%);
+    --bg-secondary: hsl(220, 15%, 97%);
+    --bg-card: hsl(0, 0%, 100%);
+    --bg-hover: hsl(220, 12%, 95%);
+    --bg-input: hsl(0, 0%, 100%);
+    --text-primary: hsl(220, 20%, 20%);
+    --text-secondary: hsl(220, 12%, 45%);
+    --text-muted: hsl(220, 10%, 60%);
+    --accent: hsl(220, 60%, 45%);
+    --accent-hover: hsl(220, 60%, 40%);
+    --accent-glow: hsla(220, 60%, 45%, 0.12);
+    --success: hsl(145, 50%, 40%);
+    --danger: hsl(0, 65%, 50%);
+    --warning: hsl(40, 85%, 50%);
+    --border: hsl(220, 15%, 85%);
+    --border-light: hsl(220, 15%, 90%);
+    --shadow: 0 2px 8px hsla(220, 20%, 20%, 0.06);
+    --shadow-sm: 0 1px 4px hsla(220, 20%, 20%, 0.04);
+    --radius: 6px;
+    --radius-sm: 4px;
+    --sidebar-gradient: none;
+    --title-gradient: linear-gradient(135deg, hsl(220, 60%, 45%), hsl(220, 70%, 55%));
+}
+
+/* ========== 霓虹主题 (Neon) - 极光流动 🌈 ========== */
 [data-theme="neon"] {
-    --bg-primary: #050505;
-    --bg-secondary: #121212;
-    --bg-card: #1a1a1a;
-    --bg-hover: #252525;
-    --bg-input: #000000;
-    --text-primary: #ffffff;
-    --text-secondary: #b3b3b3;
-    --text-muted: #666666;
-    --accent: #39ff14;
-    --accent-hover: #32d911;
-    --accent-glow: rgba(57, 255, 20, 0.3);
-    --success: #00ff00;
-    --danger: #ff003c;
-    --warning: #fefe33;
-    --border: #333333;
-    --border-light: #222222;
+    --bg-primary: hsl(230, 25%, 10%);
+    --bg-secondary: hsl(220, 30%, 8%);
+    --bg-card: hsla(230, 25%, 16%, 0.85);
+    --bg-hover: hsl(230, 25%, 18%);
+    --bg-input: hsl(230, 25%, 12%);
+    --text-primary: hsl(180, 40%, 92%);
+    --text-secondary: hsl(180, 20%, 70%);
+    --text-muted: hsl(180, 15%, 50%);
+    --accent: hsl(170, 100%, 50%);
+    --accent-hover: hsl(170, 100%, 55%);
+    --accent-glow: hsla(170, 100%, 50%, 0.2);
+    --success: hsl(145, 80%, 50%);
+    --danger: hsl(350, 80%, 55%);
+    --warning: hsl(50, 90%, 55%);
+    --border: hsla(170, 50%, 40%, 0.25);
+    --border-light: hsla(170, 50%, 50%, 0.15);
+    --shadow: 0 4px 20px hsla(170, 80%, 50%, 0.12);
+    --shadow-sm: 0 0 15px hsla(170, 80%, 50%, 0.1);
+    --sidebar-gradient: linear-gradient(180deg, hsl(230, 30%, 12%) 0%, hsl(200, 35%, 10%) 50%, hsl(170, 30%, 12%) 100%);
+    --title-gradient: linear-gradient(90deg, hsl(180, 100%, 50%), hsl(140, 100%, 50%));
+}
+
+[data-theme="neon"] .sidebar {
+    background: var(--sidebar-gradient);
+}
+
+[data-theme="neon"] .theme-mascot-wrapper {
+    background: hsla(170, 50%, 20%, 0.5);
+    border: 1px solid hsla(170, 100%, 50%, 0.3);
+    box-shadow: 0 0 20px hsla(170, 100%, 50%, 0.2), inset 0 0 15px hsla(170, 100%, 50%, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+[data-theme="neon"] .logo-text {
+    text-shadow: 0 0 20px hsla(170, 100%, 50%, 0.5);
 }
 
 [data-theme="neon"] .credential-card,
-[data-theme="neon"] .command-card,
-[data-theme="neon"] input:focus,
-[data-theme="neon"] textarea:focus {
-    box-shadow: 0 0 12px rgba(57, 255, 20, 0.2);
+[data-theme="neon"] .command-card {
+    backdrop-filter: blur(10px);
+    border: 1px solid hsla(170, 80%, 50%, 0.15);
+    box-shadow: 0 0 20px hsla(170, 80%, 50%, 0.08);
 }
 
-/* ========== 赛博朋克主题 (Cyberpunk) ========== */
+[data-theme="neon"] .btn-primary {
+    box-shadow: 0 0 15px hsla(170, 100%, 50%, 0.4);
+    text-shadow: 0 0 8px hsla(170, 100%, 50%, 0.5);
+}
+
+/* ========== 赛博朋克主题 (Cyberpunk) - 故障艺术 🤖 ========== */
 [data-theme="cyberpunk"] {
-    --bg-primary: #0b0c15;
-    --bg-secondary: #131525;
-    --bg-card: #1c1f35;
-    --bg-hover: #262a45;
-    --bg-input: #0f101a;
-    --text-primary: #e0e6ed;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --accent: #00f3ff;
-    --accent-hover: #00c2cc;
-    --accent-glow: rgba(0, 243, 255, 0.25);
-    --success: #00ff9d;
-    --danger: #ff0055;
-    --warning: #ffbe0b;
-    --border: #2d3748;
-    --border-light: #1e293b;
+    --bg-primary: hsl(260, 40%, 8%);
+    --bg-secondary: hsl(270, 45%, 7%);
+    --bg-card: hsl(260, 30%, 14%);
+    --bg-hover: hsl(260, 30%, 18%);
+    --bg-input: hsl(260, 35%, 10%);
+    --text-primary: hsl(300, 15%, 92%);
+    --text-secondary: hsl(300, 10%, 70%);
+    --text-muted: hsl(300, 8%, 50%);
+    --accent: hsl(300, 100%, 65%);
+    --accent-hover: hsl(300, 100%, 70%);
+    --accent-glow: hsla(300, 100%, 65%, 0.2);
+    --accent-secondary: hsl(190, 100%, 50%);
+    --success: hsl(160, 80%, 50%);
+    --danger: hsl(340, 90%, 55%);
+    --warning: hsl(45, 100%, 55%);
+    --border: hsla(300, 60%, 40%, 0.3);
+    --border-light: hsla(300, 50%, 50%, 0.2);
+    --shadow: 4px 4px 0px hsla(300, 80%, 50%, 0.3);
+    --shadow-sm: 2px 2px 0px hsla(300, 80%, 50%, 0.2);
+    --radius: 4px;
+    --radius-sm: 2px;
+    --sidebar-gradient: linear-gradient(160deg, hsl(270, 50%, 10%) 0%, hsl(260, 45%, 8%) 50%, hsl(240, 50%, 10%) 100%);
+    --title-gradient: linear-gradient(90deg, hsl(300, 100%, 65%), hsl(190, 100%, 50%));
 }
 
-[data-theme="cyberpunk"] .btn-primary {
-    border: 1px solid var(--accent);
-    box-shadow: 0 0 8px rgba(0, 243, 255, 0.3);
+[data-theme="cyberpunk"] .sidebar {
+    background: var(--sidebar-gradient);
+}
+
+[data-theme="cyberpunk"] .theme-mascot-wrapper {
+    background: hsl(260, 30%, 12%);
+    border: 1px solid hsl(300, 100%, 65%);
+    box-shadow: 3px 3px 0px hsl(190, 100%, 50%);
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);
+    border-radius: 4px;
+}
+
+[data-theme="cyberpunk"] .logo-text {
+    text-shadow: 2px 0 hsl(300, 100%, 65%), -2px 0 hsl(190, 100%, 50%);
 }
 
 [data-theme="cyberpunk"] .credential-card,
 [data-theme="cyberpunk"] .command-card {
-    border: 1px solid rgba(0, 243, 255, 0.2);
+    border: 1px solid hsla(300, 80%, 50%, 0.25);
+    box-shadow: 3px 3px 0px hsla(190, 100%, 50%, 0.2);
 }
 
-/* ========== 办公主题 (Office) ========== */
-[data-theme="office"] {
-    --bg-primary: #f4f6f8;
-    --bg-secondary: #e3e8ee;
-    --bg-card: #ffffff;
-    --bg-hover: #f1f5f9;
-    --bg-input: #ffffff;
-    --text-primary: #1e293b;
-    --text-secondary: #475569;
-    --text-muted: #94a3b8;
-    --accent: #2563eb;
-    --accent-hover: #1d4ed8;
-    --accent-glow: rgba(37, 99, 235, 0.15);
-    --success: #10b981;
-    --danger: #ef4444;
-    --warning: #f59e0b;
-    --border: #cbd5e1;
-    --border-light: #e2e8f0;
+[data-theme="cyberpunk"] .btn-primary {
+    background: linear-gradient(135deg, hsl(300, 100%, 60%), hsl(190, 100%, 50%));
+    box-shadow: 3px 3px 0px hsla(300, 80%, 40%, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* 赛博朋克扫描线效果 */
+[data-theme="cyberpunk"] .content::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        hsla(0, 0%, 0%, 0.03) 2px,
+        hsla(0, 0%, 0%, 0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* ========== 赛博亮色主题 (Cyberpunk Light) - 日间未来 🌸 ========== */
+[data-theme="cyberpunk-light"] {
+    --bg-primary: hsl(280, 30%, 95%);
+    --bg-secondary: hsl(280, 25%, 97%);
+    --bg-card: hsla(0, 0%, 100%, 0.85);
+    --bg-hover: hsl(280, 20%, 93%);
+    --bg-input: hsl(0, 0%, 100%);
+    --text-primary: hsl(260, 40%, 25%);
+    --text-secondary: hsl(260, 25%, 45%);
+    --text-muted: hsl(260, 15%, 60%);
+    --accent: hsl(280, 80%, 55%);
+    --accent-hover: hsl(280, 80%, 50%);
+    --accent-glow: hsla(280, 80%, 55%, 0.2);
+    --accent-secondary: hsl(190, 90%, 45%);
+    --success: hsl(160, 70%, 42%);
+    --danger: hsl(340, 75%, 50%);
+    --warning: hsl(45, 90%, 50%);
+    --border: hsla(280, 40%, 80%, 0.5);
+    --border-light: hsla(280, 30%, 85%, 0.4);
+    --shadow: 0 4px 20px hsla(280, 60%, 50%, 0.12);
+    --shadow-sm: 0 2px 10px hsla(280, 60%, 50%, 0.08);
+    --radius: 8px;
+    --radius-sm: 4px;
+    --sidebar-gradient: linear-gradient(135deg, hsl(280, 60%, 75%) 0%, hsl(220, 70%, 75%) 50%, hsl(190, 70%, 70%) 100%);
+    --title-gradient: linear-gradient(90deg, hsl(280, 80%, 55%), hsl(190, 90%, 45%));
+}
+
+[data-theme="cyberpunk-light"] .sidebar {
+    background: var(--sidebar-gradient);
+}
+
+[data-theme="cyberpunk-light"] .nav-item {
+    color: hsla(0, 0%, 100%, 0.85);
+}
+
+[data-theme="cyberpunk-light"] .nav-item:hover {
+    background: hsla(0, 0%, 100%, 0.15);
+    color: hsl(0, 0%, 100%);
+}
+
+[data-theme="cyberpunk-light"] .nav-item.active {
+    background: hsla(0, 0%, 100%, 0.25);
+    color: hsl(0, 0%, 100%);
+    border-left-color: hsl(0, 0%, 100%);
+}
+
+[data-theme="cyberpunk-light"] .logo-text {
+    background: linear-gradient(90deg, hsl(0, 0%, 100%), hsla(0, 0%, 100%, 0.9));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+}
+
+[data-theme="cyberpunk-light"] .logo-subtitle {
+    color: hsla(0, 0%, 100%, 0.7);
+}
+
+[data-theme="cyberpunk-light"] .theme-mascot-wrapper {
+    background: hsla(0, 0%, 100%, 0.25);
+    border: 1px solid hsla(0, 0%, 100%, 0.4);
+    box-shadow: 0 4px 15px hsla(280, 60%, 40%, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+[data-theme="cyberpunk-light"] .theme-selector-wrapper {
+    border-top-color: hsla(0, 0%, 100%, 0.2);
+}
+
+[data-theme="cyberpunk-light"] .theme-main-btn {
+    background: hsla(0, 0%, 100%, 0.3);
+    border-color: hsla(0, 0%, 100%, 0.5);
+}
+
+[data-theme="cyberpunk-light"] .credential-card,
+[data-theme="cyberpunk-light"] .command-card {
+    backdrop-filter: blur(10px);
+    border: 1px solid hsla(280, 50%, 70%, 0.3);
+    box-shadow: 0 4px 20px hsla(280, 60%, 50%, 0.1);
+}
+
+[data-theme="cyberpunk-light"] .btn-primary {
+    background: linear-gradient(135deg, hsl(280, 80%, 55%), hsl(190, 90%, 45%));
+    box-shadow: 0 4px 15px hsla(280, 70%, 50%, 0.3);
+}
+
+[data-theme="cyberpunk-light"] .content {
+    background: linear-gradient(135deg, hsl(280, 45%, 92%) 0%, hsl(220, 50%, 92%) 50%, hsl(190, 50%, 90%) 100%);
+}
+
+/* ========== 极光亮色主题 (Neon Light) - 日间极光 🌊 ========== */
+[data-theme="neon-light"] {
+    --bg-primary: hsl(180, 25%, 95%);
+    --bg-secondary: hsl(180, 20%, 97%);
+    --bg-card: hsla(0, 0%, 100%, 0.9);
+    --bg-hover: hsl(180, 20%, 93%);
+    --bg-input: hsl(0, 0%, 100%);
+    --text-primary: hsl(200, 35%, 22%);
+    --text-secondary: hsl(200, 20%, 42%);
+    --text-muted: hsl(200, 15%, 58%);
+    --accent: hsl(170, 80%, 40%);
+    --accent-hover: hsl(170, 80%, 35%);
+    --accent-glow: hsla(170, 80%, 40%, 0.18);
+    --success: hsl(145, 65%, 40%);
+    --danger: hsl(350, 70%, 50%);
+    --warning: hsl(45, 85%, 50%);
+    --border: hsla(180, 35%, 75%, 0.5);
+    --border-light: hsla(180, 25%, 82%, 0.4);
+    --shadow: 0 4px 20px hsla(180, 50%, 45%, 0.1);
+    --shadow-sm: 0 2px 10px hsla(180, 50%, 45%, 0.06);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --sidebar-gradient: linear-gradient(160deg, hsl(200, 60%, 75%) 0%, hsl(170, 55%, 70%) 50%, hsl(145, 50%, 72%) 100%);
+    --title-gradient: linear-gradient(90deg, hsl(200, 70%, 45%), hsl(160, 70%, 40%));
+}
+
+[data-theme="neon-light"] .sidebar {
+    background: var(--sidebar-gradient);
+}
+
+[data-theme="neon-light"] .nav-item {
+    color: hsla(0, 0%, 100%, 0.9);
+}
+
+[data-theme="neon-light"] .nav-item:hover {
+    background: hsla(0, 0%, 100%, 0.2);
+    color: hsl(0, 0%, 100%);
+}
+
+[data-theme="neon-light"] .nav-item.active {
+    background: hsla(0, 0%, 100%, 0.3);
+    color: hsl(0, 0%, 100%);
+    border-left-color: hsl(0, 0%, 100%);
+}
+
+[data-theme="neon-light"] .logo-text {
+    background: linear-gradient(90deg, hsl(0, 0%, 100%), hsla(0, 0%, 100%, 0.95));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+}
+
+[data-theme="neon-light"] .logo-subtitle {
+    color: hsla(0, 0%, 100%, 0.75);
+}
+
+[data-theme="neon-light"] .theme-mascot-wrapper {
+    background: hsla(0, 0%, 100%, 0.3);
+    border: 1px solid hsla(0, 0%, 100%, 0.45);
+    box-shadow: 0 4px 15px hsla(180, 50%, 40%, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+[data-theme="neon-light"] .theme-selector-wrapper {
+    border-top-color: hsla(0, 0%, 100%, 0.25);
+}
+
+[data-theme="neon-light"] .theme-main-btn {
+    background: hsla(0, 0%, 100%, 0.35);
+    border-color: hsla(0, 0%, 100%, 0.5);
+}
+
+[data-theme="neon-light"] .credential-card,
+[data-theme="neon-light"] .command-card {
+    backdrop-filter: blur(10px);
+    border: 1px solid hsla(180, 45%, 65%, 0.3);
+    box-shadow: 0 4px 20px hsla(180, 50%, 45%, 0.08);
+}
+
+[data-theme="neon-light"] .btn-primary {
+    background: linear-gradient(135deg, hsl(200, 70%, 50%), hsl(160, 70%, 45%));
+    box-shadow: 0 4px 15px hsla(180, 60%, 45%, 0.25);
+}
+
+[data-theme="neon-light"] .content {
+    background: linear-gradient(160deg, hsl(200, 45%, 92%) 0%, hsl(170, 40%, 91%) 50%, hsl(145, 38%, 92%) 100%);
+}
+
+/* ========== 各主题按钮适配 ========== */
+
+/* Light - 清爽天空蓝 */
+[data-theme="light"] .btn-primary {
+    background-color: hsl(200, 85%, 50%);
+    color: white;
+    box-shadow: 0 2px 8px hsla(200, 85%, 50%, 0.25);
+}
+[data-theme="light"] .btn-primary:hover {
+    background-color: hsl(200, 85%, 45%);
+    transform: translateY(-1px);
+}
+[data-theme="light"] .btn-ghost {
+    background-color: transparent;
+    border: 1px solid hsl(210, 20%, 85%);
+    color: hsl(210, 15%, 45%);
+}
+[data-theme="light"] .btn-ghost:hover {
+    border-color: hsl(200, 85%, 50%);
+    color: hsl(200, 85%, 45%);
+    background-color: hsl(200, 80%, 97%);
+}
+/* Light 删除按钮 - 默认低调灰色，悬停变红 */
+[data-theme="light"] .btn-danger {
+    background: transparent;
+    border: 1px solid hsl(210, 15%, 85%);
+    color: hsl(210, 10%, 55%);
+}
+[data-theme="light"] .btn-danger:hover {
+    background: hsl(0, 75%, 55%);
+    border-color: hsl(0, 75%, 55%);
+    color: white;
+    box-shadow: 0 4px 12px hsla(0, 75%, 55%, 0.3);
+}
+[data-theme="light"] .btn-sm {
+    background-color: hsl(210, 20%, 96%);
+    color: hsl(210, 15%, 40%);
+}
+[data-theme="light"] .btn-sm:hover {
+    background-color: hsl(210, 20%, 92%);
+    color: hsl(200, 85%, 45%);
+}
+
+/* Cute - 可爱圆润粉色 */
+[data-theme="cute"] .btn-primary,
+[data-theme="cute"] .btn-ghost,
+[data-theme="cute"] .btn-danger,
+[data-theme="cute"] .btn-sm {
+    border-radius: 20px;
+    font-weight: 600;
+}
+[data-theme="cute"] .btn-primary {
+    background-color: hsl(340, 80%, 65%);
+    color: white;
+    border: 2px solid hsl(340, 80%, 65%);
+}
+[data-theme="cute"] .btn-primary:hover {
+    background-color: hsl(340, 85%, 58%);
+    border-color: hsl(340, 85%, 58%);
+    transform: scale(1.03);
+}
+[data-theme="cute"] .btn-ghost {
+    background-color: hsl(340, 60%, 97%);
+    border: 2px solid hsl(340, 50%, 88%);
+    color: hsl(340, 50%, 35%);
+}
+[data-theme="cute"] .btn-ghost:hover {
+    background-color: hsl(340, 55%, 94%);
+    border-color: hsl(340, 70%, 70%);
+}
+/* Cute 删除按钮 - 默认柔和粉边框，悬停变实心粉红 */
+[data-theme="cute"] .btn-danger {
+    background: transparent;
+    border: 2px solid hsl(340, 30%, 80%);
+    color: hsl(340, 20%, 55%);
+}
+[data-theme="cute"] .btn-danger:hover {
+    background: hsl(350, 75%, 60%);
+    border-color: hsl(350, 75%, 60%);
+    color: white;
+    box-shadow: 0 4px 12px hsla(350, 75%, 60%, 0.35);
+    transform: scale(1.03);
+}
+[data-theme="cute"] .btn-sm {
+    background-color: hsl(30, 50%, 97%);
+    color: hsl(20, 40%, 40%);
+    border: 1px solid hsl(30, 40%, 90%);
+}
+[data-theme="cute"] .btn-sm:hover {
+    background-color: hsl(30, 45%, 92%);
+}
+
+/* Office - 专业直角深蓝 */
+[data-theme="office"] .btn-primary,
+[data-theme="office"] .btn-ghost,
+[data-theme="office"] .btn-danger,
+[data-theme="office"] .btn-sm {
+    border-radius: 3px;
+}
+[data-theme="office"] .btn-primary {
+    background-color: hsl(220, 70%, 40%);
+    color: white;
+}
+[data-theme="office"] .btn-primary:hover {
+    background-color: hsl(220, 70%, 35%);
+}
+[data-theme="office"] .btn-ghost {
+    background-color: transparent;
+    border: 1px solid hsl(220, 15%, 80%);
+    color: hsl(220, 20%, 35%);
+}
+[data-theme="office"] .btn-ghost:hover {
+    background-color: hsl(220, 15%, 97%);
+    border-color: hsl(220, 20%, 65%);
+}
+/* Office 删除按钮 - 默认专业灰边框，悬停变深红 */
+[data-theme="office"] .btn-danger {
+    background: transparent;
+    border: 1px solid hsl(220, 12%, 78%);
+    color: hsl(220, 10%, 50%);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.3px;
+}
+[data-theme="office"] .btn-danger:hover {
+    background: hsl(0, 65%, 45%);
+    border-color: hsl(0, 65%, 45%);
+    color: white;
+}
+[data-theme="office"] .btn-sm {
+    border: 1px solid hsl(220, 15%, 88%);
+    background-color: white;
+    color: hsl(220, 15%, 40%);
+}
+[data-theme="office"] .btn-sm:hover {
+    background-color: hsl(220, 15%, 96%);
+}
+
+/* Neon Light - 日间极光渐变 */
+[data-theme="neon-light"] .btn-primary {
+    background: linear-gradient(135deg, hsl(200, 80%, 50%) 0%, hsl(170, 75%, 45%) 100%);
+    color: white;
+    background-size: 200% auto;
+}
+[data-theme="neon-light"] .btn-primary:hover {
+    background-position: right center;
+    box-shadow: 0 4px 15px hsla(180, 70%, 45%, 0.35);
+}
+[data-theme="neon-light"] .btn-ghost {
+    background: white;
+    color: hsl(180, 70%, 38%);
+    border: 1px solid hsl(180, 60%, 70%);
+}
+[data-theme="neon-light"] .btn-ghost:hover {
+    background: linear-gradient(135deg, hsl(200, 50%, 97%) 0%, hsl(170, 45%, 96%) 100%);
+    border-color: hsl(180, 70%, 50%);
+}
+/* Neon Light 删除按钮 - 默认透明青边框，悬停发光红 */
+[data-theme="neon-light"] .btn-danger {
+    background: transparent;
+    border: 1px solid hsl(180, 40%, 70%);
+    color: hsl(180, 30%, 50%);
+}
+[data-theme="neon-light"] .btn-danger:hover {
+    background: transparent;
+    border-color: hsl(350, 80%, 55%);
+    color: hsl(350, 80%, 55%);
+    box-shadow: 0 0 12px hsla(350, 80%, 55%, 0.4);
+    text-shadow: 0 0 6px hsla(350, 80%, 55%, 0.5);
+}
+[data-theme="neon-light"] .btn-sm {
+    background: transparent;
+    color: hsl(170, 70%, 38%);
+}
+[data-theme="neon-light"] .btn-sm:hover {
+    color: hsl(170, 75%, 32%);
+    text-decoration: underline;
+}
+
+/* Cyberpunk Light - 日间赛博渐变+切角 */
+[data-theme="cyberpunk-light"] .btn-primary {
+    background: linear-gradient(90deg, hsl(280, 70%, 60%) 0%, hsl(220, 75%, 55%) 50%, hsl(190, 80%, 50%) 100%);
+    color: white;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    border-radius: 0;
+}
+[data-theme="cyberpunk-light"] .btn-primary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-2px);
+}
+[data-theme="cyberpunk-light"] .btn-ghost {
+    background: transparent;
+    border: 2px solid hsl(280, 60%, 65%);
+    color: hsl(280, 60%, 50%);
+    border-radius: 0;
+}
+[data-theme="cyberpunk-light"] .btn-ghost:hover {
+    background: hsla(280, 60%, 65%, 0.1);
+}
+/* Cyberpunk Light 删除按钮 - 默认紫边框切角，悬停变实心红 */
+[data-theme="cyberpunk-light"] .btn-danger {
+    background: transparent;
+    border: 2px solid hsl(280, 40%, 70%);
+    color: hsl(280, 30%, 50%);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    border-radius: 0;
+}
+[data-theme="cyberpunk-light"] .btn-danger:hover {
+    background: hsl(340, 85%, 55%);
+    border-color: hsl(340, 85%, 55%);
+    color: white;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+[data-theme="cyberpunk-light"] .btn-sm {
+    border: 1px solid hsl(280, 50%, 80%);
+    color: hsl(280, 60%, 50%);
+    background: white;
+    border-radius: 4px;
+}
+[data-theme="cyberpunk-light"] .btn-sm:hover {
+    border-color: hsl(280, 60%, 60%);
+    background: hsl(280, 50%, 98%);
+}
+
+/* Dark - 午夜深灰蓝紫 */
+[data-theme="dark"] .btn-primary {
+    background-color: hsl(240, 60%, 55%);
+    color: hsl(220, 15%, 92%);
+    border: 1px solid hsl(240, 55%, 48%);
+}
+[data-theme="dark"] .btn-primary:hover {
+    background-color: hsl(240, 55%, 48%);
+    color: white;
+}
+[data-theme="dark"] .btn-ghost {
+    background-color: hsl(220, 18%, 18%);
+    border: 1px solid hsl(220, 15%, 28%);
+    color: hsl(220, 12%, 65%);
+}
+[data-theme="dark"] .btn-ghost:hover {
+    background-color: hsl(220, 15%, 25%);
+    color: hsl(220, 12%, 85%);
+    border-color: hsl(220, 15%, 38%);
+}
+/* Dark 删除按钮 - 默认暗灰边框，悬停变暗红发光 */
+[data-theme="dark"] .btn-danger {
+    background: transparent;
+    border: 1px solid hsl(220, 15%, 30%);
+    color: hsl(220, 10%, 50%);
+}
+[data-theme="dark"] .btn-danger:hover {
+    background: hsla(0, 70%, 50%, 0.2);
+    border-color: hsl(0, 65%, 50%);
+    color: hsl(0, 75%, 65%);
+    box-shadow: 0 0 12px hsla(0, 70%, 50%, 0.25);
+}
+[data-theme="dark"] .btn-sm {
+    background-color: transparent;
+    color: hsl(220, 12%, 55%);
+}
+[data-theme="dark"] .btn-sm:hover {
+    color: hsl(220, 12%, 80%);
+    background-color: hsl(220, 15%, 18%);
+}
+
+/* Neon - 夜间极光发光 */
+[data-theme="neon"] .btn-primary {
+    background-color: hsl(230, 30%, 10%);
+    color: hsl(175, 90%, 55%);
+    border: 1px solid hsl(175, 90%, 50%);
+    box-shadow: 0 0 12px hsla(175, 90%, 50%, 0.35), inset 0 0 12px hsla(175, 90%, 50%, 0.08);
+    text-shadow: 0 0 8px hsla(175, 90%, 50%, 0.5);
+}
+[data-theme="neon"] .btn-primary:hover {
+    background-color: hsla(175, 90%, 50%, 0.12);
+    box-shadow: 0 0 20px hsla(175, 90%, 50%, 0.5), inset 0 0 18px hsla(175, 90%, 50%, 0.12);
+}
+[data-theme="neon"] .btn-ghost {
+    background-color: transparent;
+    border: 1px solid hsl(160, 80%, 45%);
+    color: hsl(160, 80%, 50%);
+}
+[data-theme="neon"] .btn-ghost:hover {
+    box-shadow: 0 0 10px hsla(160, 80%, 45%, 0.35);
+    background-color: hsla(160, 80%, 45%, 0.08);
+}
+/* Neon 删除按钮 - 默认暗青边框，悬停霓虹红发光 */
+[data-theme="neon"] .btn-danger {
+    background: transparent;
+    border: 1px solid hsl(170, 40%, 30%);
+    color: hsl(170, 30%, 45%);
+}
+[data-theme="neon"] .btn-danger:hover {
+    background: transparent;
+    border-color: hsl(350, 100%, 55%);
+    color: hsl(350, 100%, 60%);
+    box-shadow: 0 0 15px hsla(350, 100%, 55%, 0.5), inset 0 0 8px hsla(350, 100%, 55%, 0.15);
+    text-shadow: 0 0 8px hsl(350, 100%, 55%);
+}
+[data-theme="neon"] .btn-sm {
+    color: hsl(170, 70%, 55%);
+}
+[data-theme="neon"] .btn-sm:hover {
+    color: hsl(170, 75%, 65%);
+    text-shadow: 0 0 6px hsl(170, 70%, 50%);
+}
+
+/* Cyberpunk - 夜间赛博硬投影 */
+[data-theme="cyberpunk"] .btn-primary {
+    background-color: hsl(50, 95%, 55%);
+    color: hsl(0, 0%, 5%);
+    border: 2px solid hsl(0, 0%, 5%);
+    box-shadow: 4px 4px 0px hsl(300, 90%, 50%);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 0;
+}
+[data-theme="cyberpunk"] .btn-primary:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px hsl(300, 90%, 50%);
+}
+[data-theme="cyberpunk"] .btn-ghost {
+    background-color: hsl(0, 0%, 5%);
+    color: hsl(185, 90%, 55%);
+    border: 2px solid hsl(185, 90%, 55%);
+    box-shadow: 4px 4px 0px hsl(185, 90%, 55%);
+    border-radius: 0;
+    font-family: monospace;
+}
+[data-theme="cyberpunk"] .btn-ghost:hover {
+    background-color: hsl(185, 90%, 55%);
+    color: hsl(0, 0%, 5%);
+    box-shadow: 2px 2px 0px white;
+}
+/* Cyberpunk 删除按钮 - 默认暗紫边框切角，悬停赛博红+硬阴影 */
+[data-theme="cyberpunk"] .btn-danger {
+    background: transparent;
+    border: 2px solid hsl(260, 30%, 35%);
+    color: hsl(260, 20%, 55%);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    border-radius: 0;
+}
+[data-theme="cyberpunk"] .btn-danger:hover {
+    background: hsl(345, 100%, 50%);
+    border-color: hsl(345, 100%, 50%);
+    color: #000;
+    font-weight: 700;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    box-shadow: 3px 3px 0px hsl(50, 100%, 50%);
+}
+[data-theme="cyberpunk"] .btn-sm {
+    background: hsl(260, 25%, 12%);
+    border: 1px solid hsl(260, 20%, 35%);
+    color: hsl(260, 10%, 75%);
+    border-radius: 0;
+    font-family: monospace;
+}
+[data-theme="cyberpunk"] .btn-sm:hover {
+    border-color: hsl(50, 95%, 55%);
+    color: hsl(50, 95%, 55%);
+}
+
+/* ========== 狗狗吉祥物主题适配 ========== */
+/* Light - 天蓝色狗狗 */
+[data-theme="light"] .dog-face,
+[data-theme="light"] .dog-ear {
+    background: hsl(200, 85%, 55%);
+}
+
+/* Cute - 粉橙色柯基 */
+[data-theme="cute"] .dog-face,
+[data-theme="cute"] .dog-ear {
+    background: hsl(25, 90%, 65%);
+}
+[data-theme="cute"] .dog-ear::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 40%;
+    background: hsl(25, 85%, 75%);
+    border-radius: 50%;
+}
+
+/* Office - 深蓝专业狗 */
+[data-theme="office"] .dog-face,
+[data-theme="office"] .dog-ear {
+    background: hsl(220, 70%, 45%);
+}
+[data-theme="office"] .dog-face {
+    border-radius: 40% 40% 35% 35%;
+}
+
+/* Neon Light - 青色发光狗 */
+[data-theme="neon-light"] .dog-face,
+[data-theme="neon-light"] .dog-ear {
+    background: hsl(175, 80%, 45%);
+}
+[data-theme="neon-light"] .dog-face {
+    box-shadow: 0 0 15px hsla(175, 80%, 50%, 0.4);
+}
+
+/* Cyberpunk Light - 紫粉渐变狗 */
+[data-theme="cyberpunk-light"] .dog-face {
+    background: linear-gradient(135deg, hsl(280, 70%, 60%), hsl(200, 80%, 55%));
+}
+[data-theme="cyberpunk-light"] .dog-ear {
+    background: hsl(280, 70%, 60%);
+}
+[data-theme="cyberpunk-light"] .dog-face {
+    border-radius: 35% 35% 40% 40%;
+}
+
+/* Dark - 紫色夜间狗 */
+[data-theme="dark"] .dog-face,
+[data-theme="dark"] .dog-ear {
+    background: hsl(250, 60%, 55%);
+}
+
+/* Neon - 霓虹发光狗 */
+[data-theme="neon"] .dog-face,
+[data-theme="neon"] .dog-ear {
+    background: hsl(175, 90%, 50%);
+}
+[data-theme="neon"] .dog-face {
+    box-shadow: 0 0 20px hsla(175, 90%, 50%, 0.6);
+}
+[data-theme="neon"] .dog-eye {
+    background: hsl(330, 100%, 55%);
+    box-shadow: 0 0 8px hsl(330, 100%, 55%);
+}
+
+/* Cyberpunk - 赛博黄色机械狗 */
+[data-theme="cyberpunk"] .dog-face,
+[data-theme="cyberpunk"] .dog-ear {
+    background: hsl(50, 95%, 55%);
+}
+[data-theme="cyberpunk"] .dog-face {
+    border-radius: 30% 30% 40% 40%;
+    box-shadow: 3px 3px 0px hsl(300, 90%, 50%);
+}
+[data-theme="cyberpunk"] .dog-eye {
+    background: hsl(0, 80%, 50%);
+    width: 10px;
+    height: 4px;
+    border-radius: 0;
+}
+[data-theme="cyberpunk"] .dog-nose {
+    background: hsl(0, 0%, 10%);
 }
 
 /* ========== 主题选择器 ========== */
