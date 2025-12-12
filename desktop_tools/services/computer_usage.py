@@ -182,6 +182,25 @@ class ComputerUsageService:
             return True
         return False
 
+    def reorder_commands(self, tab_id: str, command_ids: List[str]) -> bool:
+        """根据前端传入的ID顺序重排指定页签下的命令块"""
+        all_cmds = self._load_commands()
+        tab_cmds = [c for c in all_cmds if c.tab_id == tab_id]
+        cmd_map = {c.id: c for c in tab_cmds}
+
+        for order, cid in enumerate(command_ids):
+            if cid in cmd_map:
+                cmd_map[cid].order = order
+
+        current_order = len(command_ids)
+        for cmd in sorted(tab_cmds, key=lambda c: c.order):
+            if cmd.id not in command_ids:
+                cmd.order = current_order
+                current_order += 1
+
+        self._save_commands(all_cmds)
+        return True
+
     def import_commands_txt(self, text: str) -> Dict:
         """从原始txt格式批量导入命令块"""
         blocks = []

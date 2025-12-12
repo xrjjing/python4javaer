@@ -49,6 +49,9 @@ class Api:
     def delete_command(self, id: str):
         return self.computer_usage.delete_command(id)
 
+    def reorder_commands(self, tab_id: str, command_ids: List[str]):
+        return self.computer_usage.reorder_commands(tab_id, command_ids)
+
     def import_commands(self, text: str):
         return self.computer_usage.import_commands_txt(text)
 

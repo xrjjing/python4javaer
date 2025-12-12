@@ -496,11 +496,11 @@ function onCommandDragOver(e) {
     }
 }
 
-function onCommandDrop(e) {
+async function onCommandDrop(e) {
     e.preventDefault();
     const target = e.target.closest('.command-card');
     if (target && draggedCommandId && target.dataset.cmdId !== draggedCommandId) {
-        reorderCommands(draggedCommandId, target.dataset.cmdId);
+        await reorderCommands(draggedCommandId, target.dataset.cmdId);
     }
     document.querySelectorAll('.command-card').forEach(el => el.classList.remove('drag-over'));
 }
@@ -512,17 +512,28 @@ function onCommandDragEnd(e) {
     });
 }
 
-function reorderCommands(draggedId, targetId) {
-    // 本地重排序（仅UI，后端暂不支持命令排序API）
+async function reorderCommands(draggedId, targetId) {
     const currentCmds = allCommands.filter(c => c.tab_id === currentTabId);
     const draggedIdx = currentCmds.findIndex(c => c.id === draggedId);
     const targetIdx = currentCmds.findIndex(c => c.id === targetId);
+    if (draggedIdx === -1 || targetIdx === -1) return;
 
-    if (draggedIdx !== -1 && targetIdx !== -1) {
-        const [dragged] = currentCmds.splice(draggedIdx, 1);
-        currentCmds.splice(targetIdx, 0, dragged);
-        renderCommands(currentCmds);
-    }
+    const [dragged] = currentCmds.splice(draggedIdx, 1);
+    currentCmds.splice(targetIdx, 0, dragged);
+
+    currentCmds.forEach((cmd, idx) => {
+        cmd.order = idx;
+    });
+
+    allCommands.sort((a, b) => {
+        if (a.tab_id === b.tab_id) {
+            return (a.order || 0) - (b.order || 0);
+        }
+        return a.tab_id < b.tab_id ? -1 : 1;
+    });
+
+    renderCommands(currentCmds);
+    await pywebview.api.reorder_commands(currentTabId, currentCmds.map(c => c.id));
 }
 
 function filterCommands() {
