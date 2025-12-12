@@ -11,15 +11,15 @@ permissions:
 
 jobs:
   build-toolbox:
-    name: Build 本地工具箱
+    name: Build 狗狗百宝箱
     strategy:
       matrix:
         include:
           - os: macos-latest
-            artifact: 本地工具箱-mac
+            artifact: 狗狗百宝箱-mac
             sep: ':'
           - os: windows-latest
-            artifact: 本地工具箱-win
+            artifact: 狗狗百宝箱-win
             sep: ';'
 
     runs-on: ${{ matrix.os }}
@@ -38,7 +38,7 @@ jobs:
       - name: Build
         working-directory: desktop_tools
         run: |
-          pyinstaller --onedir --windowed --name "本地工具箱" --add-data "web${{ matrix.sep }}web" --add-data "services${{ matrix.sep }}services" main.py
+          pyinstaller --onedir --windowed --name "狗狗百宝箱" --add-data "web${{ matrix.sep }}web" --add-data "services${{ matrix.sep }}services" main.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
