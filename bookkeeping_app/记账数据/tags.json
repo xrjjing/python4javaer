@@ -1,0 +1,122 @@
+[
+  {
+    "id": "tag_breakfast",
+    "name": "早餐",
+    "category_id": "exp_food",
+    "is_system": true
+  },
+  {
+    "id": "tag_lunch",
+    "name": "午餐",
+    "category_id": "exp_food",
+    "is_system": true
+  },
+  {
+    "id": "tag_dinner",
+    "name": "晚餐",
+    "category_id": "exp_food",
+    "is_system": true
+  },
+  {
+    "id": "tag_supper",
+    "name": "夜宵",
+    "category_id": "exp_food",
+    "is_system": true
+  },
+  {
+    "id": "tag_takeout",
+    "name": "外卖",
+    "category_id": "exp_food",
+    "is_system": true
+  },
+  {
+    "id": "tag_dinein",
+    "name": "堂食",
+    "category_id": "exp_food",
+    "is_system": true
+  },
+  {
+    "id": "tag_milktea",
+    "name": "奶茶",
+    "category_id": "exp_snack",
+    "is_system": true
+  },
+  {
+    "id": "tag_dessert",
+    "name": "甜品",
+    "category_id": "exp_snack",
+    "is_system": true
+  },
+  {
+    "id": "tag_fruit",
+    "name": "水果",
+    "category_id": "exp_snack",
+    "is_system": true
+  },
+  {
+    "id": "tag_drink",
+    "name": "饮料",
+    "category_id": "exp_snack",
+    "is_system": true
+  },
+  {
+    "id": "tag_gym",
+    "name": "健身房",
+    "category_id": "exp_sport",
+    "is_system": true
+  },
+  {
+    "id": "tag_running",
+    "name": "跑步",
+    "category_id": "exp_sport",
+    "is_system": true
+  },
+  {
+    "id": "tag_swimming",
+    "name": "游泳",
+    "category_id": "exp_sport",
+    "is_system": true
+  },
+  {
+    "id": "tag_ball",
+    "name": "球类",
+    "category_id": "exp_sport",
+    "is_system": true
+  },
+  {
+    "id": "tag_subway",
+    "name": "地铁",
+    "category_id": "exp_transport",
+    "is_system": true
+  },
+  {
+    "id": "tag_bus",
+    "name": "公交",
+    "category_id": "exp_transport",
+    "is_system": true
+  },
+  {
+    "id": "tag_taxi",
+    "name": "打车",
+    "category_id": "exp_transport",
+    "is_system": true
+  },
+  {
+    "id": "tag_fuel",
+    "name": "加油",
+    "category_id": "exp_transport",
+    "is_system": true
+  },
+  {
+    "id": "tag_necessary",
+    "name": "必要",
+    "category_id": "",
+    "is_system": true
+  },
+  {
+    "id": "tag_impulse",
+    "name": "冲动消费",
+    "category_id": "",
+    "is_system": true
+  }
+]

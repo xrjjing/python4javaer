@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1765513637967",
+    "type": "expense",
+    "amount": 15,
+    "category_id": "exp_food",
+    "account_id": "acc_cash",
+    "ledger_id": "",
+    "date": "2025-12-12",
+    "time": "12:27",
+    "note": "",
+    "tags": [],
+    "created_at": "2025-12-12T12:27:17.967099",
+    "updated_at": "2025-12-12T12:27:17.967099"
+  }
+]

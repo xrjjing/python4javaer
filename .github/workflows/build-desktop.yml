@@ -1,4 +1,4 @@
-name: Build Desktop App
+name: Build Desktop Apps
 
 on:
   push:
@@ -6,15 +6,21 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  build:
+  build-toolbox:
+    name: Build 本地工具箱
     strategy:
       matrix:
         include:
           - os: macos-latest
             artifact: 本地工具箱-mac
+            sep: ':'
           - os: windows-latest
             artifact: 本地工具箱-win
+            sep: ';'
 
     runs-on: ${{ matrix.os }}
 
@@ -27,23 +33,77 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          pip install pyinstaller pywebview
+        run: pip install pyinstaller pywebview
 
-      - name: Build (macOS)
-        if: runner.os == 'macOS'
+      - name: Build
         working-directory: desktop_tools
         run: |
-          pyinstaller --onedir --windowed --name "本地工具箱" --add-data "web:web" main.py
-
-      - name: Build (Windows)
-        if: runner.os == 'Windows'
-        working-directory: desktop_tools
-        run: |
-          pyinstaller --onedir --windowed --name "本地工具箱" --add-data "web;web" main.py
+          pyinstaller --onedir --windowed --name "本地工具箱" --add-data "web${{ matrix.sep }}web" --add-data "services${{ matrix.sep }}services" main.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
           path: desktop_tools/dist/
+
+  build-bookkeeping:
+    name: Build 喵喵记账
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            artifact: 喵喵记账-mac
+            sep: ':'
+          - os: windows-latest
+            artifact: 喵喵记账-win
+            sep: ';'
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyinstaller pywebview
+
+      - name: Build
+        working-directory: bookkeeping_app
+        run: |
+          pyinstaller --onedir --windowed --name "喵喵记账" --add-data "web${{ matrix.sep }}web" --add-data "services${{ matrix.sep }}services" main.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: bookkeeping_app/dist/
+
+  release:
+    name: Create Release
+    needs: [build-toolbox, build-bookkeeping]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create archives
+        run: |
+          cd artifacts
+          for dir in */; do
+            name="${dir%/}"
+            zip -r "${name}.zip" "$dir"
+          done
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: artifacts/*.zip
+          generate_release_notes: true

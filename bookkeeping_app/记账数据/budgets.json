@@ -1,0 +1,11 @@
+[
+  {
+    "id": "budget_1765504502",
+    "name": "餐饮",
+    "type": "total",
+    "category_id": "",
+    "amount": 1000,
+    "period": "month",
+    "ledger_id": ""
+  }
+]

@@ -1,0 +1,212 @@
+[
+  {
+    "id": "exp_food",
+    "name": "餐饮",
+    "icon": "🍜",
+    "color": "#FFB7B2",
+    "type": "expense",
+    "parent_id": "",
+    "is_system": true,
+    "order": 0
+  },
+  {
+    "id": "exp_transport",
+    "name": "交通",
+    "icon": "🚌",
+    "color": "#B5EAD7",
+    "type": "expense",
+    "parent_id": "",
+    "is_system": true,
+    "order": 1
+  },
+  {
+    "id": "exp_shopping",
+    "name": "购物",
+    "icon": "🛍️",
+    "color": "#C7CEEA",
+    "type": "expense",
+    "parent_id": "",
+    "is_system": true,
+    "order": 2
+  },
+  {
+    "id": "exp_entertainment",
+    "name": "娱乐",
+    "icon": "🎮",
+    "color": "#FFDAC1",
+    "type": "expense",
+    "parent_id": "",
+    "is_system": true,
+    "order": 3
+  },
+  {
+    "id": "exp_housing",
+    "name": "居家",
+    "icon": "🏠",
+    "color": "#E0BBE4",
+    "type": "expense",
+    "parent_id": "",
+    "is_system": true,
+    "order": 4
+  },
+  {
+    "id": "exp_medical",
+    "name": "医疗",
+    "icon": "💊",
+    "color": "#FF9AA2",
+    "type": "expense",
+    "parent_id": "",
+    "is_system": true,
+    "order": 5
+  },
+  {
+    "id": "exp_education",
+    "name": "教育",
+    "icon": "📚",
+    "color": "#A8D8EA",
+    "type": "expense",
+    "parent_id": "",
+    "is_system": true,
+    "order": 6
+  },
+  {
+    "id": "exp_social",
+    "name": "人情",
+    "icon": "🎁",
+    "color": "#FFD93D",
+    "type": "expense",
+    "parent_id": "",
+    "is_system": true,
+    "order": 7
+  },
+  {
+    "id": "exp_snack",
+    "name": "零食",
+    "icon": "🍪",
+    "color": "#F6C6C6",
+    "type": "expense",
+    "parent_id": "",
+    "is_system": true,
+    "order": 8
+  },
+  {
+    "id": "exp_sport",
+    "name": "运动",
+    "icon": "⚽",
+    "color": "#98D8AA",
+    "type": "expense",
+    "parent_id": "",
+    "is_system": true,
+    "order": 9
+  },
+  {
+    "id": "exp_other",
+    "name": "其他",
+    "icon": "📦",
+    "color": "#D4D4D4",
+    "type": "expense",
+    "parent_id": "",
+    "is_system": true,
+    "order": 99
+  },
+  {
+    "id": "inc_salary",
+    "name": "工资",
+    "icon": "💰",
+    "color": "#52B788",
+    "type": "income",
+    "parent_id": "",
+    "is_system": true,
+    "order": 0
+  },
+  {
+    "id": "inc_bonus",
+    "name": "奖金",
+    "icon": "🎉",
+    "color": "#95D5B2",
+    "type": "income",
+    "parent_id": "",
+    "is_system": true,
+    "order": 1
+  },
+  {
+    "id": "inc_freelance",
+    "name": "兼职",
+    "icon": "💼",
+    "color": "#74C69D",
+    "type": "income",
+    "parent_id": "",
+    "is_system": true,
+    "order": 2
+  },
+  {
+    "id": "inc_investment",
+    "name": "投资",
+    "icon": "📈",
+    "color": "#40916C",
+    "type": "income",
+    "parent_id": "",
+    "is_system": true,
+    "order": 3
+  },
+  {
+    "id": "inc_gift",
+    "name": "红包",
+    "icon": "🧧",
+    "color": "#FF6B6B",
+    "type": "income",
+    "parent_id": "",
+    "is_system": true,
+    "order": 4
+  },
+  {
+    "id": "inc_refund",
+    "name": "退款",
+    "icon": "↩️",
+    "color": "#4ECDC4",
+    "type": "income",
+    "parent_id": "",
+    "is_system": true,
+    "order": 5
+  },
+  {
+    "id": "inc_other",
+    "name": "其他",
+    "icon": "📦",
+    "color": "#D4D4D4",
+    "type": "income",
+    "parent_id": "",
+    "is_system": true,
+    "order": 99
+  },
+  {
+    "id": "exp_1765503844",
+    "name": "宠物",
+    "icon": "🐶",
+    "color": "#B5EAD7",
+    "type": "expense",
+    "parent_id": "",
+    "is_system": false,
+    "order": 10
+  },
+  {
+    "id": "exp_1765504452",
+    "name": "宠物",
+    "icon": "🐶",
+    "color": "#98D8AA",
+    "type": "expense",
+    "parent_id": "",
+    "is_system": false,
+    "order": 11
+  },
+  {
+    "id": "inc_1765504481",
+    "name": "游戏",
+    "icon": "🎮",
+    "color": "#E0BBE4",
+    "type": "income",
+    "parent_id": "",
+    "is_system": false,
+    "order": 6
+  }
+]

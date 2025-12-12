@@ -1,0 +1,16 @@
+[
+  {
+    "id": "acc_cash",
+    "name": "现金",
+    "type": "cash",
+    "icon": "💳",
+    "color": "#B5EAD7",
+    "balance": 9985,
+    "credit_limit": 0,
+    "billing_day": 1,
+    "repayment_day": 15,
+    "note": "",
+    "is_default": true,
+    "order": 0
+  }
+]

@@ -99,6 +99,27 @@
   - 配合 log-detective.html 提供日志分析功能
   - 详见 `log_detective_service/09_项目说明.md`
 
+- `desktop_tools/`
+  本地工具箱 - 桌面应用（PyWebView + HTML/CSS/JS）：
+  - 轻量级本地桌面工具合集
+  - 前端使用原生 HTML/CSS/JS，无框架依赖
+  - 后端通过 PyWebView 提供 Python API
+  - 支持深色模式、响应式布局
+  - 可通过 PyInstaller 打包为独立可执行程序
+  - 运行方式：`python desktop_tools/main.py`
+
+- `bookkeeping_app/`
+  喵喵记账 - 独立桌面应用（PyWebView + HTML/CSS/JS）：
+  - 功能完整的个人记账应用
+  - 支持多账本、多账户、分类预算管理
+  - 收支统计、趋势分析、资产管理
+  - 数据完整性保护（关联删除/迁移）
+  - 预算超支预警系统
+  - 深色模式、响应式设计
+  - 数据本地存储，隐私安全
+  - 运行方式：`python bookkeeping_app/main.py`
+  - 打包方式：`python bookkeeping_app/build.py`
+
 - `网关_RBAC_后端联调说明.md`
   五服务联调指南，包含完整的端到端练习流程。
 
