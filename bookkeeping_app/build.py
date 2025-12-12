@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""打包脚本 - 喵喵记账"""
+"""打包脚本 - 喵喵存金罐"""
 import subprocess
 import sys
 import platform
@@ -9,7 +9,7 @@ from pathlib import Path
 
 def cleanup(root):
     """清理打包临时文件"""
-    for name in ["build", "喵喵记账.spec"]:
+    for name in ["build", "喵喵存金罐.spec"]:
         p = root / name
         if p.exists():
             if p.is_dir():
@@ -38,7 +38,7 @@ def build():
         "--onedir",
         "--windowed",
         "-y",
-        "--name", "喵喵记账",
+        "--name", "喵喵存金罐",
         # 添加前端资源
         "--add-data", f"{web_dir}{sep}web",
         # 添加 services 模块
@@ -78,7 +78,7 @@ def build():
     cleanup(root)
 
     # 显示打包大小
-    output_dir = dist_dir / "喵喵记账"
+    output_dir = dist_dir / "喵喵存金罐"
     if output_dir.exists():
         total_size = sum(f.stat().st_size for f in output_dir.rglob('*') if f.is_file())
         print(f"📊 打包大小: {total_size / 1024 / 1024:.1f} MB")

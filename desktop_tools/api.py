@@ -1,4 +1,5 @@
 """PyWebView API - 暴露给前端的接口"""
+import json
 from pathlib import Path
 from typing import List
 
@@ -7,6 +8,7 @@ from services import ComputerUsageService, NodeConverterService
 
 class Api:
     def __init__(self, data_dir: Path):
+        self.data_dir = data_dir
         self.computer_usage = ComputerUsageService(data_dir / "电脑使用")
         self.node_converter = NodeConverterService(data_dir / "转化节点")
 
@@ -90,3 +92,34 @@ class Api:
 
     def delete_node(self, id: str):
         return self.node_converter.delete_node(id)
+
+    # ========== 系统配置 ==========
+    def get_theme(self):
+        """获取保存的主题设置"""
+        config_path = self.data_dir / "config.json"
+        if config_path.exists():
+            try:
+                with open(config_path, "r", encoding="utf-8") as f:
+                    config = json.load(f)
+                    return config.get("theme", "dark")
+            except Exception:
+                pass
+        return "dark"
+
+    def save_theme(self, theme: str):
+        """保存主题设置"""
+        config_path = self.data_dir / "config.json"
+        config = {}
+        if config_path.exists():
+            try:
+                with open(config_path, "r", encoding="utf-8") as f:
+                    config = json.load(f)
+            except Exception:
+                pass
+        config["theme"] = theme
+        try:
+            with open(config_path, "w", encoding="utf-8") as f:
+                json.dump(config, f, ensure_ascii=False, indent=2)
+            return True
+        except Exception:
+            return False

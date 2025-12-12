@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""喵喵记账 - 主入口"""
+"""喵喵存金罐 - 主入口"""
 import sys
 from pathlib import Path
 
@@ -34,7 +34,7 @@ def main():
 
     web_dir = get_base_path() / "web"
     webview.create_window(
-        title="喵喵记账",
+        title="喵喵存金罐",
         url=str(web_dir / "index.html"),
         js_api=api,
         width=1100,

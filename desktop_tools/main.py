@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""桌面工具 - 主入口"""
+"""狗狗百宝箱 - 主入口"""
 
 import sys
 from pathlib import Path
@@ -26,7 +26,7 @@ def get_data_dir():
     if is_bundled():
         # 打包后使用用户主目录下的文件夹
         home = Path.home()
-        data_dir = home / ".local_toolbox"
+        data_dir = home / ".dog_toolbox"
         data_dir.mkdir(exist_ok=True)
         return data_dir
     else:
@@ -40,7 +40,7 @@ def main():
 
     web_dir = get_base_path() / "web"
     webview.create_window(
-        title="本地工具箱",
+        title="狗狗百宝箱",
         url=str(web_dir / "index.html"),
         js_api=api,
         width=1200,

@@ -109,7 +109,7 @@
   - 运行方式：`python desktop_tools/main.py`
 
 - `bookkeeping_app/`
-  喵喵记账 - 独立桌面应用（PyWebView + HTML/CSS/JS）：
+  喵喵存金罐 - 独立桌面应用（PyWebView + HTML/CSS/JS）：
   - 功能完整的个人记账应用
   - 支持多账本、多账户、分类预算管理
   - 收支统计、趋势分析、资产管理

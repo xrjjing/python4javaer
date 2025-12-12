@@ -9,6 +9,7 @@
 - 前端添加图表 RAF 管理（state.chartRAF）和 cancelPendingChartRAF() 函数
 
 ### Changed
+- 狗狗工具箱重命名为"狗狗百宝箱"：统一 main.py 窗口标题、数据目录(.dog_toolbox)、index.html 标题/Logo、build.py 打包名；副标题改为 Dog Toolbox
 - 将记账应用(bookkeeping_app)从 desktop_tools 移至根目录，成为独立项目
 - 更新 GitHub Actions workflow 支持同时打包"本地工具箱"和"喵喵记账"两个桌面应用
 - 更新 README.md 添加 desktop_tools 和 bookkeeping_app 目录说明

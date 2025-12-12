@@ -1,0 +1,36 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: Warm Coin/Sun Circle -->
+  <circle cx="256" cy="256" r="224" fill="#FF9A9E" stroke="#FFF" stroke-width="8"/>
+  <circle cx="256" cy="256" r="210" stroke="#FECFEF" stroke-width="4" stroke-dasharray="20 10" opacity="0.5"/>
+
+  <!-- Cat Face -->
+  <ellipse cx="256" cy="280" rx="150" ry="130" fill="#FFF5E1"/>
+
+  <!-- Ears -->
+  <path d="M140 200L120 110L200 160" fill="#FFF5E1" stroke="#5D4037" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M372 200L392 110L312 160" fill="#FFF5E1" stroke="#5D4037" stroke-width="6" stroke-linejoin="round"/>
+
+  <!-- Inner Ears (Pink) -->
+  <path d="M145 180L135 130L185 165" fill="#FFB7B2"/>
+  <path d="M367 180L377 130L327 165" fill="#FFB7B2"/>
+
+  <!-- Eyes -->
+  <circle cx="200" cy="250" r="10" fill="#5D4037"/>
+  <circle cx="312" cy="250" r="10" fill="#5D4037"/>
+
+  <!-- Cheeks -->
+  <ellipse cx="160" cy="280" rx="15" ry="8" fill="#FFB7B2" opacity="0.6"/>
+  <ellipse cx="352" cy="280" rx="15" ry="8" fill="#FFB7B2" opacity="0.6"/>
+
+  <!-- Mouth -->
+  <path d="M236 280Q256 290 276 280" stroke="#5D4037" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Gold Coin held by paws -->
+  <circle cx="256" cy="380" r="55" fill="#FFD700" stroke="#E6AC00" stroke-width="3"/>
+  <!-- Yen/Money Symbol on Coin -->
+  <path d="M241 365H271M241 375H271M256 360V390" stroke="#B38600" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Paws -->
+  <ellipse cx="210" cy="380" rx="20" ry="25" fill="#FFF5E1" stroke="#5D4037" stroke-width="3"/>
+  <ellipse cx="302" cy="380" rx="20" ry="25" fill="#FFF5E1" stroke="#5D4037" stroke-width="3"/>
+</svg>

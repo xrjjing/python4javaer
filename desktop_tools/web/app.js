@@ -52,9 +52,15 @@ const THEME_MASCOTS = {
     'dark': '🌙', 'neon': '🌈', 'cyberpunk': '🤖'
 };
 
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    setTheme(savedTheme);
+async function initTheme() {
+    // 优先从后端获取主题，回退到 localStorage
+    let savedTheme = 'dark';
+    try {
+        savedTheme = await pywebview.api.get_theme();
+    } catch (e) {
+        savedTheme = localStorage.getItem('theme') || 'dark';
+    }
+    setTheme(savedTheme, false);
 
     // 点击外部关闭菜单
     window.addEventListener('click', (e) => {
@@ -78,11 +84,15 @@ function selectTheme(theme) {
     document.getElementById('themeMenu').classList.remove('active');
 }
 
-function setTheme(theme) {
+function setTheme(theme, save = true) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
     updateThemeIcon(theme);
     updateThemeSelector(theme);
+    // 保存到后端
+    if (save) {
+        pywebview.api.save_theme(theme).catch(() => {});
+    }
 }
 
 function updateThemeIcon(theme) {

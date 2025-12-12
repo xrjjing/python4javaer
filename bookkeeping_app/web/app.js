@@ -68,9 +68,15 @@ const THEME_ICONS = {
     'dark': '🌙', 'neon': '🌃', 'cyberpunk': '🤖'
 };
 
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'cute';
-    setTheme(savedTheme);
+async function initTheme() {
+    // 优先从后端获取主题，回退到 localStorage
+    let savedTheme = 'cute';
+    try {
+        savedTheme = await pywebview.api.get_theme();
+    } catch (e) {
+        savedTheme = localStorage.getItem('theme') || 'cute';
+    }
+    setTheme(savedTheme, false);
 
     // 点击外部关闭菜单
     window.addEventListener('click', (e) => {
@@ -94,12 +100,16 @@ function selectTheme(theme) {
     document.getElementById('themeMenu').classList.remove('active');
 }
 
-function setTheme(theme) {
+function setTheme(theme, save = true) {
     document.documentElement.setAttribute('data-theme', theme);
     document.body.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
     updateThemeIcon(theme);
     updateThemeSelector(theme);
+    // 保存到后端
+    if (save) {
+        pywebview.api.save_theme(theme).catch(() => {});
+    }
 }
 
 function updateThemeIcon(theme) {
@@ -1751,7 +1761,7 @@ async function doExport() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `喵喵记账_${type === 'records' ? '明细' : '汇总'}_${start}_${end}.csv`;
+        a.download = `喵喵存金罐_${type === 'records' ? '明细' : '汇总'}_${start}_${end}.csv`;
         a.click();
         URL.revokeObjectURL(url);
 

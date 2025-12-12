@@ -1,0 +1,28 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: Deep Tech Squircle -->
+  <rect x="32" y="32" width="448" height="448" rx="100" fill="#0F172A" stroke="#334155" stroke-width="8"/>
+
+  <!-- Subtle Grid Background -->
+  <path d="M32 256H480M256 32V480" stroke="#1E293B" stroke-width="4"/>
+
+  <!-- Dog Head Base -->
+  <path d="M156 380L136 220L196 140L256 160L316 140L376 220L356 380C356 380 316 420 256 420C196 420 156 380 156 380Z" fill="#F8FAFC"/>
+
+  <!-- Ears (Metallic/Grey) -->
+  <path d="M136 220L116 120L196 140" fill="#94A3B8"/>
+  <path d="M376 220L396 120L316 140" fill="#94A3B8"/>
+
+  <!-- Tech Visor (Hacker Glasses) -->
+  <path d="M146 240H366L356 290H266L256 300L246 290H156L146 240Z" fill="#1E293B"/>
+
+  <!-- Glowing Eyes/Data on Visor -->
+  <rect x="170" y="255" width="50" height="15" rx="2" fill="#10B981" />
+  <rect x="290" y="255" width="50" height="15" rx="2" fill="#10B981" />
+
+  <!-- Nose & Mouth -->
+  <path d="M241 330H271L256 350L241 330Z" fill="#0F172A"/>
+  <path d="M256 350V370" stroke="#0F172A" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Tech Accent: Lightning Bolt / Power Symbol -->
+  <path d="M400 80L420 120H390L410 160" stroke="#06B6D4" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

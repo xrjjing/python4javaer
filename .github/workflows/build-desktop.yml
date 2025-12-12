@@ -47,15 +47,15 @@ jobs:
           path: desktop_tools/dist/
 
   build-bookkeeping:
-    name: Build 喵喵记账
+    name: Build 喵喵存金罐
     strategy:
       matrix:
         include:
           - os: macos-latest
-            artifact: 喵喵记账-mac
+            artifact: 喵喵存金罐-mac
             sep: ':'
           - os: windows-latest
-            artifact: 喵喵记账-win
+            artifact: 喵喵存金罐-win
             sep: ';'
 
     runs-on: ${{ matrix.os }}
@@ -74,7 +74,7 @@ jobs:
       - name: Build
         working-directory: bookkeeping_app
         run: |
-          pyinstaller --onedir --windowed --name "喵喵记账" --add-data "web${{ matrix.sep }}web" --add-data "services${{ matrix.sep }}services" main.py
+          pyinstaller --onedir --windowed --name "喵喵存金罐" --add-data "web${{ matrix.sep }}web" --add-data "services${{ matrix.sep }}services" main.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

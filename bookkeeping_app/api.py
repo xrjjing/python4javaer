@@ -1,4 +1,5 @@
 """PyWebView API - 记账应用接口（增强版）"""
+import json
 import traceback
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -30,6 +31,7 @@ def api_error_handler(func):
 
 class Api:
     def __init__(self, data_dir: Path):
+        self.data_dir = data_dir
         self.bookkeeping = BookkeepingService(data_dir / "记账数据")
 
     def __dir__(self):
@@ -196,3 +198,34 @@ class Api:
         if not year:
             year = datetime.now().year
         return self.bookkeeping.export_summary_csv(year, ledger_id)
+
+    # ========== 系统配置 ==========
+    def get_theme(self):
+        """获取保存的主题设置"""
+        config_path = self.data_dir / "config.json"
+        if config_path.exists():
+            try:
+                with open(config_path, "r", encoding="utf-8") as f:
+                    config = json.load(f)
+                    return config.get("theme", "cute")
+            except Exception:
+                pass
+        return "cute"
+
+    def save_theme(self, theme: str):
+        """保存主题设置"""
+        config_path = self.data_dir / "config.json"
+        config = {}
+        if config_path.exists():
+            try:
+                with open(config_path, "r", encoding="utf-8") as f:
+                    config = json.load(f)
+            except Exception:
+                pass
+        config["theme"] = theme
+        try:
+            with open(config_path, "w", encoding="utf-8") as f:
+                json.dump(config, f, ensure_ascii=False, indent=2)
+            return True
+        except Exception:
+            return False
