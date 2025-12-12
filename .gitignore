@@ -34,10 +34,11 @@ dist/
 htmlcov/
 .pytest_cache/
 
-/AGENTS.md
+AGENTS.md
+CLAUDE.md
+CHANGELOG.md
 /.spec-workflow/
 /.serena/
-/CLAUDE.md
 /.roo/
 /.claude/
 /.snow/
