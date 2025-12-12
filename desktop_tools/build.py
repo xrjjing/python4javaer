@@ -10,7 +10,7 @@ from pathlib import Path
 def cleanup(root):
     """清理打包临时文件"""
     build_dir = root / "build"
-    spec_file = root / "本地工具箱.spec"
+    spec_file = root / "狗狗工具箱.spec"
 
     if build_dir.exists():
         shutil.rmtree(build_dir)
@@ -38,7 +38,7 @@ def build():
         "--onedir",
         "--windowed",
         "-y",
-        "--name", "本地工具箱",
+        "--name", "狗狗工具箱",
         "--add-data", f"{web_dir}:web",
         str(main_py)
     ]
