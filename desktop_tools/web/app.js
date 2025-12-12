@@ -40,24 +40,55 @@ function initNavigation() {
 }
 
 // 主题切换
+const THEME_ICONS = {
+    'light': '☀️', 'cute': '🐶', 'office': '💼',
+    'dark': '🌙', 'neon': '⚡', 'cyberpunk': '🤖'
+};
+
 function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedTheme = localStorage.getItem('theme') || 'dark';
     setTheme(savedTheme);
+
+    // 点击外部关闭菜单
+    window.addEventListener('click', (e) => {
+        const menu = document.getElementById('themeMenu');
+        const btn = document.getElementById('themeToggleBtn');
+        if (menu && btn && menu.classList.contains('active')) {
+            if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        }
+    });
 }
 
-function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
+function toggleThemeMenu() {
+    const menu = document.getElementById('themeMenu');
+    menu.classList.toggle('active');
+}
+
+function selectTheme(theme) {
+    setTheme(theme);
+    document.getElementById('themeMenu').classList.remove('active');
 }
 
 function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-    const icon = document.querySelector('.theme-icon');
-    if (icon) {
-        icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+    localStorage.setItem('theme', theme);
+    updateThemeIcon(theme);
+    updateThemeSelector(theme);
+}
+
+function updateThemeIcon(theme) {
+    const iconEl = document.getElementById('currentThemeIcon');
+    if (iconEl && THEME_ICONS[theme]) {
+        iconEl.textContent = THEME_ICONS[theme];
     }
+}
+
+function updateThemeSelector(activeTheme) {
+    document.querySelectorAll('.theme-item').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.theme === activeTheme);
+    });
 }
 
 // ==================== 凭证管理 ====================

@@ -1167,3 +1167,238 @@ select option {
     color: var(--text-primary);
     padding: 8px;
 }
+
+/* ========== 可爱主题 (Cute/Kawaii) ========== */
+[data-theme="cute"] {
+    --bg-primary: #f4f9f9;
+    --bg-secondary: #e0f2f1;
+    --bg-card: #ffffff;
+    --bg-hover: #e6fffa;
+    --bg-input: #ffffff;
+    --text-primary: #5d4037;
+    --text-secondary: #8d6e63;
+    --text-muted: #bcaaa4;
+    --accent: #4db6ac;
+    --accent-hover: #26a69a;
+    --accent-glow: rgba(77, 182, 172, 0.25);
+    --success: #aed581;
+    --danger: #ef9a9a;
+    --warning: #ffe082;
+    --border: #b2dfdb;
+    --border-light: #e0f2f1;
+}
+
+/* ========== 霓虹主题 (Neon) ========== */
+[data-theme="neon"] {
+    --bg-primary: #050505;
+    --bg-secondary: #121212;
+    --bg-card: #1a1a1a;
+    --bg-hover: #252525;
+    --bg-input: #000000;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --text-muted: #666666;
+    --accent: #39ff14;
+    --accent-hover: #32d911;
+    --accent-glow: rgba(57, 255, 20, 0.3);
+    --success: #00ff00;
+    --danger: #ff003c;
+    --warning: #fefe33;
+    --border: #333333;
+    --border-light: #222222;
+}
+
+[data-theme="neon"] .credential-card,
+[data-theme="neon"] .command-card,
+[data-theme="neon"] input:focus,
+[data-theme="neon"] textarea:focus {
+    box-shadow: 0 0 12px rgba(57, 255, 20, 0.2);
+}
+
+/* ========== 赛博朋克主题 (Cyberpunk) ========== */
+[data-theme="cyberpunk"] {
+    --bg-primary: #0b0c15;
+    --bg-secondary: #131525;
+    --bg-card: #1c1f35;
+    --bg-hover: #262a45;
+    --bg-input: #0f101a;
+    --text-primary: #e0e6ed;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent: #00f3ff;
+    --accent-hover: #00c2cc;
+    --accent-glow: rgba(0, 243, 255, 0.25);
+    --success: #00ff9d;
+    --danger: #ff0055;
+    --warning: #ffbe0b;
+    --border: #2d3748;
+    --border-light: #1e293b;
+}
+
+[data-theme="cyberpunk"] .btn-primary {
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 8px rgba(0, 243, 255, 0.3);
+}
+
+[data-theme="cyberpunk"] .credential-card,
+[data-theme="cyberpunk"] .command-card {
+    border: 1px solid rgba(0, 243, 255, 0.2);
+}
+
+/* ========== 办公主题 (Office) ========== */
+[data-theme="office"] {
+    --bg-primary: #f4f6f8;
+    --bg-secondary: #e3e8ee;
+    --bg-card: #ffffff;
+    --bg-hover: #f1f5f9;
+    --bg-input: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-glow: rgba(37, 99, 235, 0.15);
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --border: #cbd5e1;
+    --border-light: #e2e8f0;
+}
+
+/* ========== 主题选择器 ========== */
+.theme-selector-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 0;
+    z-index: 1000;
+}
+
+.theme-main-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+}
+
+.theme-main-btn .current-icon {
+    font-size: 28px;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.theme-main-btn:hover {
+    transform: translateY(-2px) scale(1.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    border-color: var(--accent);
+}
+
+.theme-main-btn:active {
+    transform: scale(0.95);
+}
+
+.theme-popup-menu {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    width: 240px;
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 14px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    transform-origin: bottom center;
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+}
+
+.theme-popup-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+    pointer-events: auto;
+}
+
+.theme-group-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    padding-left: 4px;
+}
+
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.theme-item {
+    background: transparent;
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 4px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-primary);
+}
+
+.theme-item:hover {
+    background: var(--bg-hover);
+    transform: translateY(-2px);
+}
+
+.theme-item.active {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+}
+
+.theme-item .emoji {
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.theme-item .label {
+    font-size: 10px;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.theme-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 12px 4px;
+    opacity: 0.5;
+}
+
+.menu-arrow {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 12px;
+    height: 12px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+}

@@ -32,9 +32,49 @@
                 </li>
             </ul>
             <div class="sidebar-footer">
-                <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">
-                    <span class="theme-icon">🌙</span>
-                </button>
+                <div class="theme-selector-wrapper">
+                    <div class="theme-popup-menu" id="themeMenu">
+                        <div class="theme-group">
+                            <div class="theme-group-label">亮色系</div>
+                            <div class="theme-grid">
+                                <button class="theme-item" data-theme="light" onclick="selectTheme('light')">
+                                    <span class="emoji">☀️</span>
+                                    <span class="label">亮色</span>
+                                </button>
+                                <button class="theme-item" data-theme="cute" onclick="selectTheme('cute')">
+                                    <span class="emoji">🐶</span>
+                                    <span class="label">可爱</span>
+                                </button>
+                                <button class="theme-item" data-theme="office" onclick="selectTheme('office')">
+                                    <span class="emoji">💼</span>
+                                    <span class="label">办公</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="theme-divider"></div>
+                        <div class="theme-group">
+                            <div class="theme-group-label">暗色系</div>
+                            <div class="theme-grid">
+                                <button class="theme-item" data-theme="dark" onclick="selectTheme('dark')">
+                                    <span class="emoji">🌙</span>
+                                    <span class="label">暗色</span>
+                                </button>
+                                <button class="theme-item" data-theme="neon" onclick="selectTheme('neon')">
+                                    <span class="emoji">⚡</span>
+                                    <span class="label">霓虹</span>
+                                </button>
+                                <button class="theme-item" data-theme="cyberpunk" onclick="selectTheme('cyberpunk')">
+                                    <span class="emoji">🤖</span>
+                                    <span class="label">赛博</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="menu-arrow"></div>
+                    </div>
+                    <button class="theme-main-btn" id="themeToggleBtn" onclick="toggleThemeMenu()">
+                        <span class="current-icon" id="currentThemeIcon">🌙</span>
+                    </button>
+                </div>
             </div>
         </nav>
 
