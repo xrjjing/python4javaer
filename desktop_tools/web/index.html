@@ -25,24 +25,134 @@
                     <span class="logo-subtitle">Dog Toolbox</span>
                 </div>
             </div>
-            <ul class="nav-list">
-                <li class="nav-item active" data-page="credentials">
-                    <span class="nav-icon">🔑</span>
-                    <span class="nav-text">密码管理</span>
-                </li>
-                <li class="nav-item" data-page="commands">
-                    <span class="nav-icon">⌨️</span>
-                    <span class="nav-text">命令管理</span>
-                </li>
-                <li class="nav-item" data-page="converter">
-                    <span class="nav-icon">⚡</span>
-                    <span class="nav-text">节点转换</span>
-                </li>
-                <li class="nav-item" data-page="nodes">
-                    <span class="nav-icon">🌐</span>
-                    <span class="nav-text">节点管理</span>
-                </li>
-            </ul>
+	            <ul class="nav-list">
+	                <li class="nav-item active" data-page="credentials">
+	                    <span class="nav-icon">🔑</span>
+	                    <span class="nav-text">密码管理</span>
+	                </li>
+	                <li class="nav-item" data-page="commands">
+	                    <span class="nav-icon">⌨️</span>
+	                    <span class="nav-text">命令管理</span>
+	                </li>
+
+	                <!-- 节点管理（分组） -->
+	                <li class="nav-group expanded" data-group="nodes">
+	                    <div class="nav-group-header" tabindex="0" role="button" aria-expanded="true">
+	                        <span class="nav-icon">🌐</span>
+	                        <span class="nav-text">节点管理</span>
+	                        <span class="nav-arrow">▾</span>
+	                    </div>
+	                    <ul class="nav-sublist">
+	                        <li class="nav-item" data-page="converter">
+	                            <span class="nav-icon">⚡</span>
+	                            <span class="nav-text">节点转换</span>
+	                        </li>
+	                        <li class="nav-item" data-page="nodes">
+	                            <span class="nav-icon">📋</span>
+	                            <span class="nav-text">节点列表</span>
+	                        </li>
+	                    </ul>
+	                </li>
+
+	                <!-- 工具箱（分组） -->
+	                <li class="nav-group" data-group="tools">
+	                    <div class="nav-group-header" tabindex="0" role="button" aria-expanded="false">
+	                        <span class="nav-icon">🧰</span>
+	                        <span class="nav-text">工具箱</span>
+	                        <span class="nav-arrow">▾</span>
+	                    </div>
+	                    <ul class="nav-sublist">
+	                        <li class="nav-item" data-page="tool-base64">
+	                            <span class="nav-icon">🔤</span>
+	                            <span class="nav-text">Base64 编解码</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-uuid">
+	                            <span class="nav-icon">🆔</span>
+	                            <span class="nav-text">UUID 生成器</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-hash">
+	                            <span class="nav-icon">#️⃣</span>
+	                            <span class="nav-text">哈希（MD5/SHA-256）</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-crypto">
+	                            <span class="nav-icon">🔒</span>
+	                            <span class="nav-text">对称加密（AES/DES）</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-b64hex">
+	                            <span class="nav-icon">🔁</span>
+	                            <span class="nav-text">Base64 ↔ Hex</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-diff">
+	                            <span class="nav-icon">🆚</span>
+	                            <span class="nav-text">文本对比</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-jwt">
+	                            <span class="nav-icon">🎟️</span>
+	                            <span class="nav-text">JWT 解码</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-time">
+	                            <span class="nav-icon">⏱️</span>
+	                            <span class="nav-text">时间戳转换</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-naming">
+	                            <span class="nav-icon">🏷️</span>
+	                            <span class="nav-text">变量命名转换</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-url">
+	                            <span class="nav-icon">🔗</span>
+	                            <span class="nav-text">URL 编解码</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-radix">
+	                            <span class="nav-icon">🔢</span>
+	                            <span class="nav-text">进制转换</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-charcount">
+	                            <span class="nav-icon">📝</span>
+	                            <span class="nav-text">字符统计</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-password">
+	                            <span class="nav-icon">🔐</span>
+	                            <span class="nav-text">密码生成器</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-json">
+	                            <span class="nav-icon">📋</span>
+	                            <span class="nav-text">JSON 格式化</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-text">
+	                            <span class="nav-icon">📑</span>
+	                            <span class="nav-text">文本处理</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-regex">
+	                            <span class="nav-icon">🔍</span>
+	                            <span class="nav-text">正则表达式</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-curl">
+	                            <span class="nav-icon">📡</span>
+	                            <span class="nav-text">cURL 解析</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-color">
+	                            <span class="nav-icon">🎨</span>
+	                            <span class="nav-text">颜色转换</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-ip">
+	                            <span class="nav-icon">🌐</span>
+	                            <span class="nav-text">IP 工具</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-cron">
+	                            <span class="nav-icon">⏰</span>
+	                            <span class="nav-text">Cron 解析</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-sql">
+	                            <span class="nav-icon">🗃️</span>
+	                            <span class="nav-text">SQL 格式化</span>
+	                        </li>
+	                    </ul>
+	                </li>
+	                <li class="nav-item" data-page="backup">
+	                    <span class="nav-icon">💾</span>
+	                    <span class="nav-text">数据备份</span>
+	                </li>
+	            </ul>
             <div class="sidebar-footer">
                 <div class="theme-selector-wrapper">
                     <div class="theme-popup-menu" id="themeMenu">
@@ -183,6 +293,10 @@
                         <div class="panel-header">
                             <h3>输出</h3>
                             <div class="panel-actions">
+                                <div class="format-toggle" title="切换输出格式">
+                                    <button class="btn btn-sm btn-ghost format-btn" id="format-yaml-btn" onclick="setConvertOutputFormat('yaml')">YAML</button>
+                                    <button class="btn btn-sm btn-ghost format-btn" id="format-json-btn" onclick="setConvertOutputFormat('json')">JSON</button>
+                                </div>
                                 <button class="btn btn-sm btn-ghost" onclick="copyYaml()">复制</button>
                                 <button class="btn btn-sm btn-primary" onclick="saveConvertedNodes()">保存</button>
                             </div>
@@ -195,18 +309,1518 @@
                 </div>
             </section>
 
-            <!-- 节点管理页面 -->
-            <section id="page-nodes" class="page">
-                <div class="page-header">
-                    <div class="page-title">
-                        <h1>节点管理</h1>
-                        <p class="subtitle">管理已保存的代理节点</p>
-                    </div>
-                </div>
-                <div id="nodes-list" class="nodes-grid"></div>
-            </section>
-        </main>
-    </div>
+	            <!-- 节点管理页面 -->
+	            <section id="page-nodes" class="page">
+	                <div class="page-header">
+	                    <div class="page-title">
+	                        <h1>节点列表</h1>
+	                        <p class="subtitle">管理已保存的代理节点</p>
+	                    </div>
+	                </div>
+	                <div id="nodes-list" class="nodes-grid"></div>
+	            </section>
+
+		            <!-- 工具箱：Base64 编解码 -->
+		            <section id="page-tool-base64" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>Base64 编解码</h1>
+		                        <p class="subtitle">文本（UTF-8）与 Base64 互相转换</p>
+		                    </div>
+		                </div>
+		                <div class="converter-layout">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输入</h3>
+		                            <div class="panel-actions">
+		                                <div class="format-toggle" title="选择模式">
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="b64-encode-btn" onclick="setBase64Mode('encode')">编码</button>
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="b64-decode-btn" onclick="setBase64Mode('decode')">解码</button>
+		                                </div>
+		                                <button class="btn btn-sm btn-ghost" onclick="clearBase64Tool()">清空</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="b64-input" placeholder="输入内容..."></textarea>
+		                            <div class="tool-options-row">
+		                                <label class="tool-check" title="按行处理输入/输出">
+		                                    <input type="checkbox" id="b64-batch" onchange="updateBase64Tool()">
+		                                    批量（按行）
+		                                </label>
+		                            </div>
+		                            <div id="b64-errors" class="error-list"></div>
+		                        </div>
+		                    </div>
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输出</h3>
+		                            <div class="panel-actions">
+		                                <button class="btn btn-sm btn-ghost" onclick="copyBase64Output(this)">复制</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="b64-output" readonly placeholder="输出结果..."></textarea>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：UUID 生成器 -->
+		            <section id="page-tool-uuid" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>UUID 生成器</h1>
+		                        <p class="subtitle">生成 UUID v4（支持批量）</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <button class="btn btn-ghost" onclick="clearUuidTool()">清空</button>
+		                        <button class="btn btn-primary" onclick="generateUuids()">生成</button>
+		                    </div>
+		                </div>
+		                <div class="tool-single">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>配置</h3>
+		                            <div class="panel-actions">
+		                                <button class="btn btn-sm btn-ghost" onclick="copyUuidOutput(this)">复制</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <div class="tool-controls">
+		                                <div class="uuid-config-grid">
+		                                    <div class="form-group">
+		                                        <label>生成数量（1 ~ 1000）</label>
+		                                        <input type="number" id="uuid-count" min="1" max="1000" value="10">
+		                                    </div>
+		                                    <div class="uuid-option-row">
+		                                        <label class="tool-check">
+		                                            <input type="checkbox" id="uuid-uppercase">
+		                                            大写
+		                                        </label>
+		                                        <label class="tool-check">
+		                                            <input type="checkbox" id="uuid-no-hyphens">
+		                                            去掉连字符（-）
+		                                        </label>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                            <textarea id="uuid-output" readonly placeholder="点击“生成”输出 UUID..."></textarea>
+		                            <div id="uuid-errors" class="error-list"></div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：哈希 -->
+		            <section id="page-tool-hash" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>哈希（MD5/SHA-256）</h1>
+		                        <p class="subtitle">支持加盐（后缀）与批量计算</p>
+		                    </div>
+		                </div>
+		                <div class="converter-layout">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输入</h3>
+		                            <div class="panel-actions">
+		                                <select id="hash-algo" onchange="updateHashTool()" title="选择算法">
+		                                    <option value="md5">MD5</option>
+		                                    <option value="sha256">SHA-256</option>
+		                                </select>
+		                                <button class="btn btn-sm btn-ghost" onclick="clearHashTool()">清空</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="hash-input" placeholder="输入内容..." oninput="updateHashTool()"></textarea>
+		                            <div class="tool-options-row">
+		                                <label class="tool-check" title="按行计算：每行输出一条 hash（空行输出空行）">
+		                                    <input type="checkbox" id="hash-batch" onchange="updateHashTool()">
+		                                    批量（按行）
+		                                </label>
+		                                <label class="tool-check" title="盐策略：后缀加盐（明文 + 盐）">
+		                                    <input type="checkbox" id="hash-use-salt" onchange="toggleHashSalt()">
+		                                    加盐（后缀）
+		                                </label>
+		                            </div>
+		                            <div id="hash-salt-row" class="hash-salt-row" style="display:none">
+		                                <div class="form-group">
+		                                    <label>盐（salt，UTF-8）</label>
+		                                    <input type="text" id="hash-salt" placeholder="后缀加盐：明文 + 盐（可留空）" oninput="updateHashTool()">
+		                                </div>
+		                                <div class="hash-note">提示：输出为小写 Hex</div>
+		                            </div>
+		                            <div id="hash-errors" class="error-list"></div>
+		                        </div>
+		                    </div>
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输出</h3>
+		                            <div class="panel-actions">
+		                                <button class="btn btn-sm btn-ghost" onclick="copyHashOutput(this)">复制</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="hash-output" readonly placeholder="输出结果（Hex）..."></textarea>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：对称加密 -->
+		            <section id="page-tool-crypto" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>对称加密（AES/DES）</h1>
+		                        <p class="subtitle">ECB + PKCS7（支持 Base64/Hex 输出）</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <div class="format-toggle" title="选择操作">
+		                            <button class="btn btn-sm btn-ghost format-btn" id="crypto-encrypt-btn" onclick="setCryptoMode('encrypt')">加密</button>
+		                            <button class="btn btn-sm btn-ghost format-btn" id="crypto-decrypt-btn" onclick="setCryptoMode('decrypt')">解密</button>
+		                        </div>
+		                        <button class="btn btn-ghost" onclick="clearCryptoTool()">清空</button>
+		                        <button class="btn btn-primary" onclick="runCryptoTool()">执行</button>
+		                    </div>
+		                </div>
+		                <div class="converter-layout crypto-layout">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3 id="crypto-input-header">输入</h3>
+		                            <div class="panel-actions">
+		                                <select id="crypto-input-encoding" disabled>
+		                                    <option value="utf8">utf-8</option>
+		                                </select>
+		                                <select id="crypto-input-kind" disabled>
+		                                    <option value="text">文本</option>
+		                                </select>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <div class="crypto-mode-row">
+		                                <div class="format-toggle" title="模式">
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="crypto-advanced-btn" onclick="setCryptoLevel('advanced')">高级</button>
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="crypto-simple-btn" onclick="setCryptoLevel('simple')">简单</button>
+		                                </div>
+		                                <div class="crypto-inline-actions">
+		                                    <select id="crypto-algo" onchange="updateCryptoToolUi()">
+		                                        <option value="aes">AES</option>
+		                                        <option value="des">DES</option>
+		                                    </select>
+		                                    <select id="crypto-aes-keysize" onchange="updateCryptoToolUi()" title="仅 AES 支持 128/256">
+		                                        <option value="128">128</option>
+		                                        <option value="256">256</option>
+		                                    </select>
+		                                    <select id="crypto-mode" disabled>
+		                                        <option value="ecb">ECB</option>
+		                                    </select>
+		                                    <select id="crypto-padding" disabled>
+		                                        <option value="pkcs7">Pkcs7</option>
+		                                    </select>
+		                                </div>
+		                            </div>
+
+		                            <div id="crypto-advanced-options" class="crypto-advanced-options">
+		                                <div class="crypto-key-grid">
+		                                    <div class="form-group">
+		                                        <label>key（UTF-8）</label>
+		                                        <input type="text" id="crypto-key" placeholder="输入 key..." oninput="updateCryptoToolUi()">
+		                                    </div>
+		                                    <div class="form-group" id="crypto-iv-group">
+		                                        <label>iv（ECB 不使用）</label>
+		                                        <input type="text" id="crypto-iv" placeholder="ECB 模式下不需要 iv" disabled>
+		                                    </div>
+		                                    <label class="tool-check" title="不足右补 0x00，超出截断；关闭后严格校验字节长度">
+		                                        <input type="checkbox" id="crypto-auto-key" checked onchange="updateCryptoToolUi()">
+		                                        自动调整 key 长度
+		                                    </label>
+		                                    <div class="crypto-key-hint" id="crypto-key-hint"></div>
+		                                </div>
+		                            </div>
+
+		                            <textarea id="crypto-input" placeholder="输入内容..." spellcheck="false"></textarea>
+		                            <div id="crypto-errors" class="error-list"></div>
+		                        </div>
+		                    </div>
+
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3 id="crypto-output-header">输出</h3>
+		                            <div class="panel-actions">
+		                                <div id="crypto-output-format-wrap">
+		                                    <select id="crypto-output-format" onchange="updateCryptoToolUi()">
+		                                        <option value="base64">Base64</option>
+		                                        <option value="hex">Hex</option>
+		                                    </select>
+		                                </div>
+		                                <div id="crypto-input-format-wrap" style="display:none">
+		                                    <select id="crypto-input-format" onchange="updateCryptoToolUi()">
+		                                        <option value="auto">自动识别</option>
+		                                        <option value="base64">Base64</option>
+		                                        <option value="hex">Hex</option>
+		                                    </select>
+		                                </div>
+		                                <button class="btn btn-sm btn-ghost" onclick="copyCryptoOutput(this)">复制</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="crypto-output" readonly placeholder="输出结果..." spellcheck="false"></textarea>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：Base64 ↔ Hex -->
+		            <section id="page-tool-b64hex" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>Base64 ↔ Hex</h1>
+		                        <p class="subtitle">支持单条与批量互转</p>
+		                    </div>
+		                </div>
+		                <div class="converter-layout">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输入</h3>
+		                            <div class="panel-actions">
+		                                <div class="format-toggle" title="选择转换方向">
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="b64hex-b2h-btn" onclick="setB64HexMode('b64_to_hex')">Base64→Hex</button>
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="b64hex-h2b-btn" onclick="setB64HexMode('hex_to_b64')">Hex→Base64</button>
+		                                </div>
+		                                <button class="btn btn-sm btn-ghost" onclick="clearB64HexTool()">清空</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="b64hex-input" placeholder="输入内容..." spellcheck="false"></textarea>
+		                            <div class="tool-options-row">
+		                                <label class="tool-check" title="按行处理输入/输出">
+		                                    <input type="checkbox" id="b64hex-batch" onchange="updateB64HexTool()">
+		                                    批量（按行）
+		                                </label>
+		                            </div>
+		                            <div id="b64hex-errors" class="error-list"></div>
+		                        </div>
+		                    </div>
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输出</h3>
+		                            <div class="panel-actions">
+		                                <button class="btn btn-sm btn-ghost" onclick="copyB64HexOutput(this)">复制</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="b64hex-output" readonly placeholder="输出结果..."></textarea>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：文本对比 -->
+		            <section id="page-tool-diff" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>文本对比</h1>
+		                        <p class="subtitle">支持 Text / JSON、自动换行与方向切换</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <select id="diff-mode" onchange="updateDiffToolUi()">
+		                            <option value="text">Text</option>
+		                            <option value="json">JSON</option>
+		                        </select>
+		                        <label class="tool-check" title="开启后对比视图自动换行">
+		                            <input type="checkbox" id="diff-wrap" checked onchange="toggleDiffWrap()">
+		                            自动换行
+		                        </label>
+		                        <div class="format-toggle" title="对比方向（影响“应用到对侧”）">
+		                            <button class="btn btn-sm btn-ghost format-btn" id="diff-ltr-btn" onclick="setDiffDirection('ltr')">左→右</button>
+		                            <button class="btn btn-sm btn-ghost format-btn" id="diff-rtl-btn" onclick="setDiffDirection('rtl')">右→左</button>
+		                        </div>
+		                        <button class="btn btn-ghost" id="diff-format-btn" onclick="formatDiffJson()">JSON 格式化</button>
+		                        <button class="btn btn-ghost" id="diff-apply-btn" onclick="applyDiffDirection()">应用到对侧</button>
+		                        <button class="btn btn-ghost" onclick="clearDiffTool()">清空</button>
+		                    </div>
+		                </div>
+		                <div class="diff-tool">
+		                    <div class="converter-layout diff-layout">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>左侧</h3>
+		                            </div>
+		                            <div class="panel-body">
+		                                <textarea id="diff-left" placeholder="左侧输入..." spellcheck="false"></textarea>
+		                                <div id="diff-errors-left" class="error-list"></div>
+		                            </div>
+		                        </div>
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>右侧</h3>
+		                            </div>
+		                            <div class="panel-body">
+		                                <textarea id="diff-right" placeholder="右侧输入..." spellcheck="false"></textarea>
+		                                <div id="diff-errors-right" class="error-list"></div>
+		                            </div>
+		                        </div>
+		                    </div>
+
+		                    <div class="converter-panel diff-result">
+		                        <div class="panel-header">
+		                            <h3>差异（按行）</h3>
+		                        </div>
+		                        <div class="panel-body diff-view-body">
+		                            <div id="diff-view" class="diff-view diff-wrap"></div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：JWT 解码 -->
+		            <section id="page-tool-jwt" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>JWT 解码</h1>
+		                        <p class="subtitle">支持 base64url 解码与 JSON 输出</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <label class="tool-check">
+		                            <input type="checkbox" id="jwt-show-header" checked onchange="updateJwtTool()">
+		                            显示 Header
+		                        </label>
+		                        <label class="tool-check">
+		                            <input type="checkbox" id="jwt-show-payload" checked onchange="updateJwtTool()">
+		                            显示 Payload
+		                        </label>
+		                    </div>
+		                </div>
+		                <div class="converter-layout jwt-layout">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输入</h3>
+		                            <div class="panel-actions">
+		                                <select id="jwt-input-type" onchange="updateJwtTool()">
+		                                    <option value="auto">自动识别</option>
+		                                    <option value="jwt">JWT（header.payload[.signature]）</option>
+		                                    <option value="header_payload">Header+Payload（两段）</option>
+		                                    <option value="header">仅 Header（base64url）</option>
+		                                    <option value="payload">仅 Payload（base64url）</option>
+		                                </select>
+		                                <button class="btn btn-sm btn-ghost" onclick="clearJwtTool()">清空</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="jwt-input" placeholder="粘贴 JWT（支持 Bearer 前缀）..."></textarea>
+		                            <div id="jwt-errors" class="error-list"></div>
+		                        </div>
+		                    </div>
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输出</h3>
+		                            <div class="panel-actions">
+		                                <button class="btn btn-sm btn-ghost" onclick="copyJwtAll(this)">复制全部</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body jwt-output">
+		                            <div class="jwt-section" id="jwt-header-section">
+		                                <div class="jwt-section-header">
+		                                    <div class="jwt-section-title">Header（JSON）</div>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyJwtPart(this, 'header')">复制</button>
+		                                </div>
+		                                <textarea id="jwt-header-output" readonly placeholder="Header JSON..."></textarea>
+		                            </div>
+		                            <div class="jwt-section" id="jwt-payload-section">
+		                                <div class="jwt-section-header">
+		                                    <div class="jwt-section-title">Payload（JSON）</div>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyJwtPart(this, 'payload')">复制</button>
+		                                </div>
+		                                <textarea id="jwt-payload-output" readonly placeholder="Payload JSON..."></textarea>
+		                            </div>
+		                            <div class="jwt-warning" id="jwt-warning"></div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：时间戳转换 -->
+		            <section id="page-tool-time" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>时间戳转换</h1>
+		                        <p class="subtitle">仅支持 UTC / UTC+8（进入页面才实时刷新）</p>
+		                    </div>
+		                </div>
+		                <div class="tool-single time-tool">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输入</h3>
+		                            <div class="panel-actions">
+		                                <select id="time-zone" onchange="updateTimeTool(true)">
+		                                    <option value="utc">UTC</option>
+		                                    <option value="utc8">UTC+08:00 Asia/Shanghai - 上海</option>
+		                                </select>
+		                                <select id="time-input-type" onchange="updateTimeTool(true)">
+		                                    <option value="auto">自动识别</option>
+		                                    <option value="unix_s">Unix时间戳(秒)</option>
+		                                    <option value="unix_ms">Unix时间戳(毫秒)</option>
+		                                    <option value="unix_ns">Unix时间戳(纳秒)</option>
+		                                    <option value="datetime">标准时间</option>
+		                                </select>
+		                                <button class="btn btn-sm btn-ghost" onclick="clearTimeTool()">清空</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <input type="text" id="time-input" placeholder="输入 Unix 时间戳或标准时间（YYYY-MM-DD HH:mm:ss[.SSS]）">
+		                            <div class="time-detect" id="time-detect"></div>
+		                            <div id="time-errors" class="error-list"></div>
+		                        </div>
+		                    </div>
+
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输出（按输入换算）</h3>
+		                        </div>
+		                        <div class="panel-body time-output">
+		                            <div class="time-row">
+		                                <div class="time-row-label">秒</div>
+		                                <input type="text" id="time-out-sec" readonly placeholder="-" />
+		                                <button class="btn btn-sm btn-ghost" onclick="copyTimeOutput(this, 'sec')">复制</button>
+		                            </div>
+		                            <div class="time-row">
+		                                <div class="time-row-label">毫秒</div>
+		                                <input type="text" id="time-out-ms" readonly placeholder="-" />
+		                                <button class="btn btn-sm btn-ghost" onclick="copyTimeOutput(this, 'ms')">复制</button>
+		                            </div>
+		                            <div class="time-row">
+		                                <div class="time-row-label">纳秒</div>
+		                                <input type="text" id="time-out-ns" readonly placeholder="-" />
+		                                <button class="btn btn-sm btn-ghost" onclick="copyTimeOutput(this, 'ns')">复制</button>
+		                            </div>
+		                        </div>
+		                    </div>
+
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>当前时间（实时）</h3>
+		                        </div>
+		                        <div class="panel-body time-now">
+		                            <div class="time-table">
+		                                <div class="time-table-head">
+		                                    <div>格式</div>
+		                                    <div>值</div>
+		                                    <div class="time-table-action">操作</div>
+		                                </div>
+		                                <div class="time-table-row">
+		                                    <div>标准时间(秒)</div>
+		                                    <div class="time-table-value" id="time-now-std-sec">-</div>
+		                                    <div class="time-table-action"><button class="btn btn-sm btn-ghost" onclick="loadTimeValue('datetime', 'time-now-std-sec')">加载</button></div>
+		                                </div>
+		                                <div class="time-table-row">
+		                                    <div>Unix时间戳(秒)</div>
+		                                    <div class="time-table-value" id="time-now-unix-sec">-</div>
+		                                    <div class="time-table-action"><button class="btn btn-sm btn-ghost" onclick="loadTimeValue('unix_s', 'time-now-unix-sec')">加载</button></div>
+		                                </div>
+		                                <div class="time-table-row">
+		                                    <div>标准时间(毫秒)</div>
+		                                    <div class="time-table-value" id="time-now-std-ms">-</div>
+		                                    <div class="time-table-action"><button class="btn btn-sm btn-ghost" onclick="loadTimeValue('datetime', 'time-now-std-ms')">加载</button></div>
+		                                </div>
+		                                <div class="time-table-row">
+		                                    <div>Unix时间戳(毫秒)</div>
+		                                    <div class="time-table-value" id="time-now-unix-ms">-</div>
+		                                    <div class="time-table-action"><button class="btn btn-sm btn-ghost" onclick="loadTimeValue('unix_ms', 'time-now-unix-ms')">加载</button></div>
+		                                </div>
+		                            </div>
+		                            <div class="time-now-note">提示：该区域仅在进入本页面后实时刷新</div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：变量命名转换 -->
+		            <section id="page-tool-naming" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>变量命名转换</h1>
+		                        <p class="subtitle">7 种格式互转（含中文名称）</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <button class="btn btn-ghost" onclick="clearNamingTool()">清空</button>
+		                    </div>
+		                </div>
+		                <div class="naming-grid">
+		                    <div class="naming-card naming-input">
+		                        <div class="naming-card-header">
+		                            <div class="naming-card-title">输入</div>
+		                        </div>
+		                        <div class="naming-card-body">
+		                            <textarea id="naming-input" placeholder="如：userAge / user_age / user-age / USER_AGE" oninput="updateNamingTool()"></textarea>
+		                        </div>
+		                    </div>
+
+		                    <div class="naming-card">
+		                        <div class="naming-card-header">
+		                            <div class="naming-card-title">空格小写（space case）</div>
+		                            <button class="btn btn-sm btn-ghost" onclick="copyNamingOutput(this, 'space')">复制</button>
+		                        </div>
+		                        <div class="naming-card-body">
+		                            <div class="naming-output" id="naming-space"></div>
+		                        </div>
+		                    </div>
+
+		                    <div class="naming-card">
+		                        <div class="naming-card-header">
+		                            <div class="naming-card-title">单词首字母大写（Camel Case）</div>
+		                            <button class="btn btn-sm btn-ghost" onclick="copyNamingOutput(this, 'camelSpace')">复制</button>
+		                        </div>
+		                        <div class="naming-card-body">
+		                            <div class="naming-output" id="naming-camelSpace"></div>
+		                        </div>
+		                    </div>
+
+		                    <div class="naming-card">
+		                        <div class="naming-card-header">
+		                            <div class="naming-card-title">连字符小写（kebab-case）</div>
+		                            <button class="btn btn-sm btn-ghost" onclick="copyNamingOutput(this, 'kebab')">复制</button>
+		                        </div>
+		                        <div class="naming-card-body">
+		                            <div class="naming-output" id="naming-kebab"></div>
+		                        </div>
+		                    </div>
+
+		                    <div class="naming-card">
+		                        <div class="naming-card-header">
+		                            <div class="naming-card-title">下划线全大写（SNAKE_CASE）</div>
+		                            <button class="btn btn-sm btn-ghost" onclick="copyNamingOutput(this, 'snakeUpper')">复制</button>
+		                        </div>
+		                        <div class="naming-card-body">
+		                            <div class="naming-output" id="naming-snakeUpper"></div>
+		                        </div>
+		                    </div>
+
+		                    <div class="naming-card">
+		                        <div class="naming-card-header">
+		                            <div class="naming-card-title">大驼峰（CamelCase）</div>
+		                            <button class="btn btn-sm btn-ghost" onclick="copyNamingOutput(this, 'pascal')">复制</button>
+		                        </div>
+		                        <div class="naming-card-body">
+		                            <div class="naming-output" id="naming-pascal"></div>
+		                        </div>
+		                    </div>
+
+		                    <div class="naming-card">
+		                        <div class="naming-card-header">
+		                            <div class="naming-card-title">小驼峰（camelCase）</div>
+		                            <button class="btn btn-sm btn-ghost" onclick="copyNamingOutput(this, 'camel')">复制</button>
+		                        </div>
+		                        <div class="naming-card-body">
+		                            <div class="naming-output" id="naming-camel"></div>
+		                        </div>
+		                    </div>
+
+		                    <div class="naming-card">
+		                        <div class="naming-card-header">
+		                            <div class="naming-card-title">下划线小写（snake_case）</div>
+		                            <button class="btn btn-sm btn-ghost" onclick="copyNamingOutput(this, 'snake')">复制</button>
+		                        </div>
+		                        <div class="naming-card-body">
+		                            <div class="naming-output" id="naming-snake"></div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：URL 编解码 -->
+		            <section id="page-tool-url" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>URL 编解码</h1>
+		                        <p class="subtitle">URL encode / decode，支持批量处理</p>
+		                    </div>
+		                </div>
+		                <div class="converter-layout">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输入</h3>
+		                            <div class="panel-actions">
+		                                <div class="format-toggle" title="选择模式">
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="url-encode-btn" onclick="setUrlMode('encode')">编码</button>
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="url-decode-btn" onclick="setUrlMode('decode')">解码</button>
+		                                </div>
+		                                <button class="btn btn-sm btn-ghost" onclick="clearUrlTool()">清空</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="url-input" placeholder="输入内容..."></textarea>
+		                            <div class="tool-options-row">
+		                                <label class="tool-check" title="按行处理输入/输出">
+		                                    <input type="checkbox" id="url-batch" onchange="updateUrlTool()">
+		                                    批量（按行）
+		                                </label>
+		                            </div>
+		                            <div id="url-errors" class="error-list"></div>
+		                        </div>
+		                    </div>
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输出</h3>
+		                            <div class="panel-actions">
+		                                <button class="btn btn-sm btn-ghost" onclick="copyUrlOutput(this)">复制</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="url-output" readonly placeholder="输出结果..."></textarea>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：进制转换 -->
+		            <section id="page-tool-radix" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>进制转换</h1>
+		                        <p class="subtitle">2 / 8 / 10 / 16 进制互转，支持大数（BigInt）</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <button class="btn btn-ghost" onclick="clearRadixTool()">清空</button>
+		                    </div>
+		                </div>
+		                <div class="tool-single radix-tool">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输入</h3>
+		                            <div class="panel-actions">
+		                                <select id="radix-from" onchange="updateRadixTool()">
+		                                    <option value="auto">自动检测</option>
+		                                    <option value="2">二进制</option>
+		                                    <option value="8">八进制</option>
+		                                    <option value="10">十进制</option>
+		                                    <option value="16">十六进制</option>
+		                                </select>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <input type="text" id="radix-input" placeholder="输入数字（支持 0x / 0o / 0b 前缀）" oninput="updateRadixTool()">
+		                            <div class="radix-detect" id="radix-detect"></div>
+		                            <div id="radix-errors" class="error-list"></div>
+		                        </div>
+		                    </div>
+
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输出</h3>
+		                        </div>
+		                        <div class="panel-body radix-output">
+		                            <div class="radix-row">
+		                                <div class="radix-row-label">二进制 (BIN)</div>
+		                                <input type="text" id="radix-out-bin" readonly placeholder="-" />
+		                                <button class="btn btn-sm btn-ghost" onclick="copyRadixOutput(this, 'bin')">复制</button>
+		                            </div>
+		                            <div class="radix-row">
+		                                <div class="radix-row-label">八进制 (OCT)</div>
+		                                <input type="text" id="radix-out-oct" readonly placeholder="-" />
+		                                <button class="btn btn-sm btn-ghost" onclick="copyRadixOutput(this, 'oct')">复制</button>
+		                            </div>
+		                            <div class="radix-row">
+		                                <div class="radix-row-label">十进制 (DEC)</div>
+		                                <input type="text" id="radix-out-dec" readonly placeholder="-" />
+		                                <button class="btn btn-sm btn-ghost" onclick="copyRadixOutput(this, 'dec')">复制</button>
+		                            </div>
+		                            <div class="radix-row">
+		                                <div class="radix-row-label">十六进制 (HEX)</div>
+		                                <input type="text" id="radix-out-hex" readonly placeholder="-" />
+		                                <button class="btn btn-sm btn-ghost" onclick="copyRadixOutput(this, 'hex')">复制</button>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：字符统计 -->
+		            <section id="page-tool-charcount" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>字符统计</h1>
+		                        <p class="subtitle">字数、字符数、字节数（UTF-8）、行数统计</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <button class="btn btn-ghost" onclick="clearCharCountTool()">清空</button>
+		                    </div>
+		                </div>
+		                <div class="tool-single charcount-tool">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输入文本</h3>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="charcount-input" placeholder="输入要统计的文本..." oninput="updateCharCountTool()"></textarea>
+		                        </div>
+		                    </div>
+
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>统计结果</h3>
+		                        </div>
+		                        <div class="panel-body charcount-output">
+		                            <div class="charcount-grid">
+		                                <div class="charcount-item">
+		                                    <div class="charcount-label">字符数（含空格）</div>
+		                                    <div class="charcount-value" id="charcount-chars">0</div>
+		                                </div>
+		                                <div class="charcount-item">
+		                                    <div class="charcount-label">字符数（不含空格）</div>
+		                                    <div class="charcount-value" id="charcount-chars-nospace">0</div>
+		                                </div>
+		                                <div class="charcount-item">
+		                                    <div class="charcount-label">字节数（UTF-8）</div>
+		                                    <div class="charcount-value" id="charcount-bytes">0</div>
+		                                </div>
+		                                <div class="charcount-item">
+		                                    <div class="charcount-label">行数</div>
+		                                    <div class="charcount-value" id="charcount-lines">0</div>
+		                                </div>
+		                                <div class="charcount-item">
+		                                    <div class="charcount-label">中文字数</div>
+		                                    <div class="charcount-value" id="charcount-chinese">0</div>
+		                                </div>
+		                                <div class="charcount-item">
+		                                    <div class="charcount-label">英文单词数</div>
+		                                    <div class="charcount-value" id="charcount-words">0</div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：密码生成器 -->
+		            <section id="page-tool-password" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>密码生成器</h1>
+		                        <p class="subtitle">生成安全随机密码，支持批量生成</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <button class="btn btn-ghost" onclick="clearPasswordTool()">清空</button>
+		                        <button class="btn btn-primary" onclick="generatePasswords()">生成</button>
+		                    </div>
+		                </div>
+		                <div class="tool-single password-tool">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>配置</h3>
+		                        </div>
+		                        <div class="panel-body">
+		                            <div class="password-config-grid">
+		                                <div class="form-group">
+		                                    <label>密码长度</label>
+		                                    <div class="password-length-row">
+		                                        <input type="range" id="password-length-slider" min="8" max="64" value="16" oninput="syncPasswordLength('slider')">
+		                                        <input type="number" id="password-length" min="8" max="128" value="16" oninput="syncPasswordLength('input')">
+		                                    </div>
+		                                </div>
+		                                <div class="form-group">
+		                                    <label>生成数量（1 ~ 100）</label>
+		                                    <input type="number" id="password-count" min="1" max="100" value="5">
+		                                </div>
+		                            </div>
+		                            <div class="password-charset-row">
+		                                <label class="tool-check">
+		                                    <input type="checkbox" id="password-uppercase" checked>
+		                                    大写字母 (A-Z)
+		                                </label>
+		                                <label class="tool-check">
+		                                    <input type="checkbox" id="password-lowercase" checked>
+		                                    小写字母 (a-z)
+		                                </label>
+		                                <label class="tool-check">
+		                                    <input type="checkbox" id="password-numbers" checked>
+		                                    数字 (0-9)
+		                                </label>
+		                                <label class="tool-check">
+		                                    <input type="checkbox" id="password-symbols">
+		                                    特殊符号 (!@#$%...)
+		                                </label>
+		                            </div>
+		                            <div class="password-option-row">
+		                                <label class="tool-check" title="排除易混淆字符：0OoIl1">
+		                                    <input type="checkbox" id="password-exclude-similar">
+		                                    排除相似字符 (0OoIl1)
+		                                </label>
+		                            </div>
+		                        </div>
+		                    </div>
+
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>生成结果</h3>
+		                            <div class="panel-actions">
+		                                <button class="btn btn-sm btn-ghost" onclick="copyPasswordOutput(this)">复制全部</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="password-output" readonly placeholder="点击"生成"输出密码..."></textarea>
+		                            <div id="password-errors" class="error-list"></div>
+		                            <div class="password-strength-row" id="password-strength-row" style="display:none">
+		                                <span class="password-strength-label">首条密码强度：</span>
+		                                <span class="password-strength-bar" id="password-strength-bar"></span>
+		                                <span class="password-strength-text" id="password-strength-text"></span>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：JSON 格式化 -->
+		            <section id="page-tool-json" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>JSON 格式化</h1>
+		                        <p class="subtitle">格式化、压缩、校验 JSON 数据</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <div class="format-toggle" title="缩进">
+		                            <button class="btn btn-sm btn-ghost format-btn" id="json-indent-2" onclick="setJsonIndent(2)">2空格</button>
+		                            <button class="btn btn-sm btn-ghost format-btn" id="json-indent-4" onclick="setJsonIndent(4)">4空格</button>
+		                            <button class="btn btn-sm btn-ghost format-btn" id="json-indent-tab" onclick="setJsonIndent('tab')">Tab</button>
+		                        </div>
+		                        <button class="btn btn-ghost" onclick="minifyJsonTool()">
+		                            <span class="btn-icon">📦</span>压缩
+		                        </button>
+		                        <button class="btn btn-ghost" onclick="clearJsonTool()">清空</button>
+		                    </div>
+		                </div>
+		                <div class="converter-layout">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输入</h3>
+		                            <div class="panel-actions">
+		                                <button class="btn btn-sm btn-ghost" onclick="tryFixJsonTool()">尝试修复</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="json-input" placeholder="粘贴 JSON 数据..." spellcheck="false"></textarea>
+		                            <div id="json-errors" class="error-list"></div>
+		                        </div>
+		                    </div>
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输出</h3>
+		                            <div class="panel-actions">
+		                                <span class="json-status" id="json-status"></span>
+		                                <button class="btn btn-sm btn-ghost" onclick="copyJsonOutput(this)">复制</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="json-output" readonly placeholder="格式化结果..." spellcheck="false"></textarea>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：文本处理 -->
+		            <section id="page-tool-text" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>文本处理</h1>
+		                        <p class="subtitle">去重、排序、行处理等常用文本操作</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <button class="btn btn-ghost" onclick="clearTextTool()">清空</button>
+		                    </div>
+		                </div>
+		                <div class="converter-layout">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输入</h3>
+		                            <div class="panel-actions">
+		                                <span class="text-stats" id="text-stats"></span>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="text-input" placeholder="输入文本（每行一条）..." spellcheck="false"></textarea>
+		                        </div>
+		                    </div>
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输出</h3>
+		                            <div class="panel-actions">
+		                                <button class="btn btn-sm btn-ghost" onclick="copyTextOutput(this)">复制</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="text-output" readonly placeholder="处理结果..." spellcheck="false"></textarea>
+		                        </div>
+		                    </div>
+		                </div>
+		                <div class="text-actions-panel">
+		                    <div class="text-action-group">
+		                        <div class="text-action-label">去重</div>
+		                        <div class="text-action-btns">
+		                            <button class="btn btn-sm btn-secondary" onclick="textDeduplicate()">去重</button>
+		                            <label class="tool-check">
+		                                <input type="checkbox" id="text-case-sensitive">
+		                                区分大小写
+		                            </label>
+		                            <label class="tool-check">
+		                                <input type="checkbox" id="text-trim-lines" checked>
+		                                忽略首尾空白
+		                            </label>
+		                        </div>
+		                    </div>
+		                    <div class="text-action-group">
+		                        <div class="text-action-label">排序</div>
+		                        <div class="text-action-btns">
+		                            <button class="btn btn-sm btn-secondary" onclick="textSort('asc')">A→Z</button>
+		                            <button class="btn btn-sm btn-secondary" onclick="textSort('desc')">Z→A</button>
+		                            <button class="btn btn-sm btn-secondary" onclick="textSort('length-asc')">短→长</button>
+		                            <button class="btn btn-sm btn-secondary" onclick="textSort('length-desc')">长→短</button>
+		                            <button class="btn btn-sm btn-secondary" onclick="textSort('random')">随机</button>
+		                            <button class="btn btn-sm btn-secondary" onclick="textReverse()">反转</button>
+		                        </div>
+		                    </div>
+		                    <div class="text-action-group">
+		                        <div class="text-action-label">行处理</div>
+		                        <div class="text-action-btns">
+		                            <button class="btn btn-sm btn-secondary" onclick="textRemoveEmpty()">删除空行</button>
+		                            <button class="btn btn-sm btn-secondary" onclick="textTrimLines()">去首尾空白</button>
+		                            <button class="btn btn-sm btn-secondary" onclick="textAddLineNumbers()">添加行号</button>
+		                            <button class="btn btn-sm btn-secondary" onclick="textRemoveLineNumbers()">移除行号</button>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：正则表达式测试 -->
+		            <section id="page-tool-regex" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>正则表达式测试</h1>
+		                        <p class="subtitle">测试、匹配、替换、提取，内置常用预设</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <button class="btn btn-ghost" onclick="clearRegexTool()">清空</button>
+		                    </div>
+		                </div>
+		                <div class="regex-tool">
+		                    <div class="regex-pattern-panel">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>正则表达式</h3>
+		                                <div class="panel-actions">
+		                                    <select id="regex-preset" onchange="loadRegexPreset()">
+		                                        <option value="">常用预设...</option>
+		                                    </select>
+		                                </div>
+		                            </div>
+		                            <div class="panel-body regex-pattern-body">
+		                                <div class="regex-input-row">
+		                                    <span class="regex-delimiter">/</span>
+		                                    <input type="text" id="regex-pattern" placeholder="输入正则表达式..." oninput="updateRegexTool()">
+		                                    <span class="regex-delimiter">/</span>
+		                                    <input type="text" id="regex-flags" placeholder="gim" maxlength="6" value="g" oninput="updateRegexTool()">
+		                                </div>
+		                                <div class="regex-flags-row">
+		                                    <label class="tool-check"><input type="checkbox" id="regex-flag-g" checked onchange="syncRegexFlags()">g 全局</label>
+		                                    <label class="tool-check"><input type="checkbox" id="regex-flag-i" onchange="syncRegexFlags()">i 忽略大小写</label>
+		                                    <label class="tool-check"><input type="checkbox" id="regex-flag-m" onchange="syncRegexFlags()">m 多行</label>
+		                                    <label class="tool-check"><input type="checkbox" id="regex-flag-s" onchange="syncRegexFlags()">s 点匹配换行</label>
+		                                </div>
+		                                <div id="regex-errors" class="error-list"></div>
+		                            </div>
+		                        </div>
+		                    </div>
+
+		                    <div class="converter-layout regex-layout">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>测试文本</h3>
+		                            </div>
+		                            <div class="panel-body">
+		                                <textarea id="regex-input" placeholder="输入测试文本..." oninput="updateRegexTool()"></textarea>
+		                            </div>
+		                        </div>
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>匹配结果</h3>
+		                                <div class="panel-actions">
+		                                    <span class="regex-match-count" id="regex-match-count"></span>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyRegexMatches(this)">复制</button>
+		                                </div>
+		                            </div>
+		                            <div class="panel-body">
+		                                <div id="regex-matches" class="regex-matches"></div>
+		                            </div>
+		                        </div>
+		                    </div>
+
+		                    <div class="regex-replace-panel">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>替换</h3>
+		                                <div class="panel-actions">
+		                                    <button class="btn btn-sm btn-secondary" onclick="executeRegexReplace()">执行替换</button>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyRegexReplaced(this)">复制结果</button>
+		                                </div>
+		                            </div>
+		                            <div class="panel-body regex-replace-body">
+		                                <div class="form-group">
+		                                    <label>替换为（支持 $1, $2...）</label>
+		                                    <input type="text" id="regex-replacement" placeholder="替换文本...">
+		                                </div>
+		                                <textarea id="regex-replaced" readonly placeholder="替换结果..."></textarea>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- cURL 解析工具 -->
+		            <section id="page-tool-curl" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>cURL 解析</h1>
+		                        <p class="subtitle">解析 cURL 命令，生成多语言代码</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <button class="btn btn-secondary" onclick="clearCurlTool()">清空</button>
+		                    </div>
+		                </div>
+
+		                <div class="curl-tool">
+		                    <div class="converter-layout curl-layout">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>cURL 命令</h3>
+		                                <div class="panel-actions">
+		                                    <button class="btn btn-sm btn-primary" onclick="parseCurlCommand()">解析</button>
+		                                </div>
+		                            </div>
+		                            <div class="panel-body">
+		                                <textarea id="curl-input" placeholder="粘贴 cURL 命令...&#10;例如: curl -X POST https://api.example.com -H 'Content-Type: application/json' -d '{&quot;key&quot;: &quot;value&quot;}'"></textarea>
+		                                <div id="curl-errors" class="error-list"></div>
+		                            </div>
+		                        </div>
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>解析结果</h3>
+		                                <div class="panel-actions">
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyCurlParsed(this)">复制</button>
+		                                </div>
+		                            </div>
+		                            <div class="panel-body">
+		                                <textarea id="curl-parsed" readonly placeholder="解析后的请求信息..."></textarea>
+		                            </div>
+		                        </div>
+		                    </div>
+
+		                    <div class="curl-code-panel">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>代码生成</h3>
+		                                <div class="panel-actions">
+		                                    <div class="format-toggle">
+		                                        <button id="curl-lang-fetch" class="btn btn-sm btn-ghost format-btn active" onclick="setCurlLang('fetch')">Fetch</button>
+		                                        <button id="curl-lang-axios" class="btn btn-sm btn-ghost format-btn" onclick="setCurlLang('axios')">Axios</button>
+		                                        <button id="curl-lang-python" class="btn btn-sm btn-ghost format-btn" onclick="setCurlLang('python')">Python</button>
+		                                        <button id="curl-lang-node" class="btn btn-sm btn-ghost format-btn" onclick="setCurlLang('node')">Node.js</button>
+		                                        <button id="curl-lang-php" class="btn btn-sm btn-ghost format-btn" onclick="setCurlLang('php')">PHP</button>
+		                                        <button id="curl-lang-go" class="btn btn-sm btn-ghost format-btn" onclick="setCurlLang('go')">Go</button>
+		                                    </div>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyCurlCode(this)">复制</button>
+		                                </div>
+		                            </div>
+		                            <div class="panel-body">
+		                                <textarea id="curl-code" readonly placeholder="生成的代码..."></textarea>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 颜色转换工具 -->
+		            <section id="page-tool-color" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>颜色转换</h1>
+		                        <p class="subtitle">HEX / RGB / HSL / HSV / CMYK 格式互转</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <button class="btn btn-ghost" onclick="clearColorTool()">清空</button>
+		                    </div>
+		                </div>
+		                <div class="color-tool">
+		                    <div class="converter-layout color-layout">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>输入</h3>
+		                            </div>
+		                            <div class="panel-body">
+		                                <div class="form-group">
+		                                    <label>颜色值</label>
+		                                    <input type="text" id="color-input" placeholder="#FF5733 / rgb(255,87,51) / hsl(11,100%,60%)" oninput="updateColorTool()">
+		                                </div>
+		                                <div class="color-preview-row">
+		                                    <div class="color-preview-box" id="color-preview">
+		                                        <div class="color-preview-checker"></div>
+		                                        <div class="color-preview-color" id="color-preview-color"></div>
+		                                    </div>
+		                                    <div class="color-info">
+		                                        <div class="color-info-item" id="color-detect"></div>
+		                                    </div>
+		                                </div>
+		                                <div id="color-errors" class="error-list"></div>
+		                            </div>
+		                        </div>
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>输出格式</h3>
+		                            </div>
+		                            <div class="panel-body color-outputs">
+		                                <div class="color-output-row">
+		                                    <label>HEX</label>
+		                                    <input type="text" id="color-out-hex" readonly>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyColorOutput(this, 'hex')">复制</button>
+		                                </div>
+		                                <div class="color-output-row">
+		                                    <label>HEX (Alpha)</label>
+		                                    <input type="text" id="color-out-hexa" readonly>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyColorOutput(this, 'hexa')">复制</button>
+		                                </div>
+		                                <div class="color-output-row">
+		                                    <label>RGB</label>
+		                                    <input type="text" id="color-out-rgb" readonly>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyColorOutput(this, 'rgb')">复制</button>
+		                                </div>
+		                                <div class="color-output-row">
+		                                    <label>RGBA</label>
+		                                    <input type="text" id="color-out-rgba" readonly>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyColorOutput(this, 'rgba')">复制</button>
+		                                </div>
+		                                <div class="color-output-row">
+		                                    <label>HSL</label>
+		                                    <input type="text" id="color-out-hsl" readonly>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyColorOutput(this, 'hsl')">复制</button>
+		                                </div>
+		                                <div class="color-output-row">
+		                                    <label>HSLA</label>
+		                                    <input type="text" id="color-out-hsla" readonly>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyColorOutput(this, 'hsla')">复制</button>
+		                                </div>
+		                                <div class="color-output-row">
+		                                    <label>HSV</label>
+		                                    <input type="text" id="color-out-hsv" readonly>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyColorOutput(this, 'hsv')">复制</button>
+		                                </div>
+		                                <div class="color-output-row">
+		                                    <label>CMYK</label>
+		                                    <input type="text" id="color-out-cmyk" readonly>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyColorOutput(this, 'cmyk')">复制</button>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                    <div class="color-palette-panel">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>相关色</h3>
+		                            </div>
+		                            <div class="panel-body">
+		                                <div class="color-palette-grid">
+		                                    <div class="color-palette-item">
+		                                        <div class="color-palette-label">互补色</div>
+		                                        <div class="color-palette-swatch" id="color-complement"></div>
+		                                        <div class="color-palette-value" id="color-complement-value"></div>
+		                                    </div>
+		                                    <div class="color-palette-item">
+		                                        <div class="color-palette-label">三等分色 1</div>
+		                                        <div class="color-palette-swatch" id="color-triadic1"></div>
+		                                        <div class="color-palette-value" id="color-triadic1-value"></div>
+		                                    </div>
+		                                    <div class="color-palette-item">
+		                                        <div class="color-palette-label">三等分色 2</div>
+		                                        <div class="color-palette-swatch" id="color-triadic2"></div>
+		                                        <div class="color-palette-value" id="color-triadic2-value"></div>
+		                                    </div>
+		                                    <div class="color-palette-item">
+		                                        <div class="color-palette-label">类似色 1</div>
+		                                        <div class="color-palette-swatch" id="color-analog1"></div>
+		                                        <div class="color-palette-value" id="color-analog1-value"></div>
+		                                    </div>
+		                                    <div class="color-palette-item">
+		                                        <div class="color-palette-label">类似色 2</div>
+		                                        <div class="color-palette-swatch" id="color-analog2"></div>
+		                                        <div class="color-palette-value" id="color-analog2-value"></div>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- IP 工具页面 -->
+		            <section id="page-tool-ip" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>IP 工具</h1>
+		                        <p class="subtitle">IP 地址验证、转换与子网计算</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <button class="btn btn-ghost" onclick="clearIpTool()">清空</button>
+		                    </div>
+		                </div>
+		                <div class="ip-tool">
+		                    <div class="converter-layout ip-layout">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>IP / CIDR 输入</h3>
+		                            </div>
+		                            <div class="panel-body">
+		                                <div class="form-group">
+		                                    <label>IP 地址或 CIDR</label>
+		                                    <input type="text" id="ip-input" placeholder="192.168.1.1 或 192.168.1.0/24" oninput="updateIpTool()">
+		                                </div>
+		                                <div id="ip-errors" class="error-list"></div>
+		                                <div class="ip-info-card" id="ip-info-card" style="display:none">
+		                                    <div class="ip-info-row">
+		                                        <span class="ip-info-label">IP 类型</span>
+		                                        <span class="ip-info-value" id="ip-type"></span>
+		                                    </div>
+		                                    <div class="ip-info-row">
+		                                        <span class="ip-info-label">IP 类别</span>
+		                                        <span class="ip-info-value" id="ip-class"></span>
+		                                    </div>
+		                                    <div class="ip-info-row">
+		                                        <span class="ip-info-label">私有地址</span>
+		                                        <span class="ip-info-value" id="ip-private"></span>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>格式转换</h3>
+		                            </div>
+		                            <div class="panel-body ip-outputs">
+		                                <div class="ip-output-row">
+		                                    <label>十进制</label>
+		                                    <input type="text" id="ip-out-decimal" readonly>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyIpOutput(this, 'decimal')">复制</button>
+		                                </div>
+		                                <div class="ip-output-row">
+		                                    <label>十六进制</label>
+		                                    <input type="text" id="ip-out-hex" readonly>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyIpOutput(this, 'hex')">复制</button>
+		                                </div>
+		                                <div class="ip-output-row">
+		                                    <label>二进制</label>
+		                                    <input type="text" id="ip-out-binary" readonly>
+		                                    <button class="btn btn-sm btn-ghost" onclick="copyIpOutput(this, 'binary')">复制</button>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                    <div class="ip-cidr-panel" id="ip-cidr-panel" style="display:none">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>子网计算结果</h3>
+		                            </div>
+		                            <div class="panel-body">
+		                                <div class="ip-cidr-grid">
+		                                    <div class="ip-cidr-item">
+		                                        <span class="ip-cidr-label">网络地址</span>
+		                                        <span class="ip-cidr-value" id="cidr-network"></span>
+		                                    </div>
+		                                    <div class="ip-cidr-item">
+		                                        <span class="ip-cidr-label">广播地址</span>
+		                                        <span class="ip-cidr-value" id="cidr-broadcast"></span>
+		                                    </div>
+		                                    <div class="ip-cidr-item">
+		                                        <span class="ip-cidr-label">子网掩码</span>
+		                                        <span class="ip-cidr-value" id="cidr-netmask"></span>
+		                                    </div>
+		                                    <div class="ip-cidr-item">
+		                                        <span class="ip-cidr-label">可用主机数</span>
+		                                        <span class="ip-cidr-value" id="cidr-hosts"></span>
+		                                    </div>
+		                                    <div class="ip-cidr-item">
+		                                        <span class="ip-cidr-label">首个主机</span>
+		                                        <span class="ip-cidr-value" id="cidr-first"></span>
+		                                    </div>
+		                                    <div class="ip-cidr-item">
+		                                        <span class="ip-cidr-label">末尾主机</span>
+		                                        <span class="ip-cidr-value" id="cidr-last"></span>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- Cron 解析页面 -->
+		            <section id="page-tool-cron" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>Cron 解析</h1>
+		                        <p class="subtitle">解析 Cron 表达式，显示人类可读描述</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <button class="btn btn-ghost" onclick="clearCronTool()">清空</button>
+		                    </div>
+		                </div>
+		                <div class="cron-tool">
+		                    <div class="converter-layout cron-layout">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>Cron 表达式</h3>
+		                            </div>
+		                            <div class="panel-body">
+		                                <div class="form-group">
+		                                    <label>表达式（5 或 6 字段）</label>
+		                                    <input type="text" id="cron-input" placeholder="*/5 * * * * 或 0 0 * * *" oninput="updateCronTool()">
+		                                </div>
+		                                <div class="cron-presets">
+		                                    <span class="cron-preset-label">常用：</span>
+		                                    <button class="btn btn-sm btn-ghost" onclick="loadCronPreset('*/5 * * * *')">每5分钟</button>
+		                                    <button class="btn btn-sm btn-ghost" onclick="loadCronPreset('0 * * * *')">每小时</button>
+		                                    <button class="btn btn-sm btn-ghost" onclick="loadCronPreset('0 0 * * *')">每天0点</button>
+		                                    <button class="btn btn-sm btn-ghost" onclick="loadCronPreset('0 0 * * 1')">每周一</button>
+		                                    <button class="btn btn-sm btn-ghost" onclick="loadCronPreset('0 0 1 * *')">每月1日</button>
+		                                </div>
+		                                <div id="cron-errors" class="error-list"></div>
+		                            </div>
+		                        </div>
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>解析结果</h3>
+		                            </div>
+		                            <div class="panel-body">
+		                                <div class="cron-description" id="cron-description">输入 Cron 表达式开始解析</div>
+		                                <div class="cron-fields" id="cron-fields"></div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                    <div class="cron-next-panel" id="cron-next-panel" style="display:none">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>下次运行时间</h3>
+		                            </div>
+		                            <div class="panel-body">
+		                                <ul class="cron-next-list" id="cron-next-list"></ul>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- SQL 格式化页面 -->
+		            <section id="page-tool-sql" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>SQL 格式化</h1>
+		                        <p class="subtitle">SQL 语句美化与压缩</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <button class="btn btn-ghost" onclick="clearSqlTool()">清空</button>
+		                    </div>
+		                </div>
+		                <div class="sql-tool">
+		                    <div class="converter-layout sql-layout">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>输入</h3>
+		                            </div>
+		                            <div class="panel-body">
+		                                <textarea id="sql-input" placeholder="SELECT * FROM users WHERE id = 1" oninput="updateSqlTool()"></textarea>
+		                            </div>
+		                        </div>
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>输出</h3>
+		                                <div class="format-toggle">
+		                                    <button class="format-btn active" id="sql-format-btn" onclick="setSqlMode('format')">格式化</button>
+		                                    <button class="format-btn" id="sql-minify-btn" onclick="setSqlMode('minify')">压缩</button>
+		                                </div>
+		                            </div>
+		                            <div class="panel-body">
+		                                <textarea id="sql-output" readonly placeholder="格式化/压缩结果"></textarea>
+		                                <button class="btn btn-sm btn-ghost copy-output-btn" onclick="copySqlOutput(this)">复制</button>
+		                            </div>
+		                        </div>
+		                    </div>
+		                    <div id="sql-errors" class="error-list"></div>
+		                    <div class="sql-tables-panel" id="sql-tables-panel" style="display:none">
+		                        <div class="converter-panel">
+		                            <div class="panel-header">
+		                                <h3>涉及表名</h3>
+		                            </div>
+		                            <div class="panel-body">
+		                                <div class="sql-tables-list" id="sql-tables-list"></div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 数据备份页面 -->
+		            <section id="page-backup" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>数据备份</h1>
+		                        <p class="subtitle">导出或导入全量数据</p>
+		                    </div>
+		                </div>
+		                <div class="backup-tool">
+		                    <div class="backup-stats" id="backup-stats">
+		                        <div class="backup-stat-card">
+		                            <div class="backup-stat-icon">📑</div>
+		                            <div class="backup-stat-value" id="stat-tabs">-</div>
+		                            <div class="backup-stat-label">页签</div>
+		                        </div>
+		                        <div class="backup-stat-card">
+		                            <div class="backup-stat-icon">⌨️</div>
+		                            <div class="backup-stat-value" id="stat-commands">-</div>
+		                            <div class="backup-stat-label">命令</div>
+		                        </div>
+		                        <div class="backup-stat-card">
+		                            <div class="backup-stat-icon">🔑</div>
+		                            <div class="backup-stat-value" id="stat-credentials">-</div>
+		                            <div class="backup-stat-label">凭证</div>
+		                        </div>
+		                        <div class="backup-stat-card">
+		                            <div class="backup-stat-icon">🌐</div>
+		                            <div class="backup-stat-value" id="stat-nodes">-</div>
+		                            <div class="backup-stat-label">节点</div>
+		                        </div>
+		                    </div>
+		                    <div class="backup-actions">
+		                        <div class="backup-action-card">
+		                            <div class="backup-action-header">
+		                                <span class="backup-action-icon">📤</span>
+		                                <h3>导出数据</h3>
+		                            </div>
+		                            <p class="backup-action-desc">将所有数据导出为 JSON 文件，便于备份或迁移</p>
+		                            <button class="btn btn-primary" onclick="exportBackup()">
+		                                <span class="btn-icon">💾</span> 导出备份
+		                            </button>
+		                        </div>
+		                        <div class="backup-action-card">
+		                            <div class="backup-action-header">
+		                                <span class="backup-action-icon">📥</span>
+		                                <h3>导入数据</h3>
+		                            </div>
+		                            <p class="backup-action-desc">从 JSON 文件恢复数据（将覆盖现有数据）</p>
+		                            <input type="file" id="backup-file-input" accept=".json" style="display:none" onchange="importBackup(event)">
+		                            <button class="btn btn-secondary" onclick="document.getElementById('backup-file-input').click()">
+		                                <span class="btn-icon">📂</span> 选择文件
+		                            </button>
+		                        </div>
+		                    </div>
+		                    <div id="backup-result" class="backup-result" style="display:none"></div>
+		                </div>
+		            </section>
+	        </main>
+	    </div>
 
     <!-- 凭证编辑弹窗 -->
     <div id="credential-modal" class="modal">
@@ -351,6 +1965,20 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
-</body>
-</html>
+	    <script src="tools_m2_utils.js"></script>
+	    <script src="tools_m3_utils.js"></script>
+	    <script src="tools_m4_utils.js"></script>
+	    <script src="tools_m5_utils.js"></script>
+	    <script src="tools_m6_utils.js"></script>
+	    <script src="tools_m7_utils.js"></script>
+	    <script src="tools_m8_utils.js"></script>
+	    <script src="tools_m9_utils.js"></script>
+	    <script src="tools_m10_utils.js"></script>
+	    <script src="tools_m11_utils.js"></script>
+	    <script src="tools_m12_utils.js"></script>
+	    <script src="tools_m13_utils.js"></script>
+	    <script src="tools_m14_utils.js"></script>
+	    <script src="tools_m15_utils.js"></script>
+	    <script src="app.js"></script>
+	</body>
+	</html>

@@ -43,6 +43,14 @@ CHANGELOG.md
 /.claude/
 /.snow/
 
+# 测试文件（仅开发时使用）
+tests/
+**/tests/
+test_*.py
+*_test.py
+*.test.js
+tests/desktop_tools_*.test.js
+
 # 桌面工具数据文件（含敏感信息）
 desktop_tools/电脑使用/credentials.json
 desktop_tools/电脑使用/commands.json

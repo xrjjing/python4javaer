@@ -28,13 +28,37 @@ const state = {
 
 // ===== 工具函数 =====
 function escapeHtml(text) {
-    if (!text) return '';
-    return text
+    if (text === null || text === undefined) return '';
+    return String(text)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+// 用于 HTML 属性值（会被浏览器解码为原始字符）
+function escapeAttr(text) {
+    return escapeHtml(text).replace(/`/g, '&#096;');
+}
+
+// 用于内联 onclick 的单引号字符串参数：onclick="fn('...')"
+function escapeJsString(text) {
+    if (text === null || text === undefined) return '';
+    return String(text)
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/\r/g, '\\r')
+        .replace(/\n/g, '\\n');
+}
+
+// 颜色值尽量限制为常见 Hex（避免 style 属性被注入复杂内容）；不满足则回退
+function safeCssHexColor(color, fallback = '#eee') {
+    const raw = String(color ?? '').trim();
+    if (/^#[0-9a-fA-F]{3}$/.test(raw)) return raw;
+    if (/^#[0-9a-fA-F]{6}$/.test(raw)) return raw;
+    if (/^#[0-9a-fA-F]{8}$/.test(raw)) return raw;
+    return fallback;
 }
 
 // 取消所有待执行的图表渲染
@@ -59,7 +83,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     setDefaultDates();
     await loadInitialData();
     updateGreeting();
+    initCatInteraction();
 });
+
+// ===== 🐱 猫咪互动 =====
+function initCatInteraction() {
+    const catFace = document.querySelector('.cat-face');
+    const eyes = document.querySelectorAll('.cat-eye');
+    if (!catFace || eyes.length === 0) return;
+
+    document.addEventListener('mousemove', (e) => {
+        const rect = catFace.getBoundingClientRect();
+        const catX = rect.left + rect.width / 2;
+        const catY = rect.top + rect.height / 2;
+
+        const angle = Math.atan2(e.clientY - catY, e.clientX - catX);
+        const distance = Math.min(2, Math.hypot(e.clientX - catX, e.clientY - catY) / 50);
+
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+
+        eyes.forEach(eye => {
+            eye.style.transform = `translate(${x}px, ${y}px)`;
+        });
+    });
+}
 
 // ===== 主题系统 =====
 const THEME_ICONS = {
@@ -152,6 +200,9 @@ function initNavigation() {
 }
 
 function switchPage(page) {
+    // 切页前取消图表 RAF，避免后台占用或重复渲染
+    cancelPendingChartRAF();
+
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
 
@@ -168,6 +219,7 @@ function switchPage(page) {
     else if (page === 'budgets') loadBudgetsPage();
     else if (page === 'ledgers') loadLedgersPage();
     else if (page === 'categories') renderCategoryManagement();
+    else if (page === 'backup') initBackupPage();
 }
 
 // ===== 账本切换 =====
@@ -186,7 +238,7 @@ async function loadLedgers() {
 function renderLedgerSelect() {
     const select = document.getElementById('current-ledger');
     select.innerHTML = state.ledgers.map(l =>
-        `<option value="${l.id}" ${l.is_default ? 'selected' : ''}>${l.icon} ${l.name}</option>`
+        `<option value="${escapeAttr(l.id)}" ${l.is_default ? 'selected' : ''}>${escapeHtml(l.icon)} ${escapeHtml(l.name)}</option>`
     ).join('');
     state.currentLedgerId = select.value;
 }
@@ -245,7 +297,7 @@ function renderAccountSelect() {
     const select = document.getElementById('input-account');
     if (select) {
         select.innerHTML = state.accounts.map(a =>
-            `<option value="${a.id}" ${a.is_default ? 'selected' : ''}>${a.icon} ${a.name}</option>`
+            `<option value="${escapeAttr(a.id)}" ${a.is_default ? 'selected' : ''}>${escapeHtml(a.icon)} ${escapeHtml(a.name)}</option>`
         ).join('');
     }
 }
@@ -295,7 +347,7 @@ function renderBudgetAlerts(budgets) {
     container.innerHTML = alerts.map(b => `
         <div class="budget-alert ${b.is_over ? 'danger' : ''}">
             <span class="alert-icon">${b.is_over ? '🚨' : '⚠️'}</span>
-            <span class="alert-text">${b.name} 预算${b.is_over ? '已超支' : '即将用完'}！</span>
+            <span class="alert-text">${escapeHtml(b.name)} 预算${b.is_over ? '已超支' : '即将用完'}！</span>
             <span class="alert-amount">已用 ${b.percentage}%</span>
         </div>
     `).join('');
@@ -314,13 +366,13 @@ function renderRecentRecords(records) {
     }
 
     container.innerHTML = records.map(r => `
-        <div class="record-item" onclick="showEditModal('${r.id}')">
-            <div class="record-icon" style="background:${r.category?.color || '#eee'}">
-                ${r.category?.icon || '📦'}
+        <div class="record-item" onclick="showEditModal('${escapeJsString(r.id)}')">
+            <div class="record-icon" style="background:${escapeAttr(safeCssHexColor(r.category?.color, '#eee'))}">
+                ${escapeHtml(r.category?.icon || '📦')}
             </div>
             <div class="record-info">
                 <span class="record-category">${escapeHtml(r.category?.name) || '未知'}</span>
-                <span class="record-meta">${r.date} ${r.note ? '· ' + escapeHtml(r.note) : ''}</span>
+                <span class="record-meta">${escapeHtml(r.date)} ${r.note ? '· ' + escapeHtml(r.note) : ''}</span>
             </div>
             <span class="record-amount ${r.type === 'income' ? 'positive' : 'negative'}">
                 ${r.type === 'income' ? '+' : '-'}¥${r.amount.toFixed(2)}
@@ -442,9 +494,9 @@ async function renderAddForm() {
     const grid = document.getElementById('category-grid');
     grid.innerHTML = cats.map(c => `
         <div class="category-item ${state.selectedCategory === c.id ? 'selected' : ''}"
-             data-id="${c.id}" onclick="selectCategory('${c.id}')">
-            <div class="category-icon" style="background:${c.color}">${c.icon}</div>
-            <span class="category-name">${c.name}</span>
+             data-id="${escapeAttr(c.id)}" onclick="selectCategory('${escapeJsString(c.id)}')">
+            <div class="category-icon" style="background:${escapeAttr(safeCssHexColor(c.color, '#eee'))}">${escapeHtml(c.icon)}</div>
+            <span class="category-name">${escapeHtml(c.name)}</span>
         </div>
     `).join('');
 
@@ -463,10 +515,10 @@ function renderSmartSuggestions(suggestions) {
     }
 
     container.innerHTML = suggestions.map(s => `
-        <div class="suggestion-item" onclick="applySuggestion('${s.category_id}', ${s.suggested_amount})">
-            <div class="suggestion-icon" style="background:var(--pink-light)">${s.category_icon}</div>
+        <div class="suggestion-item" onclick="applySuggestion('${escapeJsString(s.category_id)}', ${Number(s.suggested_amount) || 0})">
+            <div class="suggestion-icon" style="background:var(--pink-light)">${escapeHtml(s.category_icon)}</div>
             <div class="suggestion-info">
-                <div>${s.category_name}</div>
+                <div>${escapeHtml(s.category_name)}</div>
                 ${s.suggested_amount ? `<div class="suggestion-amount">¥${s.suggested_amount}</div>` : ''}
             </div>
         </div>
@@ -497,9 +549,9 @@ function renderSubcategories() {
 
     subGrid.innerHTML = parent.children.map(c => `
         <div class="subcategory-item ${state.selectedSubCategory === c.id ? 'selected' : ''}"
-             onclick="selectSubCategory('${c.id}')">
-            <span>${c.icon}</span>
-            <span>${c.name}</span>
+             onclick="selectSubCategory('${escapeJsString(c.id)}')">
+            <span>${escapeHtml(c.icon)}</span>
+            <span>${escapeHtml(c.name)}</span>
         </div>
     `).join('');
 }
@@ -581,7 +633,7 @@ function showBudgetWarningModal(warnings) {
             <div class="budget-warning-item ${isOver ? 'danger' : 'warning'}">
                 <div class="budget-warning-header">
                     <span class="budget-warning-name">
-                        ${isOver ? '🚨' : '⚠️'} ${w.budget_name}
+                        ${isOver ? '🚨' : '⚠️'} ${escapeHtml(w.budget_name)}
                     </span>
                     <span class="budget-warning-pct">${w.pct_after}%</span>
                 </div>
@@ -650,13 +702,13 @@ function renderRecordsList(records) {
         <div class="date-group">
             <div class="date-header">${formatDate(date)}</div>
             ${items.map(r => `
-                <div class="record-item" onclick="showEditModal('${r.id}')">
-                    <div class="record-icon" style="background:${r.category?.color || '#eee'}">
-                        ${r.category?.icon || '📦'}
+                <div class="record-item" onclick="showEditModal('${escapeJsString(r.id)}')">
+                    <div class="record-icon" style="background:${escapeAttr(safeCssHexColor(r.category?.color, '#eee'))}">
+                        ${escapeHtml(r.category?.icon || '📦')}
                     </div>
                     <div class="record-info">
                         <span class="record-category">${escapeHtml(r.category?.name) || '未知'}</span>
-                        <span class="record-meta">${r.time || ''} ${r.account?.name ? '· ' + r.account.icon + escapeHtml(r.account.name) : ''} ${r.note ? '· ' + escapeHtml(r.note) : ''}</span>
+                        <span class="record-meta">${escapeHtml(r.time || '')} ${r.account?.name ? '· ' + escapeHtml(r.account.icon || '') + escapeHtml(r.account.name) : ''} ${r.note ? '· ' + escapeHtml(r.note) : ''}</span>
                     </div>
                     <span class="record-amount ${r.type === 'income' ? 'positive' : 'negative'}">
                         ${r.type === 'income' ? '+' : '-'}¥${r.amount.toFixed(2)}
@@ -719,14 +771,14 @@ function updateEditCategorySelect() {
     const select = document.getElementById('edit-category');
     const cats = state.flatCategories[state.editType];
     select.innerHTML = cats.map(c =>
-        `<option value="${c.id}" ${c.id === currentEditRecord?.category_id ? 'selected' : ''}>${c.icon} ${c.name}</option>`
+        `<option value="${escapeAttr(c.id)}" ${c.id === currentEditRecord?.category_id ? 'selected' : ''}>${escapeHtml(c.icon)} ${escapeHtml(c.name)}</option>`
     ).join('');
 }
 
 function updateEditAccountSelect() {
     const select = document.getElementById('edit-account');
     select.innerHTML = state.accounts.map(a =>
-        `<option value="${a.id}" ${a.id === currentEditRecord?.account_id ? 'selected' : ''}>${a.icon} ${a.name}</option>`
+        `<option value="${escapeAttr(a.id)}" ${a.id === currentEditRecord?.account_id ? 'selected' : ''}>${escapeHtml(a.icon)} ${escapeHtml(a.name)}</option>`
     ).join('');
 }
 
@@ -973,8 +1025,8 @@ function drawPieChartImpl(canvas, data) {
     if (legend) {
         legend.innerHTML = data.slice(0, 5).map(d => `
             <span class="legend-item">
-                <span class="legend-dot" style="background:${d.category_color}"></span>
-                ${d.category_name}
+                <span class="legend-dot" style="background:${escapeAttr(safeCssHexColor(d.category_color, '#eee'))}"></span>
+                ${escapeHtml(d.category_name)}
             </span>
         `).join('');
     }
@@ -1080,8 +1132,8 @@ function renderCategoryRanking(data) {
     container.innerHTML = data.slice(0, 5).map((d, i) => `
         <div class="rank-item">
             <span class="rank-num">${i + 1}</span>
-            <span class="rank-icon">${d.category_icon}</span>
-            <span class="rank-name">${d.category_name}</span>
+            <span class="rank-icon">${escapeHtml(d.category_icon)}</span>
+            <span class="rank-name">${escapeHtml(d.category_name)}</span>
             <span class="rank-amount">¥${d.amount.toFixed(2)}</span>
             <span class="rank-percent">${d.percentage}%</span>
         </div>
@@ -1136,18 +1188,18 @@ function renderAccountsGrid(accounts) {
         }
 
         return `
-            <div class="account-card" data-type="${a.type}">
-                <div class="account-header" onclick="showEditAccountModal('${a.id}')">
-                    <div class="account-icon" style="background:${a.color}">${a.icon}</div>
-                    <span class="account-name">${a.name}</span>
+            <div class="account-card" data-type="${escapeAttr(a.type)}">
+                <div class="account-header" onclick="showEditAccountModal('${escapeJsString(a.id)}')">
+                    <div class="account-icon" style="background:${escapeAttr(safeCssHexColor(a.color, '#eee'))}">${escapeHtml(a.icon)}</div>
+                    <span class="account-name">${escapeHtml(a.name)}</span>
                     <span class="account-type">${ACCOUNT_TYPES[a.type]}</span>
                 </div>
-                <div class="account-balance ${a.balance < 0 ? 'negative' : ''}" onclick="showEditAccountModal('${a.id}')">
+                <div class="account-balance ${a.balance < 0 ? 'negative' : ''}" onclick="showEditAccountModal('${escapeJsString(a.id)}')">
                     ¥${a.balance.toFixed(2)}
                 </div>
                 ${a.type === 'credit' && a.billing_day ? `<div class="account-meta">账单日 ${a.billing_day}日 · 还款日 ${a.repayment_day}日</div>` : ''}
                 ${creditHtml}
-                ${!a.is_default ? `<button class="btn btn-ghost btn-sm account-delete-btn" onclick="event.stopPropagation();deleteAccountWithCheck('${a.id}')">删除</button>` : ''}
+                ${!a.is_default ? `<button class="btn btn-ghost btn-sm account-delete-btn" onclick="event.stopPropagation();deleteAccountWithCheck('${escapeJsString(a.id)}')">删除</button>` : ''}
             </div>
         `;
     }).join('');
@@ -1259,6 +1311,164 @@ async function saveAccount() {
     }
 }
 
+// ===== 账户转账 =====
+function showTransferModal() {
+    const fromSelect = document.getElementById('transfer-from');
+    const toSelect = document.getElementById('transfer-to');
+
+    // 填充账户选项
+    const options = state.accounts.map(a =>
+        `<option value="${escapeAttr(a.id)}">${escapeHtml(a.icon)} ${escapeHtml(a.name)} (¥${a.balance.toFixed(2)})</option>`
+    ).join('');
+
+    fromSelect.innerHTML = options;
+    toSelect.innerHTML = options;
+
+    // 默认选择不同账户
+    if (state.accounts.length > 1) {
+        toSelect.selectedIndex = 1;
+    }
+
+    // 清空输入
+    document.getElementById('transfer-amount').value = '';
+    document.getElementById('transfer-note').value = '';
+
+    openModal('transfer-modal');
+}
+
+let isTransferring = false;
+async function executeTransfer() {
+    if (isTransferring) return;
+
+    const fromId = document.getElementById('transfer-from').value;
+    const toId = document.getElementById('transfer-to').value;
+    const amount = parseFloat(document.getElementById('transfer-amount').value);
+    const note = document.getElementById('transfer-note').value;
+
+    if (!fromId || !toId) {
+        showToast('请选择账户', true);
+        return;
+    }
+    if (fromId === toId) {
+        showToast('转出和转入账户不能相同喵～', true);
+        return;
+    }
+    if (!amount || amount <= 0) {
+        showToast('请输入有效金额', true);
+        return;
+    }
+
+    isTransferring = true;
+    try {
+        const result = await pywebview.api.transfer(fromId, toId, amount, '', note);
+
+        if (result.success) {
+            showToast(`转账成功！${result.from_account.icon} → ${result.to_account.icon} ¥${result.amount.toFixed(2)}`);
+            closeModal('transfer-modal');
+            await loadAccounts();
+            loadAccountsPage();
+            refreshDashboard();
+        } else {
+            showToast(result.error || '转账失败', true);
+        }
+    } catch (err) {
+        console.error('转账失败:', err);
+        showToast('转账失败: ' + err, true);
+    } finally {
+        isTransferring = false;
+    }
+}
+
+// ===== 余额调整 =====
+function showAdjustBalanceModal() {
+    const select = document.getElementById('adjust-account');
+
+    // 填充账户选项
+    select.innerHTML = state.accounts.map(a =>
+        `<option value="${escapeAttr(a.id)}" data-balance="${a.balance}">${escapeHtml(a.icon)} ${escapeHtml(a.name)}</option>`
+    ).join('');
+
+    // 更新当前余额显示
+    updateCurrentBalance();
+
+    // 清空输入
+    document.getElementById('adjust-new-balance').value = '';
+    document.getElementById('adjust-note').value = '';
+    document.getElementById('adjust-diff').style.display = 'none';
+
+    // 监听输入变化以显示差额
+    document.getElementById('adjust-new-balance').oninput = updateBalanceDiff;
+
+    openModal('adjust-balance-modal');
+}
+
+function updateCurrentBalance() {
+    const select = document.getElementById('adjust-account');
+    const selectedOption = select.options[select.selectedIndex];
+    const balance = parseFloat(selectedOption?.dataset.balance || 0);
+    document.getElementById('adjust-current-balance').textContent = `¥${balance.toFixed(2)}`;
+    updateBalanceDiff();
+}
+
+function updateBalanceDiff() {
+    const select = document.getElementById('adjust-account');
+    const selectedOption = select.options[select.selectedIndex];
+    const currentBalance = parseFloat(selectedOption?.dataset.balance || 0);
+    const newBalance = parseFloat(document.getElementById('adjust-new-balance').value) || 0;
+
+    const diff = newBalance - currentBalance;
+    const diffEl = document.getElementById('adjust-diff');
+    const diffValueEl = document.getElementById('adjust-diff-value');
+
+    if (document.getElementById('adjust-new-balance').value) {
+        diffEl.style.display = 'flex';
+        const sign = diff >= 0 ? '+' : '';
+        diffValueEl.textContent = `${sign}¥${diff.toFixed(2)}`;
+        diffValueEl.className = 'diff-value ' + (diff >= 0 ? 'positive' : 'negative');
+    } else {
+        diffEl.style.display = 'none';
+    }
+}
+
+let isAdjusting = false;
+async function executeAdjustBalance() {
+    if (isAdjusting) return;
+
+    const accountId = document.getElementById('adjust-account').value;
+    const newBalance = parseFloat(document.getElementById('adjust-new-balance').value);
+    const note = document.getElementById('adjust-note').value;
+
+    if (!accountId) {
+        showToast('请选择账户', true);
+        return;
+    }
+    if (isNaN(newBalance)) {
+        showToast('请输入有效金额', true);
+        return;
+    }
+
+    isAdjusting = true;
+    try {
+        const result = await pywebview.api.adjust_balance(accountId, newBalance, note);
+
+        if (result.success) {
+            const diffText = result.difference >= 0 ? `+¥${result.difference.toFixed(2)}` : `-¥${Math.abs(result.difference).toFixed(2)}`;
+            showToast(`${result.account_icon} ${result.account_name} 余额已调整 (${diffText})`);
+            closeModal('adjust-balance-modal');
+            await loadAccounts();
+            loadAccountsPage();
+            refreshDashboard();
+        } else {
+            showToast(result.error || '调整失败', true);
+        }
+    } catch (err) {
+        console.error('余额调整失败:', err);
+        showToast('调整失败: ' + err, true);
+    } finally {
+        isAdjusting = false;
+    }
+}
+
 // ===== 预算管理 =====
 async function loadBudgetsPage() {
     const budgets = await pywebview.api.get_budget_status(state.currentLedgerId);
@@ -1293,11 +1503,11 @@ function renderBudgetsGrid(budgets) {
         const cat = state.flatCategories.expense.find(c => c.id === b.category_id);
 
         return `
-            <div class="budget-card" onclick="showEditBudgetModal('${b.id}')">
+            <div class="budget-card" onclick="showEditBudgetModal('${escapeJsString(b.id)}')">
                 <div class="budget-header">
                     <div class="budget-name">
-                        ${cat ? `<span class="cat-icon" style="background:${cat.color}">${cat.icon}</span>` : ''}
-                        <span>${b.name}</span>
+                        ${cat ? `<span class="cat-icon" style="background:${escapeAttr(safeCssHexColor(cat.color, '#eee'))}">${escapeHtml(cat.icon)}</span>` : ''}
+                        <span>${escapeHtml(b.name)}</span>
                     </div>
                     ${tagText ? `<span class="budget-tag ${tagClass}">${tagText}</span>` : ''}
                 </div>
@@ -1336,7 +1546,7 @@ function renderBudgetCategorySelect() {
     const select = document.getElementById('budget-category');
     const cats = state.categories.expense;
     select.innerHTML = cats.map(c =>
-        `<option value="${c.id}">${c.icon} ${c.name}</option>`
+        `<option value="${escapeAttr(c.id)}">${escapeHtml(c.icon)} ${escapeHtml(c.name)}</option>`
     ).join('');
 }
 
@@ -1388,11 +1598,11 @@ function renderLedgersGrid() {
 
     grid.innerHTML = state.ledgers.map(l => `
         <div class="ledger-card ${l.is_default ? 'default' : ''} ${l.id === state.currentLedgerId ? 'active' : ''}"
-             onclick="switchLedger('${l.id}')">
-            <div class="ledger-icon" style="background:${l.color}">${l.icon}</div>
-            <div class="ledger-name">${l.name}</div>
+             onclick="switchLedger('${escapeJsString(l.id)}')">
+            <div class="ledger-icon" style="background:${escapeAttr(safeCssHexColor(l.color, '#eee'))}">${escapeHtml(l.icon)}</div>
+            <div class="ledger-name">${escapeHtml(l.name)}</div>
             <div class="ledger-stats">
-                <span>创建于 ${l.created_at?.slice(0, 10) || '-'}</span>
+                <span>创建于 ${escapeHtml(l.created_at?.slice(0, 10) || '-')}</span>
             </div>
         </div>
     `).join('') + `
@@ -1488,9 +1698,9 @@ function renderCategoryList(type, containerId) {
 
     container.innerHTML = cats.map(c => `
         <div class="category-manage-item">
-            <div class="category-icon" style="background:${c.color}">${c.icon}</div>
-            <span class="category-name">${c.name}</span>
-            ${!c.is_system ? `<button class="delete-btn" onclick="deleteCategory('${c.id}')">×</button>` : ''}
+            <div class="category-icon" style="background:${escapeAttr(safeCssHexColor(c.color, '#eee'))}">${escapeHtml(c.icon)}</div>
+            <span class="category-name">${escapeHtml(c.name)}</span>
+            ${!c.is_system ? `<button class="delete-btn" onclick="deleteCategory('${escapeJsString(c.id)}')">×</button>` : ''}
         </div>
     `).join('');
 }
@@ -1667,12 +1877,12 @@ function showIntegrityModal(type, id, checkResult) {
     if (isCategory) {
         const cats = state.flatCategories[checkResult.category_type].filter(c => c.id !== id && !c.parent_id);
         migrateSelect.innerHTML = cats.map(c =>
-            `<option value="${c.id}" ${c.id === checkResult.suggested_migrate_to ? 'selected' : ''}>${c.icon} ${c.name}</option>`
+            `<option value="${escapeAttr(c.id)}" ${c.id === checkResult.suggested_migrate_to ? 'selected' : ''}>${escapeHtml(c.icon)} ${escapeHtml(c.name)}</option>`
         ).join('');
     } else {
         const accs = state.accounts.filter(a => a.id !== id);
         migrateSelect.innerHTML = accs.map(a =>
-            `<option value="${a.id}" ${a.id === checkResult.suggested_migrate_to ? 'selected' : ''}>${a.icon} ${a.name}</option>`
+            `<option value="${escapeAttr(a.id)}" ${a.id === checkResult.suggested_migrate_to ? 'selected' : ''}>${escapeHtml(a.icon)} ${escapeHtml(a.name)}</option>`
         ).join('');
     }
     migrateGroup.style.display = 'block';
@@ -1795,3 +2005,126 @@ function showToast(msg, isError = false) {
 }
 
 // 旧的深色模式代码已被多主题系统替代 (initTheme)
+
+// ===== 数据备份与恢复 =====
+async function initBackupPage() {
+    await updateBackupStats();
+}
+
+async function updateBackupStats() {
+    try {
+        const stats = await pywebview.api.get_data_stats();
+        document.getElementById('stat-categories').textContent = stats.categories ?? '-';
+        document.getElementById('stat-accounts').textContent = stats.accounts ?? '-';
+        document.getElementById('stat-ledgers').textContent = stats.ledgers ?? '-';
+        document.getElementById('stat-budgets').textContent = stats.budgets ?? '-';
+        document.getElementById('stat-records').textContent = stats.records ?? '-';
+    } catch (e) {
+        console.error('Failed to load backup stats:', e);
+    }
+}
+
+async function exportBackupData() {
+    const resultEl = document.getElementById('backup-result');
+    resultEl.style.display = 'none';
+    resultEl.className = 'backup-result';
+
+    try {
+        const data = await pywebview.api.export_data();
+        const jsonStr = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const now = new Date();
+        const ts = now.toISOString().slice(0, 19).replace(/[:\-T]/g, '').replace(/(\d{8})(\d{6})/, '$1_$2');
+        const filename = `喵喵存金罐_备份_${ts}.json`;
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        resultEl.className = 'backup-result backup-success';
+        resultEl.innerHTML = `
+            <div class="backup-result-title">✅ 导出成功喵～</div>
+            <div class="backup-result-details">
+                备份文件已下载：<strong>${filename}</strong>
+                <ul>
+                    <li>分类：${data.data.categories?.length ?? 0} 条</li>
+                    <li>账户：${data.data.accounts?.length ?? 0} 条</li>
+                    <li>账本：${data.data.ledgers?.length ?? 0} 条</li>
+                    <li>预算：${data.data.budgets?.length ?? 0} 条</li>
+                    <li>记录：${data.data.records?.length ?? 0} 条</li>
+                </ul>
+            </div>
+        `;
+        resultEl.style.display = '';
+    } catch (e) {
+        resultEl.className = 'backup-result backup-error';
+        resultEl.innerHTML = `
+            <div class="backup-result-title">❌ 导出失败</div>
+            <div class="backup-result-details">${escapeHtml(e.message || String(e))}</div>
+        `;
+        resultEl.style.display = '';
+    }
+}
+
+async function importBackupData(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const resultEl = document.getElementById('backup-result');
+    resultEl.style.display = 'none';
+    resultEl.className = 'backup-result';
+
+    try {
+        const text = await file.text();
+        const jsonData = JSON.parse(text);
+
+        if (!jsonData.data) {
+            throw new Error('无效的备份文件格式：缺少 data 字段');
+        }
+
+        if (!confirm('导入将覆盖现有数据，是否继续？')) {
+            event.target.value = '';
+            return;
+        }
+
+        const result = await pywebview.api.import_data(jsonData);
+
+        if (result.success) {
+            resultEl.className = 'backup-result backup-success';
+            resultEl.innerHTML = `
+                <div class="backup-result-title">✅ 导入成功喵～</div>
+                <div class="backup-result-details">
+                    已导入数据：
+                    <ul>
+                        <li>分类：${result.imported.categories} 条</li>
+                        <li>账户：${result.imported.accounts} 条</li>
+                        <li>账本：${result.imported.ledgers} 条</li>
+                        <li>预算：${result.imported.budgets} 条</li>
+                        <li>记录：${result.imported.records} 条</li>
+                    </ul>
+                    页面将自动刷新以加载新数据...
+                </div>
+            `;
+            resultEl.style.display = '';
+            await updateBackupStats();
+            setTimeout(() => location.reload(), 2000);
+        } else {
+            throw new Error(result.error || '导入失败');
+        }
+    } catch (e) {
+        resultEl.className = 'backup-result backup-error';
+        resultEl.innerHTML = `
+            <div class="backup-result-title">❌ 导入失败</div>
+            <div class="backup-result-details">${escapeHtml(e.message || String(e))}</div>
+        `;
+        resultEl.style.display = '';
+    }
+
+    event.target.value = '';
+}

@@ -40,6 +40,7 @@ body {
     --accent-light: var(--pink-light);
     --sidebar-bg: var(--white);
     --content-gradient: linear-gradient(135deg, var(--bg) 0%, #FFF5F5 100%);
+    --on-accent: #fff;
 }
 
 /* ========== 1. Light 主题 - 清爽日间 ☀️ ========== */
@@ -72,6 +73,7 @@ body {
     --accent-light: #dbeafe;
     --sidebar-bg: #ffffff;
     --content-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    --on-accent: #fff;
 }
 
 /* ========== 2. Cute 主题 - 糖果可爱 🐱 (默认) ========== */
@@ -104,6 +106,7 @@ body {
     --accent-light: #FFE5E2;
     --sidebar-bg: #ffffff;
     --content-gradient: linear-gradient(135deg, #FFF9F9 0%, #FFF5F5 100%);
+    --on-accent: #fff;
 }
 
 /* ========== 3. Office 主题 - 专业办公 📊 ========== */
@@ -136,6 +139,7 @@ body {
     --accent-light: #dbeafe;
     --sidebar-bg: #ffffff;
     --content-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    --on-accent: #fff;
 }
 
 /* ========== 4. Neon Light 主题 - 日间极光 🌊 ========== */
@@ -168,6 +172,7 @@ body {
     --accent-light: #ccfbf1;
     --sidebar-bg: linear-gradient(160deg, hsl(180, 60%, 85%) 0%, hsl(160, 55%, 82%) 100%);
     --content-gradient: linear-gradient(160deg, #f0fdfa 0%, #ecfeff 50%, #f0fdf4 100%);
+    --on-accent: #fff;
 }
 
 /* ========== 5. Cyberpunk Light 主题 - 日间赛博 🌸 ========== */
@@ -200,6 +205,7 @@ body {
     --accent-light: #fae8ff;
     --sidebar-bg: linear-gradient(135deg, hsl(280, 60%, 80%) 0%, hsl(220, 70%, 80%) 50%, hsl(190, 70%, 78%) 100%);
     --content-gradient: linear-gradient(135deg, #fdf4ff 0%, #fce7f3 50%, #f0f9ff 100%);
+    --on-accent: #fff;
 }
 
 /* ========== 6. Dark 主题 - 午夜深邃 🌙 ========== */
@@ -232,6 +238,7 @@ body {
     --accent-light: #312e81;
     --sidebar-bg: #1e293b;
     --content-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    --on-accent: #fff;
 }
 
 /* ========== 7. Neon 主题 - 霓虹夜城 🌃 ========== */
@@ -264,6 +271,7 @@ body {
     --accent-light: #134e4a;
     --sidebar-bg: linear-gradient(180deg, #0f172a 0%, #134e4a 50%, #0f172a 100%);
     --content-gradient: linear-gradient(135deg, #020617 0%, #0c4a6e 50%, #020617 100%);
+    --on-accent: #0f172a;
 }
 
 /* ========== 8. Cyberpunk 主题 - 赛博朋克 🤖 ========== */
@@ -296,16 +304,19 @@ body {
     --accent-light: #3d3d00;
     --sidebar-bg: linear-gradient(160deg, #121212 0%, #1a1a2e 50%, #121212 100%);
     --content-gradient: linear-gradient(135deg, #050505 0%, #1a1a2e 50%, #050505 100%);
+    --on-accent: #000;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", sans-serif;
+    font-family: "Nunito", "Varela Round", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", sans-serif;
     background: var(--bg);
     color: var(--text);
     height: 100vh;
     overflow: hidden;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
 }
 
 .app {
@@ -428,7 +439,7 @@ body {
 
 .nav-item.active {
     background: var(--pink);
-    color: var(--white);
+    color: var(--on-accent);
     box-shadow: 0 4px 12px rgba(255, 183, 178, 0.4);
 }
 
@@ -475,6 +486,87 @@ body {
     color: var(--text);
 }
 
+.page-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* 转账箭头 */
+.transfer-arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: -8px 0;
+    color: var(--text-light);
+    font-size: 1.5rem;
+}
+
+/* 紧凑金额输入 */
+.amount-input-wrapper.compact {
+    display: flex;
+    align-items: center;
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 0 12px;
+}
+.amount-input-wrapper.compact .currency {
+    color: var(--text-light);
+    font-size: 1rem;
+    margin-right: 4px;
+}
+.amount-input-wrapper.compact .form-input {
+    border: none;
+    background: transparent;
+    padding-left: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* 余额信息显示 */
+.balance-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--bg);
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+.balance-label {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+.balance-value {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* 余额差额显示 */
+.balance-diff {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background: var(--bg);
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+.diff-label {
+    color: var(--text-light);
+    font-size: 0.85rem;
+}
+.diff-value {
+    font-size: 1rem;
+    font-weight: 600;
+}
+.diff-value.positive {
+    color: var(--positive);
+}
+.diff-value.negative {
+    color: var(--negative);
+}
+
 .greeting h1 { margin-bottom: 4px; }
 .greeting-sub {
     color: var(--text-light);
@@ -514,6 +606,12 @@ body {
     display: flex;
     align-items: center;
     gap: 16px;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
 }
 
 .card-icon {
@@ -818,6 +916,12 @@ body {
     font-family: inherit;
     outline: none;
     transition: border-color 0.2s;
+    background: var(--white);
+    color: var(--text);
+}
+
+.form-input::placeholder {
+    color: var(--text-light);
 }
 
 .form-input:focus { border-color: var(--pink); }
@@ -830,16 +934,20 @@ body {
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
 }
 
+.btn:active {
+    transform: scale(0.95);
+}
+
 .btn-primary {
     background: var(--pink);
-    color: var(--white);
+    color: var(--on-accent);
     box-shadow: 0 4px 12px rgba(255, 183, 178, 0.4);
 }
 
@@ -941,7 +1049,7 @@ body {
 
 .stats-tab.active {
     background: var(--lavender);
-    color: var(--white);
+    color: var(--on-accent);
 }
 
 .stats-summary {
@@ -1693,7 +1801,13 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
     background: var(--pink);
-    border-radius: 3px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+    border: 0;
 }
 
 /* ===== FAB 快捷按钮 ===== */
@@ -2454,4 +2568,129 @@ body.dark-mode .content {
 [data-theme="cyberpunk"] .btn-primary:hover {
     transform: translate(2px, 2px);
     box-shadow: 1px 1px 0px #e879f9;
+}
+
+/* ========== 数据备份页面 ========== */
+.backup-tool {
+    padding: 20px;
+}
+
+.backup-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.backup-stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 12px;
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.backup-stat-card .stat-icon {
+    font-size: 1.5rem;
+}
+
+.backup-stat-card .stat-label {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+.backup-stat-card .stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.backup-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.backup-action-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+.backup-action-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.backup-action-card .action-label {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.backup-action-card .action-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.backup-action-card .action-info h3 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    color: var(--text);
+}
+
+.backup-action-card .action-info p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.backup-result {
+    padding: 16px;
+    border-radius: var(--radius);
+    margin-top: 16px;
+}
+
+.backup-result.backup-success {
+    background: var(--mint);
+    border: 1px solid var(--mint-dark);
+}
+
+.backup-result.backup-error {
+    background: var(--pink-light);
+    border: 1px solid var(--negative);
+}
+
+.backup-result .backup-result-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.backup-result .backup-result-details {
+    font-size: 0.85rem;
+    color: var(--text);
+}
+
+.backup-result .backup-result-details ul {
+    margin: 8px 0 0;
+    padding-left: 20px;
+}
+
+.backup-result .backup-result-details li {
+    margin: 4px 0;
 }

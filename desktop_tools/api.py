@@ -123,3 +123,83 @@ class Api:
             return True
         except Exception:
             return False
+
+    # ========== 数据备份与恢复 ==========
+    def export_data(self):
+        """导出所有数据为 JSON 格式"""
+        from datetime import datetime
+
+        data = {
+            "version": "1.0",
+            "exported_at": datetime.now().isoformat(),
+            "app": "狗狗百宝箱",
+            "data": {
+                "tabs": self.computer_usage.get_tabs(),
+                "commands": self.computer_usage.get_commands(),
+                "credentials": self.computer_usage.get_credentials(),
+                "nodes": self.node_converter.get_nodes(),
+                "theme": self.get_theme()
+            }
+        }
+        return data
+
+    def import_data(self, json_data: dict):
+        """从 JSON 数据导入（覆盖现有数据）"""
+        try:
+            if not isinstance(json_data, dict) or "data" not in json_data:
+                return {"success": False, "error": "无效的备份数据格式"}
+
+            data = json_data["data"]
+            imported = {"tabs": 0, "commands": 0, "credentials": 0, "nodes": 0}
+
+            # 导入页签
+            if "tabs" in data and isinstance(data["tabs"], list):
+                tabs_file = self.computer_usage.tabs_file
+                tabs_file.write_text(json.dumps(data["tabs"], ensure_ascii=False, indent=2), encoding="utf-8")
+                imported["tabs"] = len(data["tabs"])
+
+            # 导入命令
+            if "commands" in data and isinstance(data["commands"], list):
+                cmds_file = self.computer_usage.commands_file
+                cmds_file.write_text(json.dumps(data["commands"], ensure_ascii=False, indent=2), encoding="utf-8")
+                imported["commands"] = len(data["commands"])
+
+            # 导入凭证
+            if "credentials" in data and isinstance(data["credentials"], list):
+                creds_file = self.computer_usage.credentials_file
+                creds_file.write_text(json.dumps(data["credentials"], ensure_ascii=False, indent=2), encoding="utf-8")
+                imported["credentials"] = len(data["credentials"])
+
+            # 导入节点
+            if "nodes" in data and isinstance(data["nodes"], list):
+                nodes = data["nodes"]
+                lines = ["# 代理节点", ""]
+                for node in nodes:
+                    lines.append(f"## {node.get('name', 'Unknown')}")
+                    lines.append(f"- **ID**: {node.get('id', '')}")
+                    lines.append(f"- **类型**: {node.get('type', '')}")
+                    lines.append(f"- **服务器**: {node.get('server', '')}:{node.get('port', '')}")
+                    lines.append(f"- **链接**: `{node.get('raw_link', '')}`")
+                    config = node.get("config", {})
+                    if config.get("yaml"):
+                        lines.append(f"```yaml\n{config['yaml']}\n```")
+                    lines.append("")
+                self.node_converter.nodes_file.write_text("\n".join(lines), encoding="utf-8")
+                imported["nodes"] = len(nodes)
+
+            # 导入主题
+            if "theme" in data:
+                self.save_theme(data["theme"])
+
+            return {"success": True, "imported": imported}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def get_data_stats(self):
+        """获取数据统计信息"""
+        return {
+            "tabs": len(self.computer_usage.get_tabs()),
+            "commands": len(self.computer_usage.get_commands()),
+            "credentials": len(self.computer_usage.get_credentials()),
+            "nodes": len(self.node_converter.get_nodes())
+        }

@@ -63,6 +63,10 @@
                     <span class="nav-icon">🏷️</span>
                     <span class="nav-text">分类</span>
                 </li>
+                <li class="nav-item" data-page="backup">
+                    <span class="nav-icon">💾</span>
+                    <span class="nav-text">数据备份</span>
+                </li>
             </ul>
             <div class="sidebar-footer">
                 <!-- 主题选择器 -->
@@ -328,9 +332,17 @@
             <section id="page-accounts" class="page">
                 <header class="page-header">
                     <h1>账户管理 💳</h1>
-                    <button class="btn btn-primary" onclick="showAddAccountModal()">
-                        <span>+</span> 添加账户
-                    </button>
+                    <div class="page-actions">
+                        <button class="btn btn-ghost" onclick="showTransferModal()">
+                            <span>🔄</span> 转账
+                        </button>
+                        <button class="btn btn-ghost" onclick="showAdjustBalanceModal()">
+                            <span>⚖️</span> 对账
+                        </button>
+                        <button class="btn btn-primary" onclick="showAddAccountModal()">
+                            <span>+</span> 添加账户
+                        </button>
+                    </div>
                 </header>
 
                 <div class="assets-overview">
@@ -398,6 +410,65 @@
                     <button class="btn btn-ghost btn-add-category" onclick="showAddCategoryModal('income')">
                         <span>+</span> 添加分类
                     </button>
+                </div>
+            </section>
+
+            <!-- 数据备份 -->
+            <section id="page-backup" class="page">
+                <header class="page-header">
+                    <h1>数据备份 💾</h1>
+                </header>
+
+                <div class="backup-tool">
+                    <div class="backup-stats">
+                        <div class="backup-stat-card">
+                            <span class="stat-icon">🏷️</span>
+                            <span class="stat-label">分类</span>
+                            <span class="stat-value" id="stat-categories">-</span>
+                        </div>
+                        <div class="backup-stat-card">
+                            <span class="stat-icon">🏦</span>
+                            <span class="stat-label">账户</span>
+                            <span class="stat-value" id="stat-accounts">-</span>
+                        </div>
+                        <div class="backup-stat-card">
+                            <span class="stat-icon">📚</span>
+                            <span class="stat-label">账本</span>
+                            <span class="stat-value" id="stat-ledgers">-</span>
+                        </div>
+                        <div class="backup-stat-card">
+                            <span class="stat-icon">🎯</span>
+                            <span class="stat-label">预算</span>
+                            <span class="stat-value" id="stat-budgets">-</span>
+                        </div>
+                        <div class="backup-stat-card">
+                            <span class="stat-icon">📝</span>
+                            <span class="stat-label">记录</span>
+                            <span class="stat-value" id="stat-records">-</span>
+                        </div>
+                    </div>
+
+                    <div class="backup-actions">
+                        <div class="backup-action-card" onclick="exportBackupData()">
+                            <div class="action-icon">📤</div>
+                            <div class="action-info">
+                                <h3>导出备份</h3>
+                                <p>将所有数据导出为 JSON 文件</p>
+                            </div>
+                        </div>
+                        <div class="backup-action-card">
+                            <input type="file" id="import-file" accept=".json" onchange="importBackupData(event)" style="display:none">
+                            <label for="import-file" class="action-label">
+                                <div class="action-icon">📥</div>
+                                <div class="action-info">
+                                    <h3>导入备份</h3>
+                                    <p>从 JSON 文件恢复数据（将覆盖现有数据）</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="backup-result" class="backup-result" style="display:none"></div>
                 </div>
             </section>
         </main>
@@ -685,6 +756,85 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-ghost" onclick="closeModal('budget-warning-modal')">知道了</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 转账弹窗 -->
+    <div id="transfer-modal" class="modal">
+        <div class="modal-overlay" onclick="closeModal('transfer-modal')"></div>
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h2>账户转账 🔄</h2>
+                <button class="close-btn" onclick="closeModal('transfer-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">转出账户</label>
+                    <select id="transfer-from" class="form-input"></select>
+                </div>
+                <div class="transfer-arrow">
+                    <span>↓</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">转入账户</label>
+                    <select id="transfer-to" class="form-input"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">转账金额</label>
+                    <div class="amount-input-wrapper compact">
+                        <span class="currency">¥</span>
+                        <input type="number" id="transfer-amount" class="form-input" placeholder="0.00" step="0.01">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">备注（可选）</label>
+                    <input type="text" id="transfer-note" class="form-input" placeholder="如：还信用卡">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('transfer-modal')">取消</button>
+                <button class="btn btn-primary" onclick="executeTransfer()">确认转账</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 余额调整弹窗 -->
+    <div id="adjust-balance-modal" class="modal">
+        <div class="modal-overlay" onclick="closeModal('adjust-balance-modal')"></div>
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h2>余额调整 ⚖️</h2>
+                <button class="close-btn" onclick="closeModal('adjust-balance-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">选择账户</label>
+                    <select id="adjust-account" class="form-input" onchange="updateCurrentBalance()"></select>
+                </div>
+                <div class="balance-info">
+                    <span class="balance-label">当前余额</span>
+                    <span class="balance-value" id="adjust-current-balance">¥0.00</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">调整后余额</label>
+                    <div class="amount-input-wrapper compact">
+                        <span class="currency">¥</span>
+                        <input type="number" id="adjust-new-balance" class="form-input" placeholder="0.00" step="0.01">
+                    </div>
+                </div>
+                <div class="balance-diff" id="adjust-diff" style="display:none">
+                    <span class="diff-label">差额</span>
+                    <span class="diff-value" id="adjust-diff-value">¥0.00</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">备注（可选）</label>
+                    <input type="text" id="adjust-note" class="form-input" placeholder="如：与银行对账">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('adjust-balance-modal')">取消</button>
+                <button class="btn btn-primary" onclick="executeAdjustBalance()">确认调整</button>
             </div>
         </div>
     </div>

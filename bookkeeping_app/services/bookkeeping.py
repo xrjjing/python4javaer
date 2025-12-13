@@ -1036,6 +1036,107 @@ class BookkeepingService:
         self._save_records([r for r in records if r.id != id])
         return True
 
+    # ========== 账户转账 ==========
+    def transfer(self, from_account_id: str, to_account_id: str, amount: float, date: str = "", note: str = "") -> Dict:
+        """
+        账户间转账，自动更新双方余额。
+        从 from_account 扣减金额，向 to_account 增加金额。
+        """
+        # 输入验证
+        if not from_account_id:
+            raise ValueError("请选择转出账户")
+        if not to_account_id:
+            raise ValueError("请选择转入账户")
+        if from_account_id == to_account_id:
+            raise ValueError("转出和转入账户不能相同")
+
+        validated_amount = validate_amount(amount)
+        validated_date = validate_date(date) if date else datetime.now().strftime("%Y-%m-%d")
+        validated_note = validate_string(note, "备注", MAX_NOTE_LENGTH, allow_empty=True)
+
+        # 验证账户存在
+        accounts = self._load_accounts()
+        acc_map = {a.id: a for a in accounts}
+        from_acc = acc_map.get(from_account_id)
+        to_acc = acc_map.get(to_account_id)
+
+        if not from_acc:
+            raise ValueError("转出账户不存在")
+        if not to_acc:
+            raise ValueError("转入账户不存在")
+
+        float_amount = decimal_to_float(validated_amount)
+
+        # 更新双方余额（使用 Decimal 精确计算）
+        for acc in accounts:
+            if acc.id == from_account_id:
+                balance = Decimal(str(acc.balance))
+                balance -= Decimal(str(float_amount))
+                acc.balance = float(balance.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+            elif acc.id == to_account_id:
+                balance = Decimal(str(acc.balance))
+                balance += Decimal(str(float_amount))
+                acc.balance = float(balance.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+
+        self._save_accounts(accounts)
+
+        # 返回转账结果
+        updated_accounts = {a.id: a for a in accounts}
+        return {
+            "success": True,
+            "amount": float_amount,
+            "date": validated_date,
+            "note": validated_note,
+            "from_account": {
+                "id": from_account_id,
+                "name": from_acc.name,
+                "icon": from_acc.icon,
+                "balance": updated_accounts[from_account_id].balance,
+            },
+            "to_account": {
+                "id": to_account_id,
+                "name": to_acc.name,
+                "icon": to_acc.icon,
+                "balance": updated_accounts[to_account_id].balance,
+            },
+        }
+
+    def adjust_balance(self, account_id: str, new_balance: float, note: str = "") -> Dict:
+        """
+        手动调整账户余额（对账校正）。
+        直接将账户余额设置为新值，用于与实际余额对账。
+        """
+        if not account_id:
+            raise ValueError("请选择账户")
+
+        validated_balance = validate_amount(new_balance, allow_zero=True)
+        validated_note = validate_string(note, "备注", MAX_NOTE_LENGTH, allow_empty=True)
+
+        accounts = self._load_accounts()
+        acc = next((a for a in accounts if a.id == account_id), None)
+
+        if not acc:
+            raise ValueError("账户不存在")
+
+        old_balance = acc.balance
+        new_balance_float = decimal_to_float(validated_balance)
+        difference = round(new_balance_float - old_balance, 2)
+
+        # 更新余额
+        acc.balance = new_balance_float
+        self._save_accounts(accounts)
+
+        return {
+            "success": True,
+            "account_id": account_id,
+            "account_name": acc.name,
+            "account_icon": acc.icon,
+            "old_balance": old_balance,
+            "new_balance": new_balance_float,
+            "difference": difference,
+            "note": validated_note,
+        }
+
     # ========== 智能推荐 ==========
     def get_smart_suggestions(self) -> List[Dict]:
         """基于历史记录和时间推荐"""

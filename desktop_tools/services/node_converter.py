@@ -214,19 +214,58 @@ class NodeConverterService:
         return {"nodes": nodes, "yaml": yaml_output, "errors": errors}
 
     def fetch_subscription(self, url: str) -> Dict:
+        def maybe_decode_subscription_content(text: str) -> str:
+            """尝试将订阅内容进行 base64 解码（兼容 urlsafe），失败则原样返回。"""
+            raw = (text or "").strip()
+            if not raw:
+                return ""
+
+            # 已经是明文节点列表/含协议的内容，不做 base64 解码
+            if "://" in raw or "\n" in raw or "\r" in raw:
+                return text
+
+            # 仅当看起来像 base64 时才尝试解码，避免误判导致“乱码但能解码”的情况
+            if not re.fullmatch(r"[A-Za-z0-9+/=_-]+", raw):
+                return text
+
+            for decoder in (base64.urlsafe_b64decode, base64.b64decode):
+                try:
+                    decoded_bytes = decoder(self._add_padding(raw))
+                    decoded = decoded_bytes.decode("utf-8")
+                except Exception:
+                    continue
+                # 简单校验：解码后至少应像“多行”或含协议
+                if "://" in decoded or "\n" in decoded or "\r" in decoded:
+                    return decoded
+
+            return text
+
+        url = (url or "").strip()
+        if not url:
+            return {"nodes": [], "yaml": "", "errors": ["订阅链接不能为空"]}
+
+        # 支持直接粘贴节点链接/节点列表到“订阅链接”输入框，避免 urlopen 报错：
+        # <urlopen error unknown url type: vless>
+        if "\n" in url or "\r" in url:
+            return self.convert_links(url)
+
+        parsed = urlparse(url)
+        if parsed.scheme and parsed.scheme not in ("http", "https"):
+            return self.convert_links(url)
+
+        # 无 scheme：不视为可拉取 URL，尝试按“订阅内容/节点内容”处理（兼容粘贴 base64 内容）
+        if not parsed.scheme:
+            content = maybe_decode_subscription_content(url)
+            return self.convert_links(content)
+
         try:
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
             req = urllib.request.Request(url, headers={"User-Agent": "ClashForAndroid/2.5.12"})
             with urllib.request.urlopen(req, timeout=15, context=ctx) as resp:
-                content = resp.read().decode("utf-8")
-            # 尝试base64解码
-            try:
-                decoded = base64.b64decode(self._add_padding(content)).decode("utf-8")
-                content = decoded
-            except Exception:
-                pass
+                content = resp.read().decode("utf-8", errors="replace")
+            content = maybe_decode_subscription_content(content)
             return self.convert_links(content)
         except Exception as e:
             return {"nodes": [], "yaml": "", "errors": [str(e)]}

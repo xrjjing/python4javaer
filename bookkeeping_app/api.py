@@ -87,6 +87,14 @@ class Api:
     def get_total_assets(self):
         return self.bookkeeping.get_total_assets()
 
+    @api_error_handler
+    def transfer(self, from_account_id: str, to_account_id: str, amount: float, date: str = "", note: str = ""):
+        return self.bookkeeping.transfer(from_account_id, to_account_id, amount, date, note)
+
+    @api_error_handler
+    def adjust_balance(self, account_id: str, new_balance: float, note: str = ""):
+        return self.bookkeeping.adjust_balance(account_id, new_balance, note)
+
     # ========== 预算管理 ==========
     def get_budgets(self, ledger_id: str = ""):
         return self.bookkeeping.get_budgets(ledger_id)
@@ -229,3 +237,85 @@ class Api:
             return True
         except Exception:
             return False
+
+    # ========== 数据备份与恢复 ==========
+    def export_data(self):
+        """导出所有数据为 JSON 格式"""
+        data = {
+            "version": "1.0",
+            "exported_at": datetime.now().isoformat(),
+            "app": "喵喵存金罐",
+            "data": {
+                "categories": self.bookkeeping.get_categories(),
+                "tags": self.bookkeeping.get_tags(),
+                "accounts": self.bookkeeping.get_accounts(),
+                "budgets": self.bookkeeping.get_budgets(),
+                "ledgers": self.bookkeeping.get_ledgers(include_archived=True),
+                "records": self.bookkeeping.get_records(),
+                "theme": self.get_theme()
+            }
+        }
+        return data
+
+    @api_error_handler
+    def import_data(self, json_data: dict):
+        """从 JSON 数据导入（覆盖现有数据）"""
+        if not isinstance(json_data, dict) or "data" not in json_data:
+            return {"success": False, "error": "无效的备份数据格式"}
+
+        data = json_data["data"]
+        imported = {"categories": 0, "tags": 0, "accounts": 0, "budgets": 0, "ledgers": 0, "records": 0}
+        data_dir = self.bookkeeping.data_dir
+
+        # 导入分类
+        if "categories" in data and isinstance(data["categories"], list):
+            (data_dir / "categories.json").write_text(
+                json.dumps(data["categories"], ensure_ascii=False, indent=2), encoding="utf-8")
+            imported["categories"] = len(data["categories"])
+
+        # 导入标签
+        if "tags" in data and isinstance(data["tags"], list):
+            (data_dir / "tags.json").write_text(
+                json.dumps(data["tags"], ensure_ascii=False, indent=2), encoding="utf-8")
+            imported["tags"] = len(data["tags"])
+
+        # 导入账户
+        if "accounts" in data and isinstance(data["accounts"], list):
+            (data_dir / "accounts.json").write_text(
+                json.dumps(data["accounts"], ensure_ascii=False, indent=2), encoding="utf-8")
+            imported["accounts"] = len(data["accounts"])
+
+        # 导入预算
+        if "budgets" in data and isinstance(data["budgets"], list):
+            (data_dir / "budgets.json").write_text(
+                json.dumps(data["budgets"], ensure_ascii=False, indent=2), encoding="utf-8")
+            imported["budgets"] = len(data["budgets"])
+
+        # 导入账本
+        if "ledgers" in data and isinstance(data["ledgers"], list):
+            (data_dir / "ledgers.json").write_text(
+                json.dumps(data["ledgers"], ensure_ascii=False, indent=2), encoding="utf-8")
+            imported["ledgers"] = len(data["ledgers"])
+
+        # 导入记录
+        if "records" in data and isinstance(data["records"], list):
+            (data_dir / "records.json").write_text(
+                json.dumps(data["records"], ensure_ascii=False, indent=2), encoding="utf-8")
+            imported["records"] = len(data["records"])
+
+        # 导入主题
+        if "theme" in data:
+            self.save_theme(data["theme"])
+
+        return {"success": True, "imported": imported}
+
+    def get_data_stats(self):
+        """获取数据统计信息"""
+        return {
+            "categories": len(self.bookkeeping.get_categories()),
+            "tags": len(self.bookkeeping.get_tags()),
+            "accounts": len(self.bookkeeping.get_accounts()),
+            "budgets": len(self.bookkeeping.get_budgets()),
+            "ledgers": len(self.bookkeeping.get_ledgers(include_archived=True)),
+            "records": len(self.bookkeeping.get_records())
+        }
