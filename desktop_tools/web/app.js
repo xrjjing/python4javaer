@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initCharCountTool();
     initPasswordTool();
     initJsonTool();
+    initDataConvertTool();
     initTextTool();
     initRegexTool();
     initCurlTool();
@@ -2525,6 +2526,10 @@ function updateJsonTool() {
         if (statusEl) statusEl.textContent = '✓ 有效';
         statusEl?.classList.remove('json-invalid');
         statusEl?.classList.add('json-valid');
+        // 如果当前是树形视图模式，同步更新
+        if (jsonViewMode === 'tree') {
+            updateJsonTreeView();
+        }
     }
 }
 
@@ -2573,16 +2578,290 @@ function clearJsonTool() {
     const outputEl = document.getElementById('json-output');
     const errorsEl = document.getElementById('json-errors');
     const statusEl = document.getElementById('json-status');
+    const treeEl = document.getElementById('json-tree-content');
     if (inputEl) inputEl.value = '';
     if (outputEl) outputEl.value = '';
     if (errorsEl) errorsEl.innerHTML = '';
     if (statusEl) statusEl.textContent = '';
+    if (treeEl) treeEl.innerHTML = '';
+}
+
+// JSON 视图切换状态
+let jsonViewMode = 'text';
+
+function switchJsonView(mode) {
+    jsonViewMode = mode;
+    const textView = document.getElementById('json-output-text');
+    const treeView = document.getElementById('json-output-tree');
+    const textTab = document.getElementById('json-view-text');
+    const treeTab = document.getElementById('json-view-tree');
+
+    if (mode === 'text') {
+        if (textView) textView.style.display = 'block';
+        if (treeView) treeView.style.display = 'none';
+        textTab?.classList.add('active');
+        treeTab?.classList.remove('active');
+    } else {
+        if (textView) textView.style.display = 'none';
+        if (treeView) treeView.style.display = 'block';
+        textTab?.classList.remove('active');
+        treeTab?.classList.add('active');
+        updateJsonTreeView();
+    }
+}
+
+function updateJsonTreeView() {
+    const inputEl = document.getElementById('json-input');
+    const treeEl = document.getElementById('json-tree-content');
+    if (!inputEl || !treeEl) return;
+
+    if (!window.DogToolboxM16Utils) {
+        treeEl.innerHTML = '<div class="jtree-error">⚠ 树形视图模块未加载</div>';
+        return;
+    }
+
+    const result = window.DogToolboxM16Utils.parseAndRender(inputEl.value);
+    treeEl.innerHTML = result.html;
+}
+
+function toggleJsonTreeNode(toggle) {
+    if (window.DogToolboxM16Utils) {
+        window.DogToolboxM16Utils.toggleNode(toggle);
+    }
+}
+
+function expandAllJsonTree() {
+    const container = document.getElementById('json-tree-content');
+    if (window.DogToolboxM16Utils && container) {
+        window.DogToolboxM16Utils.expandAll(container);
+    }
+}
+
+function collapseAllJsonTree() {
+    const container = document.getElementById('json-tree-content');
+    if (window.DogToolboxM16Utils && container) {
+        window.DogToolboxM16Utils.collapseAll(container);
+    }
 }
 
 function copyJsonOutput(btn) {
     const outputEl = document.getElementById('json-output');
     const text = outputEl?.value || '';
     copyToolText(btn, text);
+}
+
+// JSON 字段排序
+function sortJsonTool(order) {
+    const inputEl = document.getElementById('json-input');
+    const outputEl = document.getElementById('json-output');
+    const statusEl = document.getElementById('json-status');
+    const errorsEl = document.getElementById('json-errors');
+    if (!inputEl || !outputEl) return;
+
+    const text = inputEl.value.trim();
+    if (!text) return;
+
+    const result = window.DogToolboxM10Utils.sortJsonFields(text, order, jsonIndent);
+    if (result.error) {
+        if (errorsEl) errorsEl.innerHTML = `<div class="error-item">❌ ${result.error}</div>`;
+        if (statusEl) statusEl.textContent = '';
+    } else {
+        outputEl.value = result.result;
+        if (errorsEl) errorsEl.innerHTML = '';
+        if (statusEl) statusEl.textContent = `✓ 已按字段名${order === 'desc' ? '降序' : '升序'}排列`;
+    }
+}
+
+// JSON 转义
+function escapeJsonTool() {
+    const inputEl = document.getElementById('json-input');
+    const outputEl = document.getElementById('json-output');
+    const statusEl = document.getElementById('json-status');
+    if (!inputEl || !outputEl) return;
+
+    const text = inputEl.value;
+    if (!text) return;
+
+    const result = window.DogToolboxM10Utils.escapeJson(text);
+    outputEl.value = result.result;
+    if (statusEl) statusEl.textContent = '✓ 已转义';
+}
+
+// JSON 反转义
+function unescapeJsonTool() {
+    const inputEl = document.getElementById('json-input');
+    const outputEl = document.getElementById('json-output');
+    const statusEl = document.getElementById('json-status');
+    const errorsEl = document.getElementById('json-errors');
+    if (!inputEl || !outputEl) return;
+
+    const text = inputEl.value;
+    if (!text) return;
+
+    const result = window.DogToolboxM10Utils.unescapeJson(text);
+    if (result.error) {
+        if (errorsEl) errorsEl.innerHTML = `<div class="error-item">❌ ${result.error}</div>`;
+        if (statusEl) statusEl.textContent = '';
+    } else {
+        outputEl.value = result.result;
+        if (errorsEl) errorsEl.innerHTML = '';
+        if (statusEl) statusEl.textContent = '✓ 已删除转义';
+    }
+}
+
+// ==================== 工具箱：数据格式转换（M18） ====================
+let dataInputFormat = 'auto';
+let dataOutputFormat = 'yaml';
+
+function initDataConvertTool() {
+    updateDataFormatButtons();
+}
+
+function setDataInputFormat(format) {
+    dataInputFormat = format;
+    updateDataFormatButtons();
+    updateDataConvertTool();
+}
+
+function setDataOutputFormat(format) {
+    dataOutputFormat = format;
+    updateDataFormatButtons();
+    updateDataConvertTool();
+}
+
+function updateDataFormatButtons() {
+    ['auto', 'json', 'yaml', 'xml'].forEach(fmt => {
+        const inBtn = document.getElementById(`data-in-${fmt}`);
+        if (inBtn) inBtn.classList.toggle('active', dataInputFormat === fmt);
+    });
+    ['json', 'yaml', 'xml'].forEach(fmt => {
+        const outBtn = document.getElementById(`data-out-${fmt}`);
+        if (outBtn) outBtn.classList.toggle('active', dataOutputFormat === fmt);
+    });
+}
+
+function updateDataConvertTool() {
+    const inputEl = document.getElementById('data-convert-input');
+    const outputEl = document.getElementById('data-convert-output');
+    const errorsEl = document.getElementById('data-convert-errors');
+    const detectEl = document.getElementById('data-detect');
+
+    if (!inputEl || !outputEl) return;
+    if (errorsEl) errorsEl.innerHTML = '';
+
+    const inputText = inputEl.value.trim();
+    if (!inputText) {
+        outputEl.value = '';
+        if (detectEl) detectEl.textContent = '';
+        return;
+    }
+
+    if (!window.DogToolboxM18Utils) {
+        if (errorsEl) errorsEl.innerHTML = '<div>⚠ 工具模块未加载：tools_m18_utils.js</div>';
+        return;
+    }
+
+    const M18 = window.DogToolboxM18Utils;
+    const detectedFormat = M18.detectFormat(inputText);
+    if (detectEl) detectEl.textContent = `检测格式: ${detectedFormat.toUpperCase()}`;
+
+    const xmlRoot = document.getElementById('data-xml-root')?.value || 'root';
+    const jsonIndent = parseInt(document.getElementById('data-json-indent')?.value || '2', 10);
+
+    let intermediateObj = null;
+    let parseError = null;
+
+    // Step 1: Parse input to JS object
+    if (dataInputFormat === 'json' || (dataInputFormat === 'auto' && detectedFormat === 'json')) {
+        try {
+            intermediateObj = JSON.parse(inputText);
+        } catch (e) {
+            parseError = `JSON 解析错误: ${e.message}`;
+        }
+    } else if (dataInputFormat === 'yaml' || (dataInputFormat === 'auto' && detectedFormat === 'yaml')) {
+        const result = M18.yamlToJson(inputText, jsonIndent);
+        if (result.error) {
+            parseError = `YAML 解析错误: ${result.error}`;
+        } else {
+            try {
+                intermediateObj = JSON.parse(result.result);
+            } catch (e) {
+                parseError = `YAML→JSON 解析错误: ${e.message}`;
+            }
+        }
+    } else if (dataInputFormat === 'xml' || (dataInputFormat === 'auto' && detectedFormat === 'xml')) {
+        const result = M18.xmlToJson(inputText, jsonIndent);
+        if (result.error) {
+            parseError = `XML 解析错误: ${result.error}`;
+        } else {
+            try {
+                intermediateObj = JSON.parse(result.result);
+            } catch (e) {
+                parseError = `XML→JSON 解析错误: ${e.message}`;
+            }
+        }
+    }
+
+    if (parseError) {
+        if (errorsEl) errorsEl.innerHTML = `<div>⚠ ${escapeHtml(parseError)}</div>`;
+        outputEl.value = '';
+        return;
+    }
+
+    if (intermediateObj === null) {
+        outputEl.value = '';
+        return;
+    }
+
+    // Step 2: Convert to output format
+    let outputText = '';
+    let convertError = null;
+
+    if (dataOutputFormat === 'json') {
+        outputText = JSON.stringify(intermediateObj, null, jsonIndent);
+    } else if (dataOutputFormat === 'yaml') {
+        const jsonStr = JSON.stringify(intermediateObj);
+        const result = M18.jsonToYaml(jsonStr);
+        if (result.error) {
+            convertError = `转换为 YAML 失败: ${result.error}`;
+        } else {
+            outputText = result.result;
+        }
+    } else if (dataOutputFormat === 'xml') {
+        const jsonStr = JSON.stringify(intermediateObj);
+        const result = M18.jsonToXml(jsonStr, xmlRoot);
+        if (result.error) {
+            convertError = `转换为 XML 失败: ${result.error}`;
+        } else {
+            outputText = result.result;
+        }
+    }
+
+    if (convertError) {
+        if (errorsEl) errorsEl.innerHTML = `<div>⚠ ${escapeHtml(convertError)}</div>`;
+        outputEl.value = '';
+        return;
+    }
+
+    outputEl.value = outputText;
+}
+
+function clearDataConvertTool() {
+    const inputEl = document.getElementById('data-convert-input');
+    const outputEl = document.getElementById('data-convert-output');
+    const errorsEl = document.getElementById('data-convert-errors');
+    const detectEl = document.getElementById('data-detect');
+
+    if (inputEl) inputEl.value = '';
+    if (outputEl) outputEl.value = '';
+    if (errorsEl) errorsEl.innerHTML = '';
+    if (detectEl) detectEl.textContent = '';
+}
+
+function copyDataConvertOutput(btn) {
+    const outputEl = document.getElementById('data-convert-output');
+    if (!outputEl || !outputEl.value) return;
+    copyToolText(btn, outputEl.value);
 }
 
 /* ========== M11: 文本去重/排序 ========== */
@@ -3249,8 +3528,35 @@ function updateCronTool() {
     if (nextPanel) nextPanel.style.display = 'none';
     if (nextList) nextList.innerHTML = '';
 
-    const input = inputEl?.value?.trim() || '';
+    let input = inputEl?.value?.trim() || '';
     if (!input) return;
+
+    // 自动为紧凑输入添加空格（如 "00***" → "0 0 * * *"）
+    // 规则：默认每个字符代表一个字段；仅对步进写法合并（如 "*/5"、"0/15"）
+    if (!input.includes(' ') && input.length >= 5) {
+        const chars = input.split('');
+        const fields = [];
+        let current = '';
+        for (const c of chars) {
+            // 允许在 "…/" 后继续拼接数字（支持多位数：*/15、0/30）
+            if (/\d/.test(c) && /\/\d*$/.test(current)) {
+                current += c;
+                continue;
+            }
+            // 允许 "/" 拼接到数字或 "*" 后面（如 "*/", "0/"）
+            if (c === '/' && /^[\d\*]$/.test(current)) {
+                current += c;
+                continue;
+            }
+            // 其他情况：结束当前字段，开始新字段
+            if (current) fields.push(current);
+            current = c;
+        }
+        if (current) fields.push(current);
+        if (fields.length >= 5) {
+            input = fields.join(' ');
+        }
+    }
 
     if (!window.DogToolboxM15Utils) {
         if (errorsEl) errorsEl.innerHTML = '<div>⚠ 工具模块未加载：tools_m15_utils.js</div>';

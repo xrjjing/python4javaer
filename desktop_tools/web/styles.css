@@ -384,6 +384,13 @@ body {
     justify-content: flex-end;
 }
 
+.toolbar-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--border-color);
+    margin: 0 4px;
+}
+
 /* ========== 搜索栏 ========== */
 .search-bar {
     margin-bottom: 24px;
@@ -494,6 +501,12 @@ body {
 .btn-sm {
     padding: 6px 12px;
     font-size: 12px;
+}
+
+.btn-xs {
+    padding: 2px 8px;
+    font-size: 11px;
+    min-width: 28px;
 }
 
 .btn-block {
@@ -2873,6 +2886,206 @@ select option {
     margin-top: 8px;
 }
 
+/* ========== 工具箱：数据格式转换（M18） ========== */
+.data-detect {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-top: 8px;
+}
+
+.data-convert-options {
+    display: flex;
+    gap: 24px;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-top: 16px;
+}
+
+.data-convert-options .option-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.data-convert-options input,
+.data-convert-options select {
+    padding: 4px 8px;
+    font-size: 13px;
+}
+
+/* ========== 工具箱：JSON 缩进栏 ========== */
+.json-indent-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--bg-hover);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.json-indent-bar span {
+    margin-right: 4px;
+}
+
+/* JSON 输出容器 */
+#json-output-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+#json-output-text textarea {
+    flex: 1;
+    width: 100%;
+}
+
+/* ========== 工具箱：JSON 树形视图（M16） ========== */
+.json-view-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.json-view-tab {
+    padding: 6px 16px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.json-view-tab:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
+.json-view-tab.active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-glow);
+}
+
+.jtree-container {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    min-height: 300px;
+    max-height: 500px;
+    overflow: auto;
+    padding: 12px;
+}
+
+.jtree-root {
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.jtree-node {
+    position: relative;
+}
+
+.jtree-children {
+    margin-left: 4px;
+    border-left: 1px dashed var(--border-light);
+    padding-left: 12px;
+}
+
+.jtree-row {
+    display: flex;
+    align-items: flex-start;
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: default;
+    white-space: nowrap;
+}
+
+.jtree-row:hover {
+    background: var(--bg-hover);
+}
+
+.jtree-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 20px;
+    margin-right: 4px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--text-muted);
+    font-size: 10px;
+    transition: transform 0.15s ease;
+}
+
+.jtree-toggle:hover {
+    color: var(--accent);
+}
+
+.jtree-toggle.expanded {
+    transform: rotate(0deg);
+}
+
+.jtree-toggle:not(.expanded) {
+    transform: rotate(-90deg);
+}
+
+.jtree-toggle-placeholder {
+    display: inline-block;
+    width: 16px;
+    margin-right: 4px;
+}
+
+.jtree-key {
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.jtree-colon {
+    margin: 0 6px 0 2px;
+    color: var(--text-muted);
+}
+
+.jtree-value {
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.jtree-type-string { color: hsl(145, 60%, 50%); }
+.jtree-type-number { color: hsl(210, 80%, 65%); }
+.jtree-type-boolean { color: hsl(280, 60%, 65%); font-weight: 600; }
+.jtree-type-null { color: var(--text-muted); font-style: italic; }
+.jtree-type-undefined { color: var(--text-muted); font-style: italic; }
+.jtree-type-array { color: var(--text-secondary); }
+.jtree-type-object { color: var(--text-secondary); }
+
+.jtree-empty, .jtree-error {
+    padding: 24px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.jtree-error {
+    color: var(--danger);
+}
+
+.jtree-toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
 /* ========== 工具箱：字符统计（M8） ========== */
 .charcount-tool .converter-panel {
     margin-bottom: 20px;
@@ -3350,15 +3563,9 @@ select option {
 }
 
 .color-outputs {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 12px;
-}
-
-@media (max-width: 768px) {
-    .color-outputs {
-        grid-template-columns: 1fr;
-    }
 }
 
 .color-output-row {
@@ -3370,7 +3577,8 @@ select option {
 .color-output-row label {
     font-size: 12px;
     color: var(--text-secondary);
-    min-width: 48px;
+    min-width: 72px;
+    flex-shrink: 0;
     text-align: right;
 }
 

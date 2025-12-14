@@ -2,11 +2,14 @@
 const state = {
     tasks: [],
     categories: [],
+    tags: [],
     currentView: 'list',
     currentCategory: '',
+    currentTag: '',
     calendarDate: new Date(),
     editingTaskId: null,
     pomodoroTaskId: null,
+    pomodoroRecordId: null,
     pomodoroRunning: false,
     pomodoroTime: 25 * 60,
     pomodoroInterval: null,
@@ -35,6 +38,16 @@ function escapeAttr(text) {
     return escapeHtml(text).replace(/`/g, '&#096;');
 }
 
+// 根据字符串生成稳定的颜色（用于标签）
+function stringToColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const hue = Math.abs(hash % 360);
+    return `hsl(${hue}, 65%, 45%)`;
+}
+
 // ===== 日期辅助函数 =====
 function getLocalDateStr() {
     const now = new Date();
@@ -48,6 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initTheme();
     initViewSwitcher();
     await loadCategories();
+    await loadTags();
     await loadTasks();
     updateStats();
     initDragDrop();
@@ -159,15 +173,36 @@ async function loadCategories() {
     renderCategorySelects();
 }
 
+async function loadTags() {
+    try {
+        state.tags = await pywebview.api.get_all_tags();
+        renderTagFilter();
+    } catch (e) {
+        state.tags = [];
+    }
+}
+
+function renderTagFilter() {
+    const select = document.getElementById('filter-tag');
+    if (!select) return;
+    select.innerHTML = '<option value="">全部标签</option>' +
+        state.tags.map(tag =>
+            `<option value="${escapeAttr(tag)}">${escapeHtml(tag)}</option>`
+        ).join('');
+}
+
 async function loadTasks() {
     const status = document.getElementById('filter-status')?.value || '';
     const priority = document.getElementById('filter-priority')?.value || '';
     const category = document.getElementById('filter-category')?.value || '';
+    const tag = document.getElementById('filter-tag')?.value || '';
     const search = document.getElementById('search-input')?.value || '';
 
-    state.tasks = await pywebview.api.get_tasks(status, category, priority, '', '', search);
+    state.tasks = await pywebview.api.get_tasks(status, category, priority, '', '', search, tag);
     renderCurrentView();
     updateStats();
+    // 刷新标签列表（可能有新标签）
+    loadTags();
 }
 
 function handleSearch() {
@@ -270,6 +305,17 @@ function renderListView() {
 function renderTaskCard(task) {
     const category = state.categories.find(c => c.id === task.category_id);
     const isOverdue = task.due_date && task.due_date < getLocalDateStr() && task.status !== 'completed';
+    const tagsHtml = (task.tags || []).filter(t => t && t.trim()).map(tag =>
+        `<span class="task-tag" style="background:${stringToColor(tag)}">${escapeHtml(tag)}</span>`
+    ).join('');
+
+    // 子任务进度
+    const subtasks = task.subtasks || [];
+    const subtaskTotal = subtasks.length;
+    const subtaskDone = subtasks.filter(s => s.completed).length;
+    const subtaskHtml = subtaskTotal > 0
+        ? `<span class="task-subtask-progress ${subtaskDone === subtaskTotal ? '' : 'incomplete'}">☑ ${subtaskDone}/${subtaskTotal}</span>`
+        : '';
 
     return `
         <div class="task-card ${task.status === 'completed' ? 'completed' : ''}"
@@ -284,8 +330,10 @@ function renderTaskCard(task) {
                 <div class="task-meta">
                     ${category ? `<span style="color:${escapeAttr(category.color)}">${escapeHtml(category.icon)} ${escapeHtml(category.name)}</span>` : ''}
                     ${task.due_date ? `<span class="task-due ${isOverdue ? 'overdue' : ''}">📅 ${task.due_date}</span>` : ''}
+                    ${subtaskHtml}
                     ${task.pomodoro_count > 0 ? `<span>🍅 ${task.pomodoro_count}</span>` : ''}
                 </div>
+                ${tagsHtml ? `<div class="task-tags">${tagsHtml}</div>` : ''}
             </div>
             <div class="task-actions">
                 <button class="btn-pomodoro" onclick="event.stopPropagation(); startPomodoro('${escapeAttr(task.id)}')" title="开始番茄钟">🍅</button>
@@ -498,7 +546,12 @@ function showTaskModal() {
     document.getElementById('task-due-date').value = '';
     document.getElementById('task-category').value = '';
     document.getElementById('task-quadrant').value = '';
+    document.getElementById('task-tags').value = '';
     document.getElementById('btn-delete-task').style.display = 'none';
+    // 新建任务时隐藏子任务区域
+    document.getElementById('subtask-section').style.display = 'none';
+    document.getElementById('subtask-list').innerHTML = '';
+    document.getElementById('subtask-progress').innerHTML = '';
     openModal('task-modal');
     document.getElementById('task-title').focus();
 }
@@ -516,7 +569,13 @@ function showEditTaskModal(taskId) {
     document.getElementById('task-due-date').value = task.due_date || '';
     document.getElementById('task-category').value = task.category_id || '';
     document.getElementById('task-quadrant').value = task.quadrant || '';
+    // 标签：数组转逗号分隔字符串
+    document.getElementById('task-tags').value = (task.tags || []).filter(t => t).join(', ');
     document.getElementById('btn-delete-task').style.display = 'block';
+    // 显示子任务区域并渲染子任务
+    document.getElementById('subtask-section').style.display = 'block';
+    initSubtaskEvents();  // 初始化事件委托
+    renderSubtasks(task);
     openModal('task-modal');
 }
 
@@ -527,6 +586,9 @@ async function saveTask() {
     const dueDate = document.getElementById('task-due-date').value;
     const categoryId = document.getElementById('task-category').value;
     const quadrant = document.getElementById('task-quadrant').value;
+    // 标签：逗号分隔字符串转数组
+    const tagsInput = document.getElementById('task-tags').value;
+    const tags = tagsInput.split(',').map(t => t.trim()).filter(t => t);
 
     if (!title) {
         showToast('请输入任务标题哞～', true);
@@ -537,11 +599,11 @@ async function saveTask() {
         if (state.editingTaskId) {
             await pywebview.api.update_task(state.editingTaskId, {
                 title, description, priority, due_date: dueDate,
-                category_id: categoryId, quadrant
+                category_id: categoryId, quadrant, tags
             });
             showToast('任务已更新哞！');
         } else {
-            await pywebview.api.add_task(title, description, priority, categoryId, dueDate, [], quadrant);
+            await pywebview.api.add_task(title, description, priority, categoryId, dueDate, tags, quadrant);
             showToast('任务创建成功哞！');
         }
 
@@ -560,6 +622,106 @@ async function deleteCurrentTask() {
     closeModal('task-modal');
     await loadTasks();
     showToast('任务已删除');
+}
+
+// ===== 子任务功能 =====
+function renderSubtasks(task) {
+    const listContainer = document.getElementById('subtask-list');
+    const progressContainer = document.getElementById('subtask-progress');
+    const subtasks = task.subtasks || [];
+
+    if (subtasks.length === 0) {
+        listContainer.innerHTML = '<div class="subtask-empty" style="text-align:center;color:var(--text-light);padding:12px;font-size:0.85rem;">暂无子任务</div>';
+        progressContainer.innerHTML = '';
+        return;
+    }
+
+    // 使用 data 属性存储 ID，避免内联 JS 拼接安全问题
+    listContainer.innerHTML = subtasks.map(sub => `
+        <div class="subtask-item ${sub.completed ? 'completed' : ''}" data-sub-id="${escapeAttr(sub.id)}" data-task-id="${escapeAttr(task.id)}">
+            <div class="subtask-checkbox" data-action="toggle">${sub.completed ? '✓' : ''}</div>
+            <span class="subtask-title">${escapeHtml(sub.title)}</span>
+            <button class="subtask-delete" data-action="delete" title="删除" aria-label="删除子任务">×</button>
+        </div>
+    `).join('');
+
+    // 渲染进度条
+    const completed = subtasks.filter(s => s.completed).length;
+    const total = subtasks.length;
+    const percent = Math.round((completed / total) * 100);
+    progressContainer.innerHTML = `
+        <div class="subtask-progress-bar">
+            <div class="subtask-progress-fill" style="width:${percent}%"></div>
+        </div>
+        <span>${completed}/${total} 完成</span>
+    `;
+}
+
+// 子任务事件委托（安全方式）
+function initSubtaskEvents() {
+    const listContainer = document.getElementById('subtask-list');
+    if (listContainer._subtaskEventsInit) return;
+    listContainer._subtaskEventsInit = true;
+
+    listContainer.addEventListener('click', async (e) => {
+        const item = e.target.closest('.subtask-item');
+        if (!item) return;
+
+        const { taskId, subId } = item.dataset;
+        const action = e.target.closest('[data-action]')?.dataset.action;
+
+        if (action === 'toggle') {
+            await toggleSubtask(taskId, subId);
+        } else if (action === 'delete') {
+            await deleteSubtask(taskId, subId);
+        }
+    });
+}
+
+async function addSubtask() {
+    if (!state.editingTaskId) return;
+
+    const input = document.getElementById('subtask-input');
+    const title = input.value.trim();
+    if (!title) {
+        showToast('请输入子任务内容哞～', true);
+        return;
+    }
+
+    try {
+        await pywebview.api.add_subtask(state.editingTaskId, title);
+        input.value = '';
+        // 重新加载任务数据并刷新显示
+        await loadTasks();
+        const task = state.tasks.find(t => t.id === state.editingTaskId);
+        if (task) renderSubtasks(task);
+        showToast('子任务已添加');
+    } catch (e) {
+        showToast('添加失败：' + e, true);
+    }
+}
+
+async function toggleSubtask(taskId, subtaskId) {
+    try {
+        await pywebview.api.toggle_subtask(taskId, subtaskId);
+        await loadTasks();
+        const task = state.tasks.find(t => t.id === taskId);
+        if (task) renderSubtasks(task);
+    } catch (e) {
+        showToast('操作失败', true);
+    }
+}
+
+async function deleteSubtask(taskId, subtaskId) {
+    try {
+        await pywebview.api.delete_subtask(taskId, subtaskId);
+        await loadTasks();
+        const task = state.tasks.find(t => t.id === taskId);
+        if (task) renderSubtasks(task);
+        showToast('子任务已删除');
+    } catch (e) {
+        showToast('删除失败', true);
+    }
 }
 
 // ===== 分类弹窗 =====
@@ -615,7 +777,7 @@ async function saveCategory() {
 }
 
 // ===== 番茄钟 =====
-function startPomodoro(taskId) {
+async function startPomodoro(taskId) {
     const task = state.tasks.find(t => t.id === taskId);
     if (!task) return;
 
@@ -629,7 +791,9 @@ function startPomodoro(taskId) {
     updatePomodoroDisplay();
     document.getElementById('pomodoro-widget').classList.remove('hidden');
 
-    pywebview.api.start_pomodoro(taskId, 25);
+    // 保存番茄钟记录 ID 以便完成时调用
+    const record = await pywebview.api.start_pomodoro(taskId, 25);
+    state.pomodoroRecordId = record?.id || null;
 }
 
 function togglePomodoro() {
@@ -663,10 +827,21 @@ async function completePomodoro() {
     clearInterval(state.pomodoroInterval);
     state.pomodoroRunning = false;
 
-    // 这里简化处理，实际应该调用 complete_pomodoro API
+    // 调用后端 API 完成番茄钟记录
+    if (state.pomodoroRecordId) {
+        try {
+            await pywebview.api.complete_pomodoro(state.pomodoroRecordId);
+        } catch (e) {
+            console.error('完成番茄钟失败:', e);
+        }
+        state.pomodoroRecordId = null;
+    }
+
     showToast('🍅 番茄钟完成！休息一下吧哞～');
     closePomodoroWidget();
+    await loadTasks();
     await updateStats();
+    await checkAndShowAchievements();
 }
 
 function closePomodoroWidget() {
@@ -1016,8 +1191,8 @@ async function loadSummaryData(period) {
 
         // 更新统计卡片
         document.getElementById('summary-completed').textContent = stats.completed_tasks || 0;
-        document.getElementById('summary-pomodoros').textContent = stats.total_pomodoros || 0;
-        document.getElementById('summary-hours').textContent = ((stats.total_pomodoros || 0) * 25 / 60).toFixed(1);
+        document.getElementById('summary-pomodoros').textContent = stats.pomodoro_count || 0;
+        document.getElementById('summary-hours').textContent = stats.pomodoro_hours || 0;
 
         const total = stats.total_tasks || 0;
         const completed = stats.completed_tasks || 0;
@@ -1081,8 +1256,8 @@ function renderSummaryTasks(tasks) {
 function generateSummaryText(periodName, stats, tasks) {
     const completed = stats.completed_tasks || 0;
     const total = stats.total_tasks || 0;
-    const pomodoros = stats.total_pomodoros || 0;
-    const hours = (pomodoros * 25 / 60).toFixed(1);
+    const pomodoros = stats.pomodoro_count || 0;
+    const hours = stats.pomodoro_hours || 0;
 
     const completedTasks = tasks.filter(t => t.status === 'completed');
     const inProgressTasks = tasks.filter(t => t.status === 'in_progress');
@@ -1236,3 +1411,253 @@ function showToast(msg, isError = false) {
 
     setTimeout(() => toast.classList.add('hidden'), 2500);
 }
+
+// ===== 专注统计图表 =====
+let trendChart = null;
+
+function showStatsModal() {
+    openModal('stats-modal');
+    loadStatsData();
+}
+
+async function loadStatsData() {
+    try {
+        // 并行加载所有统计数据
+        const [dailyStats, heatmapData, categoryStats] = await Promise.all([
+            pywebview.api.get_pomodoro_daily_stats(30),
+            pywebview.api.get_pomodoro_heatmap(new Date().getFullYear()),
+            pywebview.api.get_category_pomodoro_stats()
+        ]);
+
+        // 延迟渲染以等待弹窗动画
+        setTimeout(() => {
+            renderTrendChart(dailyStats);
+            renderHeatmap(heatmapData);
+            renderCategoryStats(categoryStats);
+        }, 100);
+    } catch (e) {
+        console.error('加载统计数据失败:', e);
+        showToast('加载统计数据失败', true);
+    }
+}
+
+function renderTrendChart(dailyStats) {
+    const container = document.getElementById('pomodoro-trend-chart');
+    container.innerHTML = '';
+
+    if (!dailyStats || dailyStats.length === 0) {
+        container.innerHTML = '<div class="stats-empty"><div class="stats-empty-icon">📊</div><div>暂无专注数据</div></div>';
+        return;
+    }
+
+    // 准备 uPlot 数据格式
+    const dates = dailyStats.map(d => new Date(d.date).getTime() / 1000);
+    const counts = dailyStats.map(d => d.count);
+
+    const style = getComputedStyle(document.body);
+    const accent = style.getPropertyValue('--accent').trim() || '#FFB347';
+    const text = style.getPropertyValue('--text').trim() || '#4A4A4A';
+    const border = style.getPropertyValue('--border').trim() || '#F0E8E8';
+
+    const opts = {
+        width: container.clientWidth - 20,
+        height: container.clientHeight - 20,
+        cursor: { show: true, points: { show: false } },
+        scales: { x: { time: true } },
+        axes: [
+            { stroke: text, grid: { show: false }, font: "10px 'Nunito'", gap: 8 },
+            { stroke: text, grid: { stroke: border, width: 1 }, font: "10px 'Nunito'", gap: 8 }
+        ],
+        series: [
+            {},
+            {
+                label: "番茄数",
+                stroke: accent,
+                width: 2,
+                fill: accent + "40",
+                points: { size: 5, fill: accent, stroke: "#fff" }
+            }
+        ]
+    };
+
+    // 销毁旧图表
+    if (trendChart) {
+        trendChart.destroy();
+        trendChart = null;
+    }
+
+    trendChart = new uPlot(opts, [dates, counts], container);
+}
+
+function renderHeatmap(data) {
+    const container = document.getElementById('pomodoro-heatmap');
+    container.innerHTML = '';
+
+    const year = new Date().getFullYear();
+    const start = new Date(year, 0, 1);
+    const end = new Date(year, 11, 31);
+    const today = new Date();
+
+    // 填充到年初第一个周日
+    const startDay = start.getDay();
+    if (startDay > 0) {
+        start.setDate(start.getDate() - startDay);
+    }
+
+    for (let d = new Date(start); d <= end || d <= today; d.setDate(d.getDate() + 1)) {
+        const dateStr = d.toISOString().split('T')[0];
+        const count = data[dateStr] || 0;
+
+        // 计算级别 (0-4)
+        let level = 0;
+        if (count > 0) level = 1;
+        if (count > 2) level = 2;
+        if (count > 5) level = 3;
+        if (count > 8) level = 4;
+
+        const cell = document.createElement('div');
+        cell.className = `heatmap-cell level-${level}`;
+        cell.title = `${dateStr}: ${count} 个番茄`;
+        container.appendChild(cell);
+    }
+}
+
+function renderCategoryStats(categories) {
+    const container = document.getElementById('category-stats');
+    container.innerHTML = '';
+
+    if (!categories || categories.length === 0) {
+        container.innerHTML = '<div class="stats-empty"><div class="stats-empty-icon">📁</div><div>暂无分类统计</div></div>';
+        return;
+    }
+
+    const total = categories.reduce((sum, c) => sum + c.count, 0);
+
+    categories.sort((a, b) => b.count - a.count).forEach(cat => {
+        const percent = total > 0 ? Math.round((cat.count / total) * 100) : 0;
+        const color = cat.color || '#FFB347';
+
+        const card = document.createElement('div');
+        card.className = 'category-stat-card';
+        card.style.borderLeftColor = color;
+
+        card.innerHTML = `
+            <div class="cat-stat-header">
+                <span>${escapeHtml(cat.icon || '📁')}</span>
+                <span>${escapeHtml(cat.name || '未分类')}</span>
+            </div>
+            <div class="cat-stat-value">
+                ${cat.count}
+                <span class="cat-stat-pct">${percent}%</span>
+            </div>
+            <div class="cat-stat-bar-bg">
+                <div class="cat-stat-bar-fill" style="width:${percent}%; background:${color}"></div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// ===== 成就系统 =====
+
+const TIER_NAMES = {
+    bronze: '铜牌',
+    silver: '银牌',
+    gold: '金牌',
+    diamond: '钻石'
+};
+
+async function showAchievementModal() {
+    openModal('achievement-modal');
+    await loadAchievements();
+}
+
+async function loadAchievements() {
+    const data = await pywebview.api.get_achievements();
+    if (!data || !data.achievements) return;
+
+    // 更新统计
+    document.getElementById('achievement-unlocked').textContent = data.stats.unlocked;
+    document.getElementById('achievement-total').textContent = data.stats.total;
+    document.getElementById('achievement-streak').textContent = data.stats.streak;
+
+    // 渲染成就卡片
+    const grid = document.getElementById('achievement-grid');
+    grid.innerHTML = '';
+
+    // 按类别分组排序：已解锁优先
+    const sorted = [...data.achievements].sort((a, b) => {
+        if (a.unlocked !== b.unlocked) return b.unlocked - a.unlocked;
+        return a.target - b.target;
+    });
+
+    sorted.forEach(ach => {
+        const progress = Math.min(100, Math.round((ach.current / ach.target) * 100));
+        const card = document.createElement('div');
+        card.className = `achievement-card ${ach.unlocked ? 'unlocked' : 'locked'}`;
+        card.style.setProperty('--tier-color', ach.tier_color);
+
+        card.innerHTML = `
+            <div class="achievement-icon">${ach.icon}</div>
+            <div class="achievement-info">
+                <div class="achievement-name">${escapeHtml(ach.name)}</div>
+                <div class="achievement-desc">${escapeHtml(ach.desc)}</div>
+                <div class="achievement-progress">
+                    <div class="achievement-progress-bar">
+                        <div class="achievement-progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    <span class="achievement-progress-text">${ach.current}/${ach.target}</span>
+                </div>
+            </div>
+            <span class="achievement-tier" style="background: ${ach.tier_color}">${TIER_NAMES[ach.tier] || ach.tier}</span>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+async function checkAndShowAchievements() {
+    const newAchievements = await pywebview.api.check_achievements();
+    if (newAchievements && newAchievements.length > 0) {
+        // 依次显示每个新解锁的成就
+        for (const ach of newAchievements) {
+            await showAchievementToast(ach);
+        }
+    }
+}
+
+function showAchievementToast(achievement) {
+    return new Promise(resolve => {
+        const toast = document.getElementById('achievement-toast');
+        const icon = document.getElementById('achievement-toast-icon');
+        const name = document.getElementById('achievement-toast-name');
+
+        icon.textContent = achievement.icon;
+        name.textContent = achievement.name;
+
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                resolve();
+            }, 500);
+        }, 3000);
+    });
+}
+
+// 在任务状态切换时检查成就（任务完成时触发）
+const originalToggleTaskStatus = toggleTaskStatus;
+toggleTaskStatus = async function(taskId) {
+    const taskBefore = state.tasks.find(t => t.id === taskId);
+    const wasCompleted = taskBefore && taskBefore.status === 'completed';
+
+    await originalToggleTaskStatus(taskId);
+
+    // 只有当任务从未完成变为完成时才检查成就
+    const taskAfter = state.tasks.find(t => t.id === taskId);
+    if (taskAfter && taskAfter.status === 'completed' && !wasCompleted) {
+        await checkAndShowAchievements();
+    }
+};

@@ -36,8 +36,8 @@
 	                </li>
 
 	                <!-- 节点管理（分组） -->
-	                <li class="nav-group expanded" data-group="nodes">
-	                    <div class="nav-group-header" tabindex="0" role="button" aria-expanded="true">
+	                <li class="nav-group" data-group="nodes">
+	                    <div class="nav-group-header" tabindex="0" role="button" aria-expanded="false">
 	                        <span class="nav-icon">🌐</span>
 	                        <span class="nav-text">节点管理</span>
 	                        <span class="nav-arrow">▾</span>
@@ -54,11 +54,11 @@
 	                    </ul>
 	                </li>
 
-	                <!-- 工具箱（分组） -->
-	                <li class="nav-group" data-group="tools">
+	                <!-- 编码转换 -->
+	                <li class="nav-group" data-group="tools-encode">
 	                    <div class="nav-group-header" tabindex="0" role="button" aria-expanded="false">
-	                        <span class="nav-icon">🧰</span>
-	                        <span class="nav-text">工具箱</span>
+	                        <span class="nav-icon">🔄</span>
+	                        <span class="nav-text">编码转换</span>
 	                        <span class="nav-arrow">▾</span>
 	                    </div>
 	                    <ul class="nav-sublist">
@@ -66,29 +66,98 @@
 	                            <span class="nav-icon">🔤</span>
 	                            <span class="nav-text">Base64 编解码</span>
 	                        </li>
-	                        <li class="nav-item" data-page="tool-uuid">
-	                            <span class="nav-icon">🆔</span>
-	                            <span class="nav-text">UUID 生成器</span>
-	                        </li>
-	                        <li class="nav-item" data-page="tool-hash">
-	                            <span class="nav-icon">#️⃣</span>
-	                            <span class="nav-text">哈希（MD5/SHA-256）</span>
-	                        </li>
-	                        <li class="nav-item" data-page="tool-crypto">
-	                            <span class="nav-icon">🔒</span>
-	                            <span class="nav-text">对称加密（AES/DES）</span>
+	                        <li class="nav-item" data-page="tool-url">
+	                            <span class="nav-icon">🔗</span>
+	                            <span class="nav-text">URL 编解码</span>
 	                        </li>
 	                        <li class="nav-item" data-page="tool-b64hex">
 	                            <span class="nav-icon">🔁</span>
 	                            <span class="nav-text">Base64 ↔ Hex</span>
 	                        </li>
-	                        <li class="nav-item" data-page="tool-diff">
-	                            <span class="nav-icon">🆚</span>
-	                            <span class="nav-text">文本对比</span>
+	                        <li class="nav-item" data-page="tool-radix">
+	                            <span class="nav-icon">🔢</span>
+	                            <span class="nav-text">进制转换</span>
+	                        </li>
+	                    </ul>
+	                </li>
+
+	                <!-- 加密安全 -->
+	                <li class="nav-group" data-group="tools-crypto">
+	                    <div class="nav-group-header" tabindex="0" role="button" aria-expanded="false">
+	                        <span class="nav-icon">🔐</span>
+	                        <span class="nav-text">加密安全</span>
+	                        <span class="nav-arrow">▾</span>
+	                    </div>
+	                    <ul class="nav-sublist">
+	                        <li class="nav-item" data-page="tool-hash">
+	                            <span class="nav-icon">#️⃣</span>
+	                            <span class="nav-text">哈希计算</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-crypto">
+	                            <span class="nav-icon">🔒</span>
+	                            <span class="nav-text">对称加密</span>
 	                        </li>
 	                        <li class="nav-item" data-page="tool-jwt">
 	                            <span class="nav-icon">🎟️</span>
 	                            <span class="nav-text">JWT 解码</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-password">
+	                            <span class="nav-icon">🔑</span>
+	                            <span class="nav-text">密码生成器</span>
+	                        </li>
+	                    </ul>
+	                </li>
+
+	                <!-- 文本处理 -->
+	                <li class="nav-group" data-group="tools-text">
+	                    <div class="nav-group-header" tabindex="0" role="button" aria-expanded="false">
+	                        <span class="nav-icon">📝</span>
+	                        <span class="nav-text">文本处理</span>
+	                        <span class="nav-arrow">▾</span>
+	                    </div>
+	                    <ul class="nav-sublist">
+	                        <li class="nav-item" data-page="tool-json">
+	                            <span class="nav-icon">📋</span>
+	                            <span class="nav-text">JSON 格式化</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-data-convert">
+	                            <span class="nav-icon">🔄</span>
+	                            <span class="nav-text">数据格式转换</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-text">
+	                            <span class="nav-icon">📑</span>
+	                            <span class="nav-text">文本处理</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-diff">
+	                            <span class="nav-icon">🆚</span>
+	                            <span class="nav-text">文本对比</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-regex">
+	                            <span class="nav-icon">🔍</span>
+	                            <span class="nav-text">正则表达式</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-charcount">
+	                            <span class="nav-icon">📊</span>
+	                            <span class="nav-text">字符统计</span>
+	                        </li>
+	                        <li class="nav-item" data-page="tool-sql">
+	                            <span class="nav-icon">🗃️</span>
+	                            <span class="nav-text">SQL 格式化</span>
+	                        </li>
+	                    </ul>
+	                </li>
+
+	                <!-- 开发工具 -->
+	                <li class="nav-group" data-group="tools-dev">
+	                    <div class="nav-group-header" tabindex="0" role="button" aria-expanded="false">
+	                        <span class="nav-icon">🛠️</span>
+	                        <span class="nav-text">开发工具</span>
+	                        <span class="nav-arrow">▾</span>
+	                    </div>
+	                    <ul class="nav-sublist">
+	                        <li class="nav-item" data-page="tool-uuid">
+	                            <span class="nav-icon">🆔</span>
+	                            <span class="nav-text">UUID 生成器</span>
 	                        </li>
 	                        <li class="nav-item" data-page="tool-time">
 	                            <span class="nav-icon">⏱️</span>
@@ -97,34 +166,6 @@
 	                        <li class="nav-item" data-page="tool-naming">
 	                            <span class="nav-icon">🏷️</span>
 	                            <span class="nav-text">变量命名转换</span>
-	                        </li>
-	                        <li class="nav-item" data-page="tool-url">
-	                            <span class="nav-icon">🔗</span>
-	                            <span class="nav-text">URL 编解码</span>
-	                        </li>
-	                        <li class="nav-item" data-page="tool-radix">
-	                            <span class="nav-icon">🔢</span>
-	                            <span class="nav-text">进制转换</span>
-	                        </li>
-	                        <li class="nav-item" data-page="tool-charcount">
-	                            <span class="nav-icon">📝</span>
-	                            <span class="nav-text">字符统计</span>
-	                        </li>
-	                        <li class="nav-item" data-page="tool-password">
-	                            <span class="nav-icon">🔐</span>
-	                            <span class="nav-text">密码生成器</span>
-	                        </li>
-	                        <li class="nav-item" data-page="tool-json">
-	                            <span class="nav-icon">📋</span>
-	                            <span class="nav-text">JSON 格式化</span>
-	                        </li>
-	                        <li class="nav-item" data-page="tool-text">
-	                            <span class="nav-icon">📑</span>
-	                            <span class="nav-text">文本处理</span>
-	                        </li>
-	                        <li class="nav-item" data-page="tool-regex">
-	                            <span class="nav-icon">🔍</span>
-	                            <span class="nav-text">正则表达式</span>
 	                        </li>
 	                        <li class="nav-item" data-page="tool-curl">
 	                            <span class="nav-icon">📡</span>
@@ -141,10 +182,6 @@
 	                        <li class="nav-item" data-page="tool-cron">
 	                            <span class="nav-icon">⏰</span>
 	                            <span class="nav-text">Cron 解析</span>
-	                        </li>
-	                        <li class="nav-item" data-page="tool-sql">
-	                            <span class="nav-icon">🗃️</span>
-	                            <span class="nav-text">SQL 格式化</span>
 	                        </li>
 	                    </ul>
 	                </li>
@@ -1174,17 +1211,9 @@
 		                <div class="page-header">
 		                    <div class="page-title">
 		                        <h1>JSON 格式化</h1>
-		                        <p class="subtitle">格式化、压缩、校验 JSON 数据</p>
+		                        <p class="subtitle">格式化、压缩、校验、排序、转义 JSON 数据</p>
 		                    </div>
 		                    <div class="page-actions">
-		                        <div class="format-toggle" title="缩进">
-		                            <button class="btn btn-sm btn-ghost format-btn" id="json-indent-2" onclick="setJsonIndent(2)">2空格</button>
-		                            <button class="btn btn-sm btn-ghost format-btn" id="json-indent-4" onclick="setJsonIndent(4)">4空格</button>
-		                            <button class="btn btn-sm btn-ghost format-btn" id="json-indent-tab" onclick="setJsonIndent('tab')">Tab</button>
-		                        </div>
-		                        <button class="btn btn-ghost" onclick="minifyJsonTool()">
-		                            <span class="btn-icon">📦</span>压缩
-		                        </button>
 		                        <button class="btn btn-ghost" onclick="clearJsonTool()">清空</button>
 		                    </div>
 		                </div>
@@ -1193,8 +1222,18 @@
 		                        <div class="panel-header">
 		                            <h3>输入</h3>
 		                            <div class="panel-actions">
-		                                <button class="btn btn-sm btn-ghost" onclick="tryFixJsonTool()">尝试修复</button>
+		                                <button class="btn btn-sm btn-ghost" onclick="tryFixJsonTool()">修复</button>
+		                                <button class="btn btn-sm btn-ghost" onclick="sortJsonTool('asc')" title="按字段名升序排列">排序</button>
+		                                <button class="btn btn-sm btn-ghost" onclick="minifyJsonTool()">压缩</button>
+		                                <button class="btn btn-sm btn-ghost" onclick="escapeJsonTool()" title="转义 JSON">转义</button>
+		                                <button class="btn btn-sm btn-ghost" onclick="unescapeJsonTool()" title="反转义">反转义</button>
 		                            </div>
+		                        </div>
+		                        <div class="json-indent-bar">
+		                            <span>缩进：</span>
+		                            <button class="btn btn-xs btn-ghost format-btn" id="json-indent-2" onclick="setJsonIndent(2)">2</button>
+		                            <button class="btn btn-xs btn-ghost format-btn" id="json-indent-4" onclick="setJsonIndent(4)">4</button>
+		                            <button class="btn btn-xs btn-ghost format-btn" id="json-indent-tab" onclick="setJsonIndent('tab')">Tab</button>
 		                        </div>
 		                        <div class="panel-body">
 		                            <textarea id="json-input" placeholder="粘贴 JSON 数据..." spellcheck="false"></textarea>
@@ -1205,13 +1244,88 @@
 		                        <div class="panel-header">
 		                            <h3>输出</h3>
 		                            <div class="panel-actions">
+		                                <div class="json-view-tabs">
+		                                    <button class="json-view-tab active" id="json-view-text" onclick="switchJsonView('text')">文本</button>
+		                                    <button class="json-view-tab" id="json-view-tree" onclick="switchJsonView('tree')">树形</button>
+		                                </div>
 		                                <span class="json-status" id="json-status"></span>
 		                                <button class="btn btn-sm btn-ghost" onclick="copyJsonOutput(this)">复制</button>
 		                            </div>
 		                        </div>
 		                        <div class="panel-body">
-		                            <textarea id="json-output" readonly placeholder="格式化结果..." spellcheck="false"></textarea>
+		                            <div id="json-output-text">
+		                                <textarea id="json-output" readonly placeholder="格式化结果..." spellcheck="false"></textarea>
+		                            </div>
+		                            <div id="json-output-tree" class="jtree-container" style="display: none;">
+		                                <div class="jtree-toolbar">
+		                                    <button class="btn btn-sm btn-ghost" onclick="expandAllJsonTree()">全部展开</button>
+		                                    <button class="btn btn-sm btn-ghost" onclick="collapseAllJsonTree()">全部折叠</button>
+		                                </div>
+		                                <div id="json-tree-content"></div>
+		                            </div>
 		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+
+		            <!-- 工具箱：数据格式转换 -->
+		            <section id="page-tool-data-convert" class="page">
+		                <div class="page-header">
+		                    <div class="page-title">
+		                        <h1>数据格式转换</h1>
+		                        <p class="subtitle">JSON ↔ YAML / XML 双向转换</p>
+		                    </div>
+		                    <div class="page-actions">
+		                        <button class="btn btn-ghost" onclick="clearDataConvertTool()">清空</button>
+		                    </div>
+		                </div>
+		                <div class="converter-layout">
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输入</h3>
+		                            <div class="panel-actions">
+		                                <div class="format-toggle" title="输入格式">
+		                                    <button class="btn btn-sm btn-ghost format-btn active" id="data-in-auto" onclick="setDataInputFormat('auto')">自动</button>
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="data-in-json" onclick="setDataInputFormat('json')">JSON</button>
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="data-in-yaml" onclick="setDataInputFormat('yaml')">YAML</button>
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="data-in-xml" onclick="setDataInputFormat('xml')">XML</button>
+		                                </div>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="data-convert-input" placeholder="粘贴 JSON / YAML / XML 数据..." spellcheck="false" oninput="updateDataConvertTool()"></textarea>
+		                            <div class="data-detect" id="data-detect"></div>
+		                            <div id="data-convert-errors" class="error-list"></div>
+		                        </div>
+		                    </div>
+		                    <div class="converter-panel">
+		                        <div class="panel-header">
+		                            <h3>输出</h3>
+		                            <div class="panel-actions">
+		                                <div class="format-toggle" title="输出格式">
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="data-out-json" onclick="setDataOutputFormat('json')">JSON</button>
+		                                    <button class="btn btn-sm btn-ghost format-btn active" id="data-out-yaml" onclick="setDataOutputFormat('yaml')">YAML</button>
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="data-out-xml" onclick="setDataOutputFormat('xml')">XML</button>
+		                                </div>
+		                                <button class="btn btn-sm btn-ghost" onclick="copyDataConvertOutput(this)">复制</button>
+		                            </div>
+		                        </div>
+		                        <div class="panel-body">
+		                            <textarea id="data-convert-output" readonly placeholder="转换结果..." spellcheck="false"></textarea>
+		                        </div>
+		                    </div>
+		                </div>
+		                <div class="data-convert-options">
+		                    <div class="option-group">
+		                        <label>XML 根元素：</label>
+		                        <input type="text" id="data-xml-root" placeholder="root" value="root" oninput="updateDataConvertTool()" style="width: 100px;">
+		                    </div>
+		                    <div class="option-group">
+		                        <label>JSON 缩进：</label>
+		                        <select id="data-json-indent" onchange="updateDataConvertTool()">
+		                            <option value="2">2 空格</option>
+		                            <option value="4">4 空格</option>
+		                        </select>
 		                    </div>
 		                </div>
 		            </section>
@@ -1681,11 +1795,11 @@
 		                                </div>
 		                                <div class="cron-presets">
 		                                    <span class="cron-preset-label">常用：</span>
-		                                    <button class="btn btn-sm btn-ghost" onclick="loadCronPreset('*/5 * * * *')">每5分钟</button>
-		                                    <button class="btn btn-sm btn-ghost" onclick="loadCronPreset('0 * * * *')">每小时</button>
-		                                    <button class="btn btn-sm btn-ghost" onclick="loadCronPreset('0 0 * * *')">每天0点</button>
-		                                    <button class="btn btn-sm btn-ghost" onclick="loadCronPreset('0 0 * * 1')">每周一</button>
-		                                    <button class="btn btn-sm btn-ghost" onclick="loadCronPreset('0 0 1 * *')">每月1日</button>
+		                                    <button class="btn btn-sm btn-ghost cron-preset-btn" onclick="loadCronPreset('*/5 * * * *')" title="*/5 * * * *">每5分钟</button>
+		                                    <button class="btn btn-sm btn-ghost cron-preset-btn" onclick="loadCronPreset('0 * * * *')" title="0 * * * *">每小时</button>
+		                                    <button class="btn btn-sm btn-ghost cron-preset-btn" onclick="loadCronPreset('0 0 * * *')" title="0 0 * * *">每天0点</button>
+		                                    <button class="btn btn-sm btn-ghost cron-preset-btn" onclick="loadCronPreset('0 0 * * 1')" title="0 0 * * 1">每周一</button>
+		                                    <button class="btn btn-sm btn-ghost cron-preset-btn" onclick="loadCronPreset('0 0 1 * *')" title="0 0 1 * *">每月1日</button>
 		                                </div>
 		                                <div id="cron-errors" class="error-list"></div>
 		                            </div>
@@ -1738,8 +1852,8 @@
 		                            <div class="panel-header">
 		                                <h3>输出</h3>
 		                                <div class="format-toggle">
-		                                    <button class="format-btn active" id="sql-format-btn" onclick="setSqlMode('format')">格式化</button>
-		                                    <button class="format-btn" id="sql-minify-btn" onclick="setSqlMode('minify')">压缩</button>
+		                                    <button class="btn btn-sm btn-ghost format-btn active" id="sql-format-btn" onclick="setSqlMode('format')">格式化</button>
+		                                    <button class="btn btn-sm btn-ghost format-btn" id="sql-minify-btn" onclick="setSqlMode('minify')">压缩</button>
 		                                </div>
 		                            </div>
 		                            <div class="panel-body">
@@ -1965,6 +2079,10 @@
         </div>
     </div>
 
+	    <!-- CDN: js-yaml for YAML parsing -->
+	    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+	    <!-- CDN: fast-xml-parser for XML parsing -->
+	    <script src="https://cdn.jsdelivr.net/npm/fast-xml-parser@4/dist/fxparser.min.js"></script>
 	    <script src="tools_m2_utils.js"></script>
 	    <script src="tools_m3_utils.js"></script>
 	    <script src="tools_m4_utils.js"></script>
@@ -1979,6 +2097,8 @@
 	    <script src="tools_m13_utils.js"></script>
 	    <script src="tools_m14_utils.js"></script>
 	    <script src="tools_m15_utils.js"></script>
+	    <script src="tools_m18_utils.js"></script>
+	    <script src="tools_m16_utils.js"></script>
 	    <script src="app.js"></script>
 	</body>
 	</html>

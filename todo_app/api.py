@@ -3,7 +3,7 @@ Todo API - pywebview 前端接口层
 """
 from dataclasses import asdict
 from functools import wraps
-from services.todo_service import TodoService
+from services.todo_service import TodoService, Subtask
 
 
 def api_error_handler(func):
@@ -57,15 +57,25 @@ class Api:
     @api_error_handler
     def get_tasks(self, status: str = "", category_id: str = "",
                   priority: str = "", quadrant: str = "",
-                  due_date: str = "", search: str = ""):
+                  due_date: str = "", search: str = "", tag: str = ""):
         tasks = self.service.get_tasks(
             status=status,
             category_id=category_id,
             priority=priority,
             quadrant=quadrant,
             due_date=due_date,
-            search=search
+            search=search,
+            tag=tag
         )
+        return [asdict(t) for t in tasks]
+
+    @api_error_handler
+    def get_all_tags(self):
+        return self.service.get_all_tags()
+
+    @api_error_handler
+    def get_tasks_by_tag(self, tag: str):
+        tasks = self.service.get_tasks_by_tag(tag)
         return [asdict(t) for t in tasks]
 
     @api_error_handler
@@ -97,6 +107,55 @@ class Api:
     def update_task_quadrant(self, task_id: str, quadrant: str):
         task = self.service.update_task_quadrant(task_id, quadrant)
         return asdict(task) if task else {"success": False, "error": "更新失败"}
+
+    # ===== Subtask API =====
+    @api_error_handler
+    def add_subtask(self, task_id: str, title: str):
+        subtask = self.service.add_subtask(task_id, title)
+        return asdict(subtask)
+
+    @api_error_handler
+    def update_subtask(self, task_id: str, subtask_id: str, **kwargs):
+        subtask = self.service.update_subtask(task_id, subtask_id, **kwargs)
+        return asdict(subtask) if subtask else {"success": False, "error": "子任务不存在"}
+
+    @api_error_handler
+    def delete_subtask(self, task_id: str, subtask_id: str):
+        success = self.service.delete_subtask(task_id, subtask_id)
+        return {"success": success}
+
+    @api_error_handler
+    def toggle_subtask(self, task_id: str, subtask_id: str):
+        subtask = self.service.toggle_subtask(task_id, subtask_id)
+        return asdict(subtask) if subtask else {"success": False, "error": "子任务不存在"}
+
+    @api_error_handler
+    def reorder_subtasks(self, task_id: str, subtask_ids: list):
+        success = self.service.reorder_subtasks(task_id, subtask_ids)
+        return {"success": success}
+
+    @api_error_handler
+    def get_subtask_progress(self, task_id: str):
+        return self.service.get_subtask_progress(task_id)
+
+    # ===== Recurring Tasks API =====
+    @api_error_handler
+    def set_recurrence(self, task_id: str, rule: dict):
+        """设置任务的重复规则"""
+        task = self.service.set_recurrence(task_id, rule)
+        return asdict(task) if task else {"success": False, "error": "任务不存在"}
+
+    @api_error_handler
+    def clear_recurrence(self, task_id: str):
+        """清除任务的重复规则"""
+        task = self.service.clear_recurrence(task_id)
+        return asdict(task) if task else {"success": False, "error": "任务不存在"}
+
+    @api_error_handler
+    def generate_recurring_tasks(self):
+        """生成到期的重复任务"""
+        tasks = self.service.generate_recurring_tasks()
+        return [asdict(t) for t in tasks]
 
     # ===== Category API =====
     @api_error_handler
@@ -153,6 +212,23 @@ class Api:
     def get_daily_stats(self, date: str):
         return self.service.get_daily_stats(date)
 
+    # ===== Pomodoro Chart API =====
+    @api_error_handler
+    def get_pomodoro_daily_stats(self, days: int = 30):
+        return self.service.get_pomodoro_daily_stats(days)
+
+    @api_error_handler
+    def get_pomodoro_weekly_stats(self, weeks: int = 12):
+        return self.service.get_pomodoro_weekly_stats(weeks)
+
+    @api_error_handler
+    def get_pomodoro_heatmap(self, year: int = 0):
+        return self.service.get_pomodoro_heatmap(year)
+
+    @api_error_handler
+    def get_category_pomodoro_stats(self):
+        return self.service.get_category_pomodoro_stats()
+
     # ===== Settings API =====
     @api_error_handler
     def get_settings(self):
@@ -184,3 +260,12 @@ class Api:
     @api_error_handler
     def get_data_stats(self):
         return self.service.get_data_stats()
+
+    # ===== Achievement API =====
+    @api_error_handler
+    def get_achievements(self):
+        return self.service.get_achievements()
+
+    @api_error_handler
+    def check_achievements(self):
+        return self.service.check_achievements()

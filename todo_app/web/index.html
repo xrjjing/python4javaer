@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>牛牛待办</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.min.css">
 </head>
 <body>
     <div class="app">
@@ -120,14 +121,25 @@
                     <input type="text" id="search-input" placeholder="搜索任务..." oninput="handleSearch()">
                 </div>
                 <div class="top-actions">
-                    <button class="btn btn-ghost" onclick="showSettingsModal()" title="设置">
-                        <span>⚙️</span>
+                    <button class="btn btn-ghost btn-with-text" onclick="showSettingsModal()" title="设置">
+                        <span class="btn-emoji">⚙️</span>
+                        <span class="btn-label">设置</span>
                     </button>
-                    <button class="btn btn-ghost" onclick="showSummaryModal()" title="工作总结">
-                        <span>📊</span>
+                    <button class="btn btn-ghost btn-with-text" onclick="showStatsModal()" title="专注统计">
+                        <span class="btn-emoji">📈</span>
+                        <span class="btn-label">统计</span>
                     </button>
-                    <button class="btn btn-ghost" onclick="toggleStickyNotes()" title="便签 (S)">
-                        <span>📌</span>
+                    <button class="btn btn-ghost btn-with-text" onclick="showSummaryModal()" title="工作总结">
+                        <span class="btn-emoji">📊</span>
+                        <span class="btn-label">总结</span>
+                    </button>
+                    <button class="btn btn-ghost btn-with-text" onclick="showAchievementModal()" title="成就殿堂">
+                        <span class="btn-emoji">🏆</span>
+                        <span class="btn-label">成就</span>
+                    </button>
+                    <button class="btn btn-ghost btn-with-text" onclick="toggleStickyNotes()" title="便签 (S)">
+                        <span class="btn-emoji">📌</span>
+                        <span class="btn-label">便签</span>
                     </button>
                     <button class="btn btn-primary" onclick="showTaskModal()">
                         <span>+ 新任务</span>
@@ -153,6 +165,9 @@
                     </select>
                     <select id="filter-category" onchange="loadTasks()">
                         <option value="">全部分类</option>
+                    </select>
+                    <select id="filter-tag" onchange="loadTasks()">
+                        <option value="">全部标签</option>
                     </select>
                 </div>
             </div>
@@ -271,6 +286,21 @@
                             <option value="q4">📋 不重要不紧急</option>
                         </select>
                     </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">标签</label>
+                    <input type="text" id="task-tags" class="form-input" placeholder="输入标签，用逗号分隔...">
+                    <div class="form-hint">多个标签请用英文逗号 , 分隔</div>
+                </div>
+                <!-- 子任务区域（仅编辑时显示） -->
+                <div class="form-group subtask-section" id="subtask-section" style="display:none">
+                    <label class="form-label">子任务</label>
+                    <div class="subtask-add">
+                        <input type="text" id="subtask-input" class="form-input" placeholder="添加子任务..." onkeydown="if(event.key==='Enter'){event.preventDefault();addSubtask();}">
+                        <button type="button" class="btn btn-sm btn-primary" onclick="addSubtask()">+</button>
+                    </div>
+                    <div class="subtask-list" id="subtask-list"></div>
+                    <div class="subtask-progress" id="subtask-progress"></div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -485,12 +515,90 @@
         </div>
     </div>
 
+    <!-- 专注统计弹窗 -->
+    <div id="stats-modal" class="modal">
+        <div class="modal-overlay" onclick="closeModal('stats-modal')"></div>
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2>🍅 专注统计</h2>
+                <button class="close-btn" onclick="closeModal('stats-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="stats-section">
+                    <h3 class="stats-title">📈 近30天专注趋势</h3>
+                    <div id="pomodoro-trend-chart" class="chart-container"></div>
+                </div>
+                <div class="stats-section">
+                    <h3 class="stats-title">🔥 年度专注热力图</h3>
+                    <div class="heatmap-container">
+                        <div class="heatmap-scroll">
+                            <div id="pomodoro-heatmap" class="heatmap-grid"></div>
+                        </div>
+                        <div class="heatmap-legend">
+                            <span>少</span>
+                            <div class="legend-item level-0"></div>
+                            <div class="legend-item level-1"></div>
+                            <div class="legend-item level-2"></div>
+                            <div class="legend-item level-3"></div>
+                            <div class="legend-item level-4"></div>
+                            <span>多</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-section">
+                    <h3 class="stats-title">📁 分类专注时长</h3>
+                    <div id="category-stats" class="category-stats-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成就模态框 -->
+    <div id="achievement-modal" class="modal">
+        <div class="modal-overlay" onclick="closeModal('achievement-modal')"></div>
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2>🏆 成就殿堂</h2>
+                <button class="close-btn" onclick="closeModal('achievement-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="achievement-stats">
+                    <div class="achievement-stat-item">
+                        <span class="stat-value" id="achievement-unlocked">0</span>
+                        <span class="stat-label">已解锁</span>
+                    </div>
+                    <div class="achievement-stat-item">
+                        <span class="stat-value" id="achievement-total">0</span>
+                        <span class="stat-label">总成就</span>
+                    </div>
+                    <div class="achievement-stat-item">
+                        <span class="stat-value" id="achievement-streak">0</span>
+                        <span class="stat-label">连续天数</span>
+                    </div>
+                </div>
+                <div class="achievement-grid" id="achievement-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成就解锁提示 -->
+    <div id="achievement-toast" class="achievement-toast hidden">
+        <div class="achievement-toast-content">
+            <span class="achievement-toast-icon" id="achievement-toast-icon">🏆</span>
+            <div class="achievement-toast-text">
+                <span class="achievement-toast-title">成就解锁！</span>
+                <span class="achievement-toast-name" id="achievement-toast-name"></span>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast 提示 -->
     <div id="toast" class="toast hidden">
         <span class="toast-icon">🐮</span>
         <span class="toast-message" id="toast-message"></span>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/uplot@1.6.24/dist/uPlot.iife.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

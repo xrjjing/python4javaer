@@ -40,6 +40,14 @@ body {
     --sidebar-bg: var(--white);
     --content-gradient: linear-gradient(135deg, var(--bg) 0%, #FFF5F0 100%);
     --on-accent: #fff;
+
+    /* 牛牛吉祥物颜色 */
+    --cow-face: #F5F5DC;
+    --cow-horn: linear-gradient(to top, #D2691E 0%, #FFE4B5 100%);
+    --cow-ear-border: #DDD;
+    --cow-nose: #FFB6C1;
+    --cow-eye: #333;
+    --cow-spot: #8B4513;
 }
 
 /* ========== Light 主题 ========== */
@@ -72,6 +80,14 @@ body {
     --accent-light: #dbeafe;
     --sidebar-bg: #ffffff;
     --content-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+
+    /* 牛牛吉祥物 - 蓝色系 */
+    --cow-face: #E8F4FD;
+    --cow-horn: linear-gradient(to top, #3b82f6 0%, #93c5fd 100%);
+    --cow-ear-border: #93c5fd;
+    --cow-nose: #bfdbfe;
+    --cow-eye: #1e40af;
+    --cow-spot: #3b82f6;
 }
 
 /* ========== Cute 主题 (默认) ========== */
@@ -104,6 +120,14 @@ body {
     --accent-light: #FFE4C4;
     --sidebar-bg: #ffffff;
     --content-gradient: linear-gradient(135deg, #FFF9F5 0%, #FFF5F0 100%);
+
+    /* 牛牛吉祥物 - 可爱橙色系 */
+    --cow-face: #FFF5E6;
+    --cow-horn: linear-gradient(to top, #FFB347 0%, #FFE4C4 100%);
+    --cow-ear-border: #FFD9B3;
+    --cow-nose: #FFB6C1;
+    --cow-eye: #8B4513;
+    --cow-spot: #FFB347;
 }
 
 /* ========== Office 主题 ========== */
@@ -136,6 +160,14 @@ body {
     --accent-light: #dbeafe;
     --sidebar-bg: #ffffff;
     --content-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+
+    /* 牛牛吉祥物 - 专业深蓝系 */
+    --cow-face: #E8EEF5;
+    --cow-horn: linear-gradient(to top, #1e40af 0%, #60a5fa 100%);
+    --cow-ear-border: #93c5fd;
+    --cow-nose: #fca5a5;
+    --cow-eye: #1e3a5f;
+    --cow-spot: #1e40af;
 }
 
 /* ========== Neon Light 主题 ========== */
@@ -168,6 +200,14 @@ body {
     --accent-light: #ccfbf1;
     --sidebar-bg: linear-gradient(160deg, hsl(180, 60%, 85%) 0%, hsl(160, 55%, 82%) 100%);
     --content-gradient: linear-gradient(160deg, #f0fdfa 0%, #ecfeff 50%, #f0fdf4 100%);
+
+    /* 牛牛吉祥物 - 极光青绿系 */
+    --cow-face: #E6FAF8;
+    --cow-horn: linear-gradient(to top, #14b8a6 0%, #5eead4 100%);
+    --cow-ear-border: #99f6e4;
+    --cow-nose: #fda4af;
+    --cow-eye: #134e4a;
+    --cow-spot: #14b8a6;
 }
 
 /* ========== Dark 主题 ========== */
@@ -200,6 +240,14 @@ body {
     --accent-light: #422006;
     --sidebar-bg: #1e293b;
     --content-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+
+    /* 牛牛吉祥物 - 暗金色系 */
+    --cow-face: #2d3748;
+    --cow-horn: linear-gradient(to top, #fbbf24 0%, #fcd34d 100%);
+    --cow-ear-border: #4a5568;
+    --cow-nose: #f87171;
+    --cow-eye: #fbbf24;
+    --cow-spot: #fbbf24;
 }
 
 /* ========== Neon 主题 ========== */
@@ -233,6 +281,14 @@ body {
     --sidebar-bg: linear-gradient(180deg, #0f172a 0%, #134e4a 50%, #0f172a 100%);
     --content-gradient: linear-gradient(135deg, #020617 0%, #0c4a6e 50%, #020617 100%);
     --on-accent: #0f172a;
+
+    /* 牛牛吉祥物 - 霓虹发光系 */
+    --cow-face: #1e293b;
+    --cow-horn: linear-gradient(to top, #2dd4bf 0%, #00ff9d 100%);
+    --cow-ear-border: #2dd4bf;
+    --cow-nose: #ff0055;
+    --cow-eye: #00ff9d;
+    --cow-spot: #2dd4bf;
 }
 
 /* ========== Cyberpunk 主题 ========== */
@@ -266,6 +322,14 @@ body {
     --sidebar-bg: linear-gradient(160deg, #121212 0%, #1a1a2e 50%, #121212 100%);
     --content-gradient: linear-gradient(135deg, #050505 0%, #1a1a2e 50%, #050505 100%);
     --on-accent: #000;
+
+    /* 牛牛吉祥物 - 赛博朋克黄黑系 */
+    --cow-face: #1a1a2e;
+    --cow-horn: linear-gradient(to top, #facc15 0%, #fef08a 100%);
+    --cow-ear-border: #facc15;
+    --cow-nose: #e879f9;
+    --cow-eye: #facc15;
+    --cow-spot: #facc15;
 }
 
 /* ========== Forest 森林主题 (浅色) ========== */
@@ -303,6 +367,14 @@ body {
     --accent-light: #d8f3dc;
     --sidebar-bg: linear-gradient(180deg, #d8f3dc 0%, #b7e4c7 100%);
     --content-gradient: linear-gradient(135deg, #f1faee 0%, #d8f3dc 100%);
+
+    /* 牛牛吉祥物 - 森林绿色系 */
+    --cow-face: #E8F5E9;
+    --cow-horn: linear-gradient(to top, #2d6a4f 0%, #74c69d 100%);
+    --cow-ear-border: #95d5b2;
+    --cow-nose: #dda15e;
+    --cow-eye: #1b4332;
+    --cow-spot: #40916c;
 }
 
 /* ========== Sunset 日落主题 (浅色) ========== */
@@ -340,6 +412,14 @@ body {
     --accent-light: #fef0ec;
     --sidebar-bg: linear-gradient(180deg, #fef0ec 0%, #fcf6e3 50%, #fff9f5 100%);
     --content-gradient: linear-gradient(135deg, #fff9f5 0%, #fef0ec 50%, #fcf6e3 100%);
+
+    /* 牛牛吉祥物 - 日落暖橙系 */
+    --cow-face: #FFF5EE;
+    --cow-horn: linear-gradient(to top, #e07a5f 0%, #f2cc8f 100%);
+    --cow-ear-border: #f4d35e;
+    --cow-nose: #f28482;
+    --cow-eye: #3d405b;
+    --cow-spot: #e07a5f;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -385,9 +465,10 @@ body {
 .cow-face {
     width: 50px;
     height: 42px;
-    background: #F5F5DC;
+    background: var(--cow-face);
     border-radius: 50% 50% 45% 45%;
     position: relative;
+    transition: background 0.3s ease;
 }
 
 .cow-horn {
@@ -395,8 +476,9 @@ body {
     top: -8px;
     width: 8px;
     height: 14px;
-    background: linear-gradient(to top, #D2691E 0%, #FFE4B5 100%);
+    background: var(--cow-horn);
     border-radius: 4px 4px 2px 2px;
+    transition: background 0.3s ease;
 }
 .cow-horn.left { left: 8px; transform: rotate(-15deg); }
 .cow-horn.right { right: 8px; transform: rotate(15deg); }
@@ -406,9 +488,10 @@ body {
     top: 2px;
     width: 14px;
     height: 18px;
-    background: #F5F5DC;
+    background: var(--cow-face);
     border-radius: 50% 50% 40% 40%;
-    border: 2px solid #DDD;
+    border: 2px solid var(--cow-ear-border);
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 .cow-ear.left { left: -4px; transform: rotate(-25deg); }
 .cow-ear.right { right: -4px; transform: rotate(25deg); }
@@ -418,9 +501,10 @@ body {
     top: 14px;
     width: 8px;
     height: 10px;
-    background: #333;
+    background: var(--cow-eye);
     border-radius: 50%;
     animation: blink 4s infinite;
+    transition: background 0.3s ease;
 }
 .cow-eye.left { left: 12px; }
 .cow-eye.right { right: 12px; }
@@ -437,8 +521,9 @@ body {
     transform: translateX(-50%);
     width: 22px;
     height: 14px;
-    background: #FFB6C1;
+    background: var(--cow-nose);
     border-radius: 50%;
+    transition: background 0.3s ease;
 }
 
 .cow-nose::before,
@@ -630,6 +715,31 @@ body {
     border-bottom: 1px solid var(--border);
 }
 
+.top-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-with-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 12px;
+    min-width: 52px;
+}
+
+.btn-with-text .btn-emoji {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.btn-with-text .btn-label {
+    font-size: 10px;
+    opacity: 0.85;
+}
+
 .search-box {
     display: flex;
     align-items: center;
@@ -789,6 +899,158 @@ body {
 }
 
 .task-due.overdue { color: var(--negative); }
+
+/* ===== 标签样式 ===== */
+.task-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.task-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.form-hint {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    margin-top: 4px;
+}
+
+/* ===== 子任务样式 ===== */
+.subtask-section { margin-top: 8px; }
+
+.subtask-add {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.subtask-add .form-input { flex: 1; }
+
+.subtask-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.subtask-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+}
+
+.subtask-item:hover { background: var(--accent-light); }
+
+.subtask-item.completed { opacity: 0.6; }
+
+.subtask-item.completed .subtask-title { text-decoration: line-through; }
+
+.subtask-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 11px;
+    transition: all 0.2s;
+    /* 扩大触控热区 */
+    padding: 8px;
+    margin: -8px;
+    box-sizing: content-box;
+}
+
+.subtask-checkbox:hover { border-color: var(--accent); }
+
+.subtask-item.completed .subtask-checkbox {
+    background: var(--positive);
+    border-color: var(--positive);
+    color: white;
+}
+
+.subtask-title {
+    flex: 1;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.subtask-delete {
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: transparent;
+    color: var(--text-light);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.2s;
+    /* 扩大触控热区 */
+    padding: 6px;
+    margin: -6px;
+    box-sizing: content-box;
+}
+
+.subtask-item:hover .subtask-delete { opacity: 1; }
+
+.subtask-delete:hover {
+    background: var(--negative);
+    color: white;
+}
+
+.subtask-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.subtask-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--bg);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.subtask-progress-fill {
+    height: 100%;
+    background: var(--positive);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* 任务卡片上的子任务进度指示 */
+.task-subtask-progress {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: var(--positive);
+}
+
+.task-subtask-progress.incomplete { color: var(--text-light); }
 
 .task-actions {
     display: flex;
@@ -1832,4 +2094,358 @@ kbd {
     .top-bar { flex-wrap: wrap; gap: 10px; }
     .search-box { width: 100%; order: 2; }
     .top-actions { order: 1; }
+}
+
+/* ===== 专注统计图表样式 ===== */
+.stats-section {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.stats-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.stats-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text);
+}
+
+/* 趋势图容器 */
+.chart-container {
+    width: 100%;
+    height: 200px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+}
+
+/* 热力图 GitHub 风格 */
+.heatmap-container {
+    background: var(--bg);
+    padding: 16px;
+    border-radius: var(--radius-sm);
+}
+
+.heatmap-scroll {
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.heatmap-grid {
+    display: grid;
+    grid-template-rows: repeat(7, 12px);
+    grid-auto-flow: column;
+    gap: 3px;
+    width: max-content;
+}
+
+.heatmap-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background: var(--border);
+    transition: transform 0.15s;
+    cursor: default;
+}
+
+.heatmap-cell:hover {
+    transform: scale(1.4);
+    z-index: 2;
+}
+
+.heatmap-cell.level-0 { background: var(--border); }
+.heatmap-cell.level-1 { background: var(--accent); opacity: 0.3; }
+.heatmap-cell.level-2 { background: var(--accent); opacity: 0.5; }
+.heatmap-cell.level-3 { background: var(--accent); opacity: 0.75; }
+.heatmap-cell.level-4 { background: var(--accent); opacity: 1; }
+
+.heatmap-legend {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-top: 10px;
+    font-size: 0.7rem;
+    color: var(--text-light);
+}
+
+.legend-item {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: var(--border);
+}
+
+.legend-item.level-1 { background: var(--accent); opacity: 0.3; }
+.legend-item.level-2 { background: var(--accent); opacity: 0.5; }
+.legend-item.level-3 { background: var(--accent); opacity: 0.75; }
+.legend-item.level-4 { background: var(--accent); opacity: 1; }
+
+/* 分类统计卡片 */
+.category-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.category-stat-card {
+    background: var(--bg);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-left: 4px solid var(--accent);
+    transition: transform 0.2s;
+}
+
+.category-stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.cat-stat-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.cat-stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.cat-stat-pct {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    font-weight: normal;
+    margin-left: 4px;
+}
+
+.cat-stat-bar-bg {
+    height: 6px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.cat-stat-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease-out;
+}
+
+/* uPlot 主题适配 */
+.uplot { font-family: inherit !important; }
+.u-legend { color: var(--text) !important; font-size: 12px !important; }
+
+/* 统计空状态 */
+.stats-empty {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-light);
+}
+
+.stats-empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
+
+/* ===== 成就系统样式 ===== */
+.achievement-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 20px;
+    background: var(--bg);
+    border-radius: var(--radius);
+    margin-bottom: 24px;
+}
+
+.achievement-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.achievement-stat-item .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.achievement-stat-item .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.achievement-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.achievement-card {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    gap: 14px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.achievement-card.unlocked {
+    border-color: var(--tier-color, var(--accent));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.achievement-card.locked {
+    opacity: 0.6;
+    filter: grayscale(0.5);
+}
+
+.achievement-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.achievement-icon {
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.achievement-card.unlocked .achievement-icon {
+    background: linear-gradient(135deg, var(--tier-color, var(--accent)) 0%, transparent 100%);
+}
+
+.achievement-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.achievement-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.achievement-desc {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.achievement-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.achievement-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.achievement-progress-fill {
+    height: 100%;
+    background: var(--tier-color, var(--accent));
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.achievement-progress-text {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    white-space: nowrap;
+}
+
+.achievement-tier {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--tier-color, var(--border));
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* 成就解锁提示 */
+.achievement-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    z-index: 10001;
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.achievement-toast.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+.achievement-toast-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 32px rgba(255, 215, 0, 0.4);
+    animation: achievementPulse 2s ease-in-out infinite;
+}
+
+@keyframes achievementPulse {
+    0%, 100% { box-shadow: 0 8px 32px rgba(255, 215, 0, 0.4); }
+    50% { box-shadow: 0 8px 48px rgba(255, 215, 0, 0.6); }
+}
+
+.achievement-toast-icon {
+    font-size: 2rem;
+    animation: achievementBounce 0.6s ease-out;
+}
+
+@keyframes achievementBounce {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+.achievement-toast-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.achievement-toast-title {
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.6);
+    font-weight: 500;
+}
+
+.achievement-toast-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
 }
