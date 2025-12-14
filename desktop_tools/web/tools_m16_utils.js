@@ -71,9 +71,13 @@
 
     /**
      * 生成唯一路径 ID
+     * 使用字符编码避免 ID 冲突（如 "a-b" 和 "a_b"）
      */
     function pathToId(path) {
-        return 'jtree-' + path.map(p => String(p).replace(/[^a-zA-Z0-9]/g, '_')).join('-');
+        return 'jtree-' + path.map(p => String(p).split('').map(c => {
+            if (/^[a-zA-Z0-9]$/.test(c)) return c;
+            return '_' + c.charCodeAt(0).toString(16) + '_';
+        }).join('')).join('-');
     }
 
     /**

@@ -259,55 +259,94 @@ class Api:
 
     @api_error_handler
     def import_data(self, json_data: dict):
-        """从 JSON 数据导入（覆盖现有数据）"""
+        """从 JSON 数据导入（覆盖现有数据），带数据验证和回滚机制"""
         if not isinstance(json_data, dict) or "data" not in json_data:
             return {"success": False, "error": "无效的备份数据格式"}
 
         data = json_data["data"]
-        imported = {"categories": 0, "tags": 0, "accounts": 0, "budgets": 0, "ledgers": 0, "records": 0}
         data_dir = self.bookkeeping.data_dir
 
-        # 导入分类
-        if "categories" in data and isinstance(data["categories"], list):
-            (data_dir / "categories.json").write_text(
-                json.dumps(data["categories"], ensure_ascii=False, indent=2), encoding="utf-8")
-            imported["categories"] = len(data["categories"])
+        # 定义各数据类型的必要字段
+        required_fields = {
+            "categories": ["id", "name", "type"],
+            "tags": ["id", "name"],
+            "accounts": ["id", "name", "type"],
+            "budgets": ["id", "name", "amount"],
+            "ledgers": ["id", "name"],
+            "records": ["id", "type", "amount", "category_id"],
+        }
 
-        # 导入标签
-        if "tags" in data and isinstance(data["tags"], list):
-            (data_dir / "tags.json").write_text(
-                json.dumps(data["tags"], ensure_ascii=False, indent=2), encoding="utf-8")
-            imported["tags"] = len(data["tags"])
+        # 验证数据结构
+        for key, fields in required_fields.items():
+            if key in data and isinstance(data[key], list):
+                for i, item in enumerate(data[key]):
+                    if not isinstance(item, dict):
+                        return {"success": False, "error": f"{key}[{i}] 不是有效的对象"}
+                    missing = [f for f in fields if f not in item]
+                    if missing:
+                        return {"success": False, "error": f"{key}[{i}] 缺少必要字段: {', '.join(missing)}"}
 
-        # 导入账户
-        if "accounts" in data and isinstance(data["accounts"], list):
-            (data_dir / "accounts.json").write_text(
-                json.dumps(data["accounts"], ensure_ascii=False, indent=2), encoding="utf-8")
-            imported["accounts"] = len(data["accounts"])
+        # 备份原数据（用于回滚）
+        backup_files = {}
+        file_names = ["categories.json", "tags.json", "accounts.json", "budgets.json", "ledgers.json", "records.json"]
+        for fname in file_names:
+            fpath = data_dir / fname
+            if fpath.exists():
+                backup_files[fname] = fpath.read_text(encoding="utf-8")
 
-        # 导入预算
-        if "budgets" in data and isinstance(data["budgets"], list):
-            (data_dir / "budgets.json").write_text(
-                json.dumps(data["budgets"], ensure_ascii=False, indent=2), encoding="utf-8")
-            imported["budgets"] = len(data["budgets"])
+        imported = {"categories": 0, "tags": 0, "accounts": 0, "budgets": 0, "ledgers": 0, "records": 0}
 
-        # 导入账本
-        if "ledgers" in data and isinstance(data["ledgers"], list):
-            (data_dir / "ledgers.json").write_text(
-                json.dumps(data["ledgers"], ensure_ascii=False, indent=2), encoding="utf-8")
-            imported["ledgers"] = len(data["ledgers"])
+        try:
+            # 导入分类
+            if "categories" in data and isinstance(data["categories"], list):
+                (data_dir / "categories.json").write_text(
+                    json.dumps(data["categories"], ensure_ascii=False, indent=2), encoding="utf-8")
+                imported["categories"] = len(data["categories"])
 
-        # 导入记录
-        if "records" in data and isinstance(data["records"], list):
-            (data_dir / "records.json").write_text(
-                json.dumps(data["records"], ensure_ascii=False, indent=2), encoding="utf-8")
-            imported["records"] = len(data["records"])
+            # 导入标签
+            if "tags" in data and isinstance(data["tags"], list):
+                (data_dir / "tags.json").write_text(
+                    json.dumps(data["tags"], ensure_ascii=False, indent=2), encoding="utf-8")
+                imported["tags"] = len(data["tags"])
 
-        # 导入主题
-        if "theme" in data:
-            self.save_theme(data["theme"])
+            # 导入账户
+            if "accounts" in data and isinstance(data["accounts"], list):
+                (data_dir / "accounts.json").write_text(
+                    json.dumps(data["accounts"], ensure_ascii=False, indent=2), encoding="utf-8")
+                imported["accounts"] = len(data["accounts"])
 
-        return {"success": True, "imported": imported}
+            # 导入预算
+            if "budgets" in data and isinstance(data["budgets"], list):
+                (data_dir / "budgets.json").write_text(
+                    json.dumps(data["budgets"], ensure_ascii=False, indent=2), encoding="utf-8")
+                imported["budgets"] = len(data["budgets"])
+
+            # 导入账本
+            if "ledgers" in data and isinstance(data["ledgers"], list):
+                (data_dir / "ledgers.json").write_text(
+                    json.dumps(data["ledgers"], ensure_ascii=False, indent=2), encoding="utf-8")
+                imported["ledgers"] = len(data["ledgers"])
+
+            # 导入记录
+            if "records" in data and isinstance(data["records"], list):
+                (data_dir / "records.json").write_text(
+                    json.dumps(data["records"], ensure_ascii=False, indent=2), encoding="utf-8")
+                imported["records"] = len(data["records"])
+
+            # 导入主题
+            if "theme" in data:
+                self.save_theme(data["theme"])
+
+            return {"success": True, "imported": imported}
+
+        except Exception as e:
+            # 回滚：恢复原数据
+            for fname, content in backup_files.items():
+                try:
+                    (data_dir / fname).write_text(content, encoding="utf-8")
+                except Exception:
+                    pass
+            return {"success": False, "error": f"导入失败，已回滚: {str(e)}"}
 
     def get_data_stats(self):
         """获取数据统计信息"""

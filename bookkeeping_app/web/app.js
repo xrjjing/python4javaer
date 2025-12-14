@@ -602,6 +602,12 @@ async function saveRecord() {
             accountId, state.currentLedgerId
         );
 
+        // 检查 API 返回的错误
+        if (result && result.success === false) {
+            showToast(result.error || '保存失败', true);
+            return;
+        }
+
         // 检查预算警告
         if (result.has_budget_warning && result.budget_warnings?.length > 0) {
             showBudgetWarningModal(result.budget_warnings);
@@ -801,7 +807,13 @@ async function saveEditRecord() {
 
     isSavingEditRecord = true;
     try {
-        await pywebview.api.update_record(id, state.editType, amount, categoryId, date, time, note, [], accountId, currentEditRecord.ledger_id);
+        const result = await pywebview.api.update_record(id, state.editType, amount, categoryId, date, time, note, [], accountId, currentEditRecord.ledger_id);
+
+        if (result && result.success === false) {
+            showToast(result.error || '修改失败', true);
+            return;
+        }
+
         showToast('修改成功喵！');
         closeModal('edit-modal');
         loadRecords();
@@ -1295,14 +1307,19 @@ async function saveAccount() {
 
     isSavingAccount = true;
     try {
+        let result;
         if (editingAccountId) {
-            await pywebview.api.update_account(editingAccountId, name, accSelectedEmoji, accSelectedColor, balance, creditLimit, billingDay, repaymentDay, '');
-            showToast('修改成功喵！');
+            result = await pywebview.api.update_account(editingAccountId, name, accSelectedEmoji, accSelectedColor, balance, creditLimit, billingDay, repaymentDay, '');
         } else {
-            await pywebview.api.add_account(name, type, accSelectedEmoji, accSelectedColor, balance, creditLimit, billingDay, repaymentDay, '');
-            showToast('添加成功喵！');
+            result = await pywebview.api.add_account(name, type, accSelectedEmoji, accSelectedColor, balance, creditLimit, billingDay, repaymentDay, '');
         }
 
+        if (result && result.success === false) {
+            showToast(result.error || (editingAccountId ? '修改失败' : '添加失败'), true);
+            return;
+        }
+
+        showToast(editingAccountId ? '修改成功喵！' : '添加成功喵！');
         closeModal('account-modal');
         await loadAccounts();
         loadAccountsPage();
@@ -1570,7 +1587,13 @@ async function saveBudget() {
 
     isSavingBudget = true;
     try {
-        await pywebview.api.add_budget(name, type, amount, categoryId, 'month', state.currentLedgerId);
+        const result = await pywebview.api.add_budget(name, type, amount, categoryId, 'month', state.currentLedgerId);
+
+        if (result && result.success === false) {
+            showToast(result.error || '预算设置失败', true);
+            return;
+        }
+
         showToast('预算设置成功喵！');
         closeModal('budget-modal');
         loadBudgetsPage();
@@ -1672,7 +1695,13 @@ async function saveLedger() {
 
     isSavingLedger = true;
     try {
-        await pywebview.api.add_ledger(name, ledgerSelectedEmoji, ledgerSelectedColor);
+        const result = await pywebview.api.add_ledger(name, ledgerSelectedEmoji, ledgerSelectedColor);
+
+        if (result && result.success === false) {
+            showToast(result.error || '账本创建失败', true);
+            return;
+        }
+
         showToast('账本创建成功喵！');
         closeModal('ledger-modal');
         await loadLedgers();
@@ -1758,7 +1787,13 @@ async function saveCategory() {
 
     isSavingCategory = true;
     try {
-        await pywebview.api.add_category(name, selectedEmoji, selectedColor, type, parentId);
+        const result = await pywebview.api.add_category(name, selectedEmoji, selectedColor, type, parentId);
+
+        if (result && result.success === false) {
+            showToast(result.error || '添加失败', true);
+            return;
+        }
+
         showToast('添加成功喵！');
         closeModal('category-modal');
         await loadCategories();

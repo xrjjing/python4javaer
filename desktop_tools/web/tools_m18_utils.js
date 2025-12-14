@@ -77,10 +77,21 @@
             // 使用 fast-xml-parser（需要 CDN 引入）
             if (typeof fxparser === 'undefined' && typeof XMLBuilder === 'undefined') {
                 // 使用简单实现作为降级方案
-                return { result: simpleJsonToXml(obj, rootName || 'root'), error: null };
+                // 如果是数组，需要包装在根元素中
+                const root = rootName || 'root';
+                if (Array.isArray(obj)) {
+                    let xml = `<${root}>\n`;
+                    for (const item of obj) {
+                        xml += simpleJsonToXml(item, 'item', '  ');
+                    }
+                    xml += `</${root}>\n`;
+                    return { result: xml, error: null };
+                }
+                return { result: simpleJsonToXml(obj, root), error: null };
             }
 
-            const builder = new (fxparser?.XMLBuilder || XMLBuilder)({
+            const Builder = (typeof fxparser !== 'undefined' && fxparser.XMLBuilder) || (typeof XMLBuilder !== 'undefined' && XMLBuilder);
+            const builder = new Builder({
                 ignoreAttributes: false,
                 format: true,
                 indentBy: '  '
@@ -109,7 +120,8 @@
                 return { result: '', error: 'fast-xml-parser 库未加载' };
             }
 
-            const parser = new (fxparser?.XMLParser || XMLParser)({
+            const Parser = (typeof fxparser !== 'undefined' && fxparser.XMLParser) || (typeof XMLParser !== 'undefined' && XMLParser);
+            const parser = new Parser({
                 ignoreAttributes: false,
                 attributeNamePrefix: '@_'
             });
@@ -145,9 +157,10 @@
         }
 
         if (Array.isArray(obj)) {
-            // 数组：每个元素用 item 包装
+            // 数组：每个元素用 tagName 包装
+            const itemTag = tagName || 'item';
             for (const item of obj) {
-                xml += simpleJsonToXml(item, 'item', indent);
+                xml += simpleJsonToXml(item, itemTag, indent);
             }
             return xml;
         }

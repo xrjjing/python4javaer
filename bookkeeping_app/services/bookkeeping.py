@@ -1067,6 +1067,10 @@ class BookkeepingService:
 
         float_amount = decimal_to_float(validated_amount)
 
+        # 检查转出账户余额是否足够（信用卡账户允许透支）
+        if from_acc.type != 'credit' and from_acc.balance < float_amount:
+            raise ValueError(f"转出账户余额不足（当前 ¥{from_acc.balance:.2f}）")
+
         # 更新双方余额（使用 Decimal 精确计算）
         for acc in accounts:
             if acc.id == from_account_id:
