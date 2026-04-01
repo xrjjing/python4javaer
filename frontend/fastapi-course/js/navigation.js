@@ -1,9 +1,27 @@
 // FastAPI 深度专题 - 导航交互脚本
+//
+// 服务页面：frontend/fastapi-course/index.html
+//
+// 页面结构对应关系：
+// - 左侧 sidebar：章节 / 实验菜单
+// - 中间 content：当前条目的摘要说明
+// - 右侧 previewBody：Markdown 预览区
+//
+// 真实职责：
+// 1) 绑定侧边栏章节 / 实验室点击事件；
+// 2) 把左栏内容区更新为摘要；
+// 3) 把右栏 previewPanel 更新为 Markdown 预览；
+// 4) 管理暗色模式、移动端侧边栏和进度条。
+//
+// 排查建议：
+// - 点击章节没反应：先看 init() 的事件绑定
+// - 右侧 Markdown 空白：先看 renderMarkdown()
+// - 进度条或高亮状态不对：再看 setActiveItem() / updateProgress()
 
 (function() {
     'use strict';
 
-    // DOM 元素
+    // DOM 引用缓存：后续所有交互都围绕这些区域展开。
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');
     const darkModeToggle = document.getElementById('darkModeToggle');
@@ -15,7 +33,7 @@
     const progressText = document.querySelector('.progress-text');
     const progressFill = document.querySelector('.progress-fill');
 
-    // 暗色模式切换
+    // 主题切换：只影响视觉层，不参与课程数据加载。
     function toggleDarkMode() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -27,19 +45,19 @@
         darkModeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
     }
 
-    // 初始化暗色模式
+    // 页面初次进入时恢复主题状态。
     function initDarkMode() {
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
         darkModeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
     }
 
-    // 侧边栏切换（移动端）
+    // 移动端侧边栏开关。
     function toggleSidebar() {
         sidebar.classList.toggle('active');
     }
 
-    // 加载章节内容
+    // 章节加载入口：左侧点击 data-chapter 后最终会走到这里。
     async function loadChapter(chapterNum) {
         try {
             const chapterTitles = {
@@ -83,7 +101,7 @@
         }
     }
 
-    // 加载实验室内容
+    // 实验室加载入口：逻辑与章节类似，但路径指向 labs 目录。
     async function loadLab(labName) {
         try {
             const labTitles = {
@@ -129,7 +147,7 @@
         }
     }
 
-    // 初始化事件监听器
+    // 初始化入口：绑定所有点击事件，并设置默认的右侧占位说明。
     function init() {
         // 暗色模式
         initDarkMode();
@@ -174,7 +192,7 @@
             });
         }
 
-        // 默认加载第一章
+        // 默认只更新预览占位和进度，不自动强行打开某个章节。
         previewBody.innerHTML = `<p style="color: var(--text-secondary);">右侧空间将显示所选章节/实验的 Markdown 内容。</p>`;
         updateProgress(0);
     }
@@ -186,7 +204,8 @@
         init();
     }
 
-    // ========== Markdown 渲染工具 ==========
+    // ========== Markdown 渲染工具：右侧预览区真正的数据入口 ==========
+    // 右侧预览区渲染入口：真正的 Markdown 请求、HTML 转换和 Prism 高亮都在这里完成。
     async function renderMarkdown(path, title, silent=false) {
         if (!path) {
             if (!silent) {
@@ -251,7 +270,8 @@
         updateProgress(calcProgress(item));
     }
 
-    // 左侧内容区同步概览
+    // 左侧内容区同步概览：避免用户只在右侧看文档而忘了当前选中项是什么。
+    // 左栏摘要区渲染：右栏是完整 Markdown，左栏只保留“当前选中项是什么、怎么学、路径在哪”。
     function renderLeftSummary(title, path, isLab=false) {
         const typeLabel = isLab ? '实验室' : '章节';
         const pathInfo = path ? `<code>${path}</code>` : '<span style="color: var(--text-secondary);">未找到文档路径，查看右侧指引</span>';
@@ -284,6 +304,7 @@
         return (idx + 1) / clickable.length;
     }
 
+    // 进度条更新：这里只更新视觉宽度，不负责决定“当前应该算第几项”，那个逻辑在 calcProgress()。
     function updateProgress(ratio) {
         if (!progressFill) return;
         const pct = Math.max(0, Math.min(1, ratio));

@@ -1,8 +1,15 @@
 """
-认证相关路由：
-- /auth/login：用户名密码登录，返回 JWT
-- /auth/me：获取当前用户信息
-- /auth/logout：可选，将当前 Token 加入黑名单
+认证路由。
+
+前端真实上游：
+- login.html -> POST /auth/login
+- login.html / admin.html -> GET /auth/me
+- admin.html -> POST /auth/logout
+
+下游依赖：
+- security.py：密码与 JWT
+- dependencies.py：当前用户与 token payload
+- log_audit_client.py：登录 / 登出审计上报
 """
 
 from __future__ import annotations
@@ -21,6 +28,7 @@ from ..log_audit_client import log_audit_client
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
+# login.html 提交用户名密码后的第一个后端入口。
 @router.post("/login", response_model=schemas.APIResponse[schemas.Token])
 def login(
     request: Request,
@@ -29,12 +37,17 @@ def login(
 ):
     """
     用户登录接口（OAuth2 Password 流）。
+
+    这是 login.html 的第一跳后端入口：
+    login-form submit -> /auth/login -> create_access_token() -> 返回 accessToken
     """
+    # 第一步：按用户名查用户，再校验密码哈希。
     user = (
         db.query(models.User)
         .filter(models.User.username == form_data.username)
         .first()
     )
+    # 第二步：校验密码哈希。
     if not user or not security.verify_password(
         form_data.password, user.hashed_password
     ):
@@ -45,6 +58,7 @@ def login(
     if not user.is_active:
         raise HTTPException(status_code=400, detail="用户已被禁用")
 
+    # 第二步：签发 JWT，供 admin.html / 其他受保护页面后续复用。
     access_token = security.create_access_token(
         subject=user.id,
         username=user.username,
@@ -66,12 +80,18 @@ def login(
     return schemas.APIResponse(code=schemas.ErrorCode.OK, message="登录成功", data=token)
 
 
+# login.html 登录成功后的二次请求入口：admin.html 也会复用它确认当前登录用户。
 @router.get("/me", response_model=schemas.APIResponse[schemas.UserOut])
 def read_me(current_user: models.User = Depends(get_current_user)):
-    """获取当前登录用户信息。"""
+    """
+    获取当前登录用户信息。
+
+    这个接口是前端判断“当前是谁、是不是超管、要不要进后台”的关键依据。
+    """
     return schemas.APIResponse(code=schemas.ErrorCode.OK, message="获取成功", data=current_user)
 
 
+# admin.html 退出登录入口。
 @router.post("/logout", response_model=schemas.APIResponse[dict])
 def logout(
     request: Request,

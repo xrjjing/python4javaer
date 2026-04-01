@@ -42,3 +42,4 @@ def get_settings() -> Settings:
 
 
 settings = get_settings()
+# 模块级单例：供 dependencies / client / router 直接复用，避免重复解析环境变量。

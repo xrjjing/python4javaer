@@ -1,8 +1,13 @@
 """
-认证与安全相关工具：
-- 密码哈希与校验（使用 passlib[bcrypt]）
-- JWT 的生成与验证
-- 可选的 Redis Token 黑名单支持
+RBAC 服务安全模块。
+
+职责：
+- 处理密码哈希与校验；
+- 生成和解析 JWT；
+- 管理 Token 黑名单（Redis 或内存回退）。
+
+排查建议：
+- 登录密码校验失败、JWT 解析失败、登出后 token 仍可用时，先看这里。
 """
 
 from __future__ import annotations
@@ -45,6 +50,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 
+# 登录成功后的 JWT 生成入口：auth.py/login 会在校验用户名密码后调用这里。
 def create_access_token(
     subject: int,
     username: str,
@@ -78,6 +84,7 @@ def create_access_token(
     return encoded_jwt
 
 
+# 受保护接口的 JWT 解析入口：dependencies.get_current_user() 会继续调用这里。
 def decode_token(token: str) -> TokenPayload:
     """
     解析并验证 JWT，返回 TokenPayload。
@@ -91,6 +98,7 @@ def decode_token(token: str) -> TokenPayload:
 # ========== Redis 支持（Token 黑名单，可选） ==========
 
 
+# Token 黑名单：登出不可能真正撤回 JWT，只能靠 jti 黑名单在后续请求里拦截。
 class TokenBlacklist:
     """
     Token 黑名单实现。

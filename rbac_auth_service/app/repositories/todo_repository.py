@@ -1,5 +1,9 @@
 """
-TODO 相关的持久化操作（Repository 层）。
+TODO Repository。
+
+职责：
+- 处理 TODO 资源的 owner 维度查询与保存；
+- 不处理权限判断，只处理数据存取。
 """
 
 from __future__ import annotations

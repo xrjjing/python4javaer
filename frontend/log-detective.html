@@ -43,49 +43,74 @@ th, td { text-align: left; padding: 0.75rem 1.5rem; border-bottom: 1px solid var
     </style>
 </head>
 <body>
+    <!-- 页面骨架：上方是工具说明，中间是日志输入与按钮区，下方是默认隐藏的分析结果区。 -->
+    <!-- 页面总览：日志侦探页是一个典型的“输入区 + 结果区”双阶段页面。 -->
+    <!-- 它自己不直接做日志分析，只负责把日志文本发给网关，再把返回结果渲染成统计卡片和表格。 -->
     <div class="container">
+        <!-- 页面头部：说明当前链路是 前端 -> 网关 -> Python 分析服务。 -->
+        <!-- 页面头部：只负责说明这是“前端 -> 网关 -> 日志分析服务”的端到端练习页。 -->
         <div class="header">
             <h1>🕵️ 日志侦探</h1>
             <p>端到端练习：前端 → 网关 → Python分析服务</p>
         </div>
+        <!-- 输入区：用户在这里粘贴日志文本，按钮事件由下方的 loadSample() / analyze() 处理。 -->
+        <!-- 输入区：日志文本框 + 操作按钮。真正提交动作由 analyze() 发起。 -->
         <div class="input-section">
             <h2>提交日志</h2>
             <textarea id="log-input" placeholder="粘贴服务器日志..."></textarea>
+            <!-- 操作区：一个按钮填充示例日志，一个按钮真正发起分析请求。 -->
             <div class="action-bar">
                 <button class="btn" onclick="loadSample()">加载示例</button>
                 <button class="btn btn-primary" id="analyze-btn" onclick="analyze()">分析日志</button>
             </div>
         </div>
+        <!-- 结果区：默认隐藏，分析成功后加上 active 类再显示。 -->
+        <!-- 结果区：默认隐藏，分析成功后添加 active。内部再拆成统计卡片、可疑 IP 表格、关键错误表格。 -->
         <div id="results" class="results">
+            <!-- 统计卡片区：展示总行数、错误数、警告数。 -->
             <div class="stats">
                 <div class="stat-card"><div>总行数</div><div class="stat-value" id="stat-lines">0</div></div>
                 <div class="stat-card"><div>错误</div><div class="stat-value" id="stat-errors">0</div></div>
                 <div class="stat-card"><div>警告</div><div class="stat-value" id="stat-warnings">0</div></div>
             </div>
+            <!-- 可疑 IP 表格区：根据返回的 suspicious_ips 动态插入 tbody。 -->
             <div class="panel">
                 <div class="panel-header">可疑IP</div>
                 <table><thead><tr><th>IP</th><th>次数</th><th>原因</th></tr></thead><tbody id="ip-table"></tbody></table>
             </div>
+            <!-- 关键错误表格区：根据返回的 critical_errors 动态插入 tbody。 -->
             <div class="panel">
                 <div class="panel-header">关键错误</div>
                 <table><thead><tr><th>级别</th><th>消息</th><th>行号</th></tr></thead><tbody id="error-table"></tbody></table>
             </div>
         </div>
     </div>
+    <!-- 页面脚本：解析网关地址，提供“加载示例”和“提交分析”两个入口，并把响应渲染回结果区。 -->
     <script>
-// 日志侦探前端只需要知道网关的地址，由网关转发到日志服务
+// 脚本总览：
+// 1) 读取网关地址；
+// 2) 提供“加载示例”按钮；
+// 3) 读取 accessToken 后调用 /gateway/log-detective/analyze；
+// 4) 把返回结果渲染到统计卡片和两个表格。
+// API 关系：本页不直连日志分析服务，只认网关地址；网关再负责鉴权、转发和错误包装。
 const API_BASE =
     window.AppConfig?.gatewayApiBaseUrl ??
     window.AppConfig?.apiBaseUrl ??
     window.API_BASE_URL ??
     '';
+// 填充演示日志：用于快速试跑整条分析链。
+// 辅助入口：快速填充一段演示日志，方便直接点“分析日志”验证整条链路是否通。
 function loadSample() {
     document.getElementById('log-input').value = '2023-10-27 10:00:01 [INFO] Service started\n2023-10-27 10:05:23 [WARN] High memory from 192.168.1.10\n2023-10-27 10:06:01 [ERROR] Database failed\n2023-10-27 10:07:12 [ERROR] Login failed from 203.0.113.42';
 }
+// 核心入口：点击“分析日志”后会走到这里。
+// 排查建议：若按钮点了没反应、结果区不显示、401/502/504，都先从这里顺着看。
+// 主提交链路：校验输入 -> 检查 accessToken -> POST /gateway/log-detective/analyze -> 渲染统计和表格。
 async function analyze() {
     const input = document.getElementById('log-input').value;
     if (!input.trim()) return alert('请输入日志');
 
+    // 这里直接复用 login.html 存下来的 accessToken；没有 token 就先回登录页。
     const token = localStorage.getItem('accessToken');
     if (!token) {
         alert('请先登录后再使用日志侦探功能');
@@ -97,6 +122,7 @@ async function analyze() {
     btn.disabled = true;
     btn.textContent = '分析中...';
     try {
+        // 真实调用链：log-detective.html -> integration_gateway_service -> log_detective_service。
         const result = await apiClient(API_BASE + '/gateway/log-detective/analyze', {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -107,6 +133,8 @@ async function analyze() {
         document.getElementById('stat-errors').textContent = data.summary?.error_lines || 0;
         document.getElementById('stat-warnings').textContent = data.summary?.warn_lines || 0;
 
+        // 动态渲染可疑 IP 表格。
+        // 动态渲染区 1：把 suspicious_ips 映射到可疑 IP 表格。
         const ipTbody = document.getElementById('ip-table');
         ipTbody.replaceChildren();
         (data.suspicious_ips || []).forEach(ip => {
@@ -119,6 +147,8 @@ async function analyze() {
             ipTbody.appendChild(tr);
         });
 
+        // 动态渲染关键错误表格。
+        // 动态渲染区 2：把 critical_errors 映射到关键错误表格。
         const errTbody = document.getElementById('error-table');
         errTbody.replaceChildren();
         (data.critical_errors || []).forEach(err => {

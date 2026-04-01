@@ -1,8 +1,12 @@
 """
-数据库配置与 Session 管理。
+RBAC 服务数据库入口。
 
-默认使用 SQLite，便于快速上手；
-在实际环境中可以通过环境变量切换到 MySQL。
+职责：
+- 创建 SQLAlchemy engine / SessionLocal / Base；
+- 对外提供 get_db() 依赖，供 routers / services / repositories 统一使用。
+
+排查建议：
+- 表没创建、连接串不对、Session 异常时，优先从这里开始。
 """
 
 from __future__ import annotations

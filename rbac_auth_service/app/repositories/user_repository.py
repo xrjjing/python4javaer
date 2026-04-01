@@ -1,5 +1,12 @@
 """
-用户相关持久化操作（Repository 层）。
+用户 Repository。
+
+职责：
+- 封装 User 的基础查询与保存；
+- 让 service 层不直接堆 SQLAlchemy 查询语句。
+
+排查建议：
+- 如果业务规则看着没问题，但库里查不到用户，先看这里的过滤条件。
 """
 
 from __future__ import annotations
@@ -31,10 +38,9 @@ def list_users(db: Session) -> List[models.User]:
 
 
 def save_user(db: Session, user: models.User) -> models.User:
-    """保存用户实体。"""
+    """保存用户实体。提交后会 refresh，确保调用方拿到的是数据库最新状态。"""
     db.add(user)
     db.commit()
     db.refresh(user)
     return user
-
 

@@ -1,9 +1,12 @@
 """
-Project 相关业务逻辑（Service 层）。
+Project 业务服务层。
 
 职责：
-- 组合 Repository 操作与业务规则；
-- 对外暴露与路由层对齐的高层接口。
+- 封装 Project 的 owner 维度业务规则；
+- 给 routers/projects.py 提供更稳定的调用入口。
+
+排查建议：
+- 404 / ownership 问题优先从这里开始看，再往 repository 追。
 """
 
 from __future__ import annotations

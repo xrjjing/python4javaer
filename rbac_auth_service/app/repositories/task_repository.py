@@ -1,5 +1,9 @@
 """
-Task 相关的持久化操作（Repository 层）。
+Task Repository。
+
+职责：
+- 处理 Task 的 project 维度查询、创建、保存和删除；
+- 供 task_service 在完成归属校验后执行具体持久化。
 """
 
 from __future__ import annotations

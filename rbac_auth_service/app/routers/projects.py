@@ -1,7 +1,12 @@
 """
-受 RBAC 控制的 Project 示例接口：
-- 列表 / 创建 / 更新 / 删除
-- 通过 require_permissions 控制访问权限
+Project 示例业务路由。
+
+职责：
+- 演示 Project 资源的列表 / 创建 / 更新 / 删除；
+- 通过 permissions 依赖把访问控制前置到 HTTP 层。
+
+排查建议：
+- 返回 404 但前端传了 project_id 时，继续往下看 project_service 与 project_repository。
 """
 
 from __future__ import annotations

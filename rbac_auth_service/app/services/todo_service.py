@@ -1,9 +1,12 @@
 """
-TODO 相关业务逻辑（Service 层）。
+TODO 业务服务层。
 
 职责：
-- 组合 Repository 操作与业务规则；
-- 对外暴露与路由层对齐的高层接口。
+- 对 TODO 资源执行 owner 维度的读写控制；
+- 把 repository 操作和“是否属于当前用户”这类规则封装起来。
+
+上游：todos.py
+下游：todo_repository.py
 """
 
 from __future__ import annotations

@@ -1,10 +1,12 @@
 """
-Task 相关业务逻辑（Service 层）。
+Task 业务服务层。
 
 职责：
-- 组合 Repository 操作与业务规则；
-- 保证用户只能操作自己项目下的任务；
-- 对外暴露与路由层对齐的高层接口。
+- 保证任务操作发生在当前用户自己的项目下；
+- 统一处理 project 与 task 的层级关系校验。
+
+上游：tasks.py
+下游：project_repository.py / task_repository.py
 """
 
 from __future__ import annotations

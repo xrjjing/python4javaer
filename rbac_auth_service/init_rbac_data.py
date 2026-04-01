@@ -1,24 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-RBAC 示例数据初始化脚本
+RBAC 示例数据初始化脚本。
 
 用途：
-- 为 RBAC 示例服务创建基础用户 / 角色 / 权限数据；
-- 默认会创建：
-  - 超级管理员：用户名 admin，密码 admin123
-  - 普通用户：用户名 alice，密码 alice123
-  - 角色：admin、user
-  - 权限：todos:read/write/delete，projects:read/write/delete，tasks:read/write/delete
+- 为 RBAC 服务准备最小可用的用户、角色、权限和示例业务数据；
+- 让 login.html / admin.html 在首次启动后就有默认账号可用。
 
-你可以通过环境变量覆盖默认用户名和密码：
-  ADMIN_USERNAME / ADMIN_PASSWORD
-  NORMAL_USERNAME / NORMAL_PASSWORD
-
-使用方式：
-
-    cd rbac_auth_service
-    python init_rbac_data.py
+排查建议：
+- 前端能打开但默认账号登录失败时，先确认是否执行过这个脚本，以及数据库文件是否是当前服务正在使用的那一个。
 """
 
 from __future__ import annotations
@@ -38,6 +28,8 @@ def get_env(key: str, default: str) -> str:
 
 def init_data(db: Session) -> None:
     """初始化基础 RBAC 数据（幂等）。"""
+    # 第一步：准备权限字典。
+    # 这一层是最底层能力点，后面的角色和用户都会依赖它。
     # 创建权限
     perm_codes = [
         ("todos:read", "读取 TODO"),
@@ -62,6 +54,8 @@ def init_data(db: Session) -> None:
             db.add(perm)
         perms_by_code[code] = perm
 
+    # 第二步：创建角色骨架。
+    # 这里先确保 admin / user 两个角色存在，再在下一步给它们挂权限。
     # 创建角色
     role_admin = (
         db.query(models.Role).filter(models.Role.name == "admin").first()
@@ -79,6 +73,7 @@ def init_data(db: Session) -> None:
 
     db.flush()
 
+    # 第三步：把权限集合绑定到角色。
     # 分配权限给角色
     role_admin.permissions = list(perms_by_code.values())
     role_user.permissions = [
@@ -90,6 +85,8 @@ def init_data(db: Session) -> None:
         perms_by_code["tasks:write"],
     ]
 
+    # 第四步：创建初始用户。
+    # 用户名和密码允许从环境变量覆盖，方便本地重复初始化时改默认值。
     # 创建用户
     admin_username = get_env("ADMIN_USERNAME", "admin")
     admin_password = get_env("ADMIN_PASSWORD", "admin123")
@@ -123,6 +120,7 @@ def init_data(db: Session) -> None:
 
     db.flush()
 
+    # 第五步：给普通用户挂默认 user 角色。
     # 为普通用户分配 user 角色
     if role_user not in normal.roles:
         normal.roles.append(role_user)

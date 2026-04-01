@@ -1,8 +1,12 @@
 """
-受 RBAC 控制的 Task 示例接口：
-- 列表 / 创建 / 更新 / 删除
-- 通过 require_permissions 控制访问权限
-- 路径以项目为前缀：/projects/{project_id}/tasks
+Task 示例业务路由。
+
+职责：
+- 处理“项目下任务”这一层级资源的 HTTP 入口；
+- 把 project_id + task_id 交给 task_service 做归属校验。
+
+排查建议：
+- 任务明明存在却返回 404，通常要继续查 task_service 是否判定为“不属于当前用户项目”。
 """
 
 from __future__ import annotations

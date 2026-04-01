@@ -1,8 +1,14 @@
 /**
- * Frontend Common Utilities
+ * 前端公共工具文件。
  *
- * 提供安全的 API 客户端和通用组件渲染器
- * 基于 Gemini 和 Codex 的专业建议实现
+ * 主要服务页面：
+ * - admin.html：用户/角色/权限表格渲染、调试面板、Toast 提示
+ * - log-detective.html：统一 API 请求日志输出
+ *
+ * 排查建议：
+ * - 如果页面请求发出去了但你想看请求/响应日志，先看 logApiActivity()
+ * - 如果表格不显示，先看 renderGenericTable()
+ * - 如果后端返回异常但页面只提示 Error，先看 apiClient() 如何解析 response.json()
  */
 
 // ============================================
@@ -10,7 +16,11 @@
 // ============================================
 
 /**
- * 脱敏处理：移除敏感字段
+ * 脱敏处理：移除敏感字段。
+ *
+ * 这个函数不参与真实业务提交，只用于调试日志展示。
+ * 目的是避免在 debug-panel 中直接打印密码、token 等敏感数据。
+ *
  * @param {string|FormData} body - 请求体
  * @returns {string} 脱敏后的字符串
  */
@@ -49,13 +59,18 @@ function sanitizeBody(body) {
 }
 
 /**
- * 记录 API 活动到调试面板
+ * 记录 API 活动到调试面板。
+ *
+ * 上游通常是 apiClient()，下游是 admin.html 底部的 debug-panel DOM。
+ * 若当前页面没有 debug-panel / log-container，本函数会直接静默返回。
+ *
  * @param {string} type - 日志类型 (REQUEST/RESPONSE/ERROR)
  * @param {string|number} method - HTTP 方法或状态码
  * @param {string} url - 请求 URL
  * @param {any} data - 数据内容
  * @param {number} duration - 请求耗时（毫秒）
  */
+// 调试面板写入入口：admin.html 勾选“调试模式”后，页面请求日志最终都会通过这里落到 #log-container。
 function logApiActivity(type, method, url, data, duration = 0) {
     const logContainer = document.getElementById('log-container');
     if (!logContainer) return; // 如果没有日志面板，跳过
@@ -109,11 +124,20 @@ function logApiActivity(type, method, url, data, duration = 0) {
 }
 
 /**
- * 统一的 API 客户端
+ * 统一的 API 客户端。
+ *
+ * 调用链：
+ * 页面按钮/初始化逻辑 -> apiClient() -> fetch() -> logApiActivity()
+ *
+ * 说明：
+ * - 本函数不替代页面自己的鉴权逻辑，只负责统一发请求和记录日志
+ * - 默认假设返回体是 JSON；如果后端返回非 JSON，这里会抛错
+ *
  * @param {string} url - 请求 URL
  * @param {object} options - fetch 选项
  * @returns {Promise<any>} 响应数据
  */
+// 通用请求入口：保留原始 fetch 的调用方式，但额外补了请求/响应日志，适合需要排查链路的页面。
 async function apiClient(url, options = {}) {
     const method = options.method || 'GET';
     const startTime = Date.now();
@@ -145,7 +169,14 @@ async function apiClient(url, options = {}) {
 // ============================================
 
 /**
- * 安全的通用表格渲染器
+ * 安全的通用表格渲染器。
+ *
+ * 主要供 admin.html 使用，把“数组数据 + 列配置”渲染成 tbody。
+ * 如果你发现表格标题有了但数据区为空，优先确认：
+ * 1) elementId 对应的 tbody 是否存在
+ * 2) data 是否真的是数组
+ * 3) render 函数是否返回了 HTMLElement 或可转字符串的值
+ *
  * @param {string} elementId - tbody 元素的 ID
  * @param {Array} data - 数据数组
  * @param {Array} columns - 列定义数组
@@ -156,6 +187,7 @@ async function apiClient(url, options = {}) {
  *   { key: 'roles', render: (roles) => roles.map(r => r.name).join(', ') }
  * ]);
  */
+// 通用表格渲染入口：admin.html 的 users / roles / permissions 三个表格都通过这里渲染 tbody。
 function renderGenericTable(elementId, data, columns) {
     const tbody = document.getElementById(elementId);
 
@@ -219,9 +251,13 @@ function renderGenericTable(elementId, data, columns) {
 // ============================================
 
 /**
- * 切换调试面板显示状态
+ * 切换调试面板显示状态。
+ *
+ * admin.html 右上角“调试模式”复选框最终会走到这里。
+ *
  * @param {boolean} show - 是否显示
  */
+// 调试面板显隐：只改 UI 状态，不会影响业务请求是否发送。
 function toggleDebugPanel(show) {
     const debugPanel = document.getElementById('debug-panel');
     if (debugPanel) {
@@ -230,7 +266,9 @@ function toggleDebugPanel(show) {
 }
 
 /**
- * 清空调试日志
+ * 清空调试日志。
+ *
+ * 只清空前端面板中的 DOM，不影响任何真实请求或后端日志。
  */
 function clearDebugLogs() {
     const logContainer = document.getElementById('log-container');
@@ -244,10 +282,14 @@ function clearDebugLogs() {
 // ============================================
 
 /**
- * 显示 Toast 提示
+ * 显示 Toast 提示。
+ *
+ * 这是一个非常轻量的提示实现，适合后台页的小反馈，不承担复杂状态管理。
+ *
  * @param {string} message - 提示消息
  * @param {string} type - 类型 (success/error/info)
  */
+// 轻量提示组件：当前主要在 admin.html 的错误/成功反馈里使用。
 function showToast(message, type = 'info') {
     // 简单实现，可以后续增强为更美观的 Toast 组件
     const colors = {

@@ -29,6 +29,7 @@ class LogAuditClient:
 
         若未配置地址或请求失败，将静默忽略，不抛出异常。
         """
+        # 审计日志是“尽力而为”的旁路调用：主链成功与否不依赖这里。
         base = self.base_url
         if not base:
             return
@@ -42,4 +43,3 @@ class LogAuditClient:
 
 
 log_audit_client = LogAuditClient()
-

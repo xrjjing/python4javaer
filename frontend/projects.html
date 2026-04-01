@@ -595,6 +595,7 @@ code[class*="language-"], pre[class*="language-"] {
     </style>
 </head>
 <body>
+    <!-- 页面总览：项目实战页采用“左侧项目导航 + 右侧项目文档 / 代码运行区”的双栏布局。左侧导航的数据源来自 projects 数组，右侧更多展示项目说明、文件清单和源码预览。 -->
     <!-- Sidebar Navigation -->
     <div class="sidebar">
         <div class="sidebar-header">
@@ -608,7 +609,7 @@ code[class*="language-"], pre[class*="language-"] {
         </div>
     </div>
 
-    <!-- Main Content Area -->
+    <!-- 主工作区：顶部是页面标题与主题切换，下面分成文档区和代码执行区。 -->
     <div class="main-content">
         <div class="top-bar">
             <div class="top-bar-title">Python 项目实战 - 面向 Java 开发者</div>
@@ -618,8 +619,9 @@ code[class*="language-"], pre[class*="language-"] {
             </button>
         </div>
 
+        <!-- 双栏工作区：左边 doc-panel 动态渲染项目说明，右边 code-panel 用于运行或查看示例代码。 -->
         <div class="content-scroll-area">
-            <!-- Document Panel -->
+            <!-- 项目文档区：showProject() 会把项目概览、文件清单和 Markdown 内容都写到这里。 -->
             <div class="doc-panel" id="doc-panel">
                 <div class="project-header">
                     <h1 class="project-title">欢迎来到项目实战</h1>
@@ -630,7 +632,7 @@ code[class*="language-"], pre[class*="language-"] {
                 </div>
             </div>
 
-            <!-- Code Panel -->
+            <!-- 代码区：提供在线 Python 执行器，适合把项目中的单文件示例拉进来试跑。 -->
             <div class="code-panel">
                 <!-- Code Editor -->
                 <div class="editor-card">
@@ -658,7 +660,8 @@ print("Hello, Python Projects!")</div>
         </div>
     </div>
 
-    <!-- 参考代码模态框 -->
+    <!-- 参考代码模态框：用于只读查看项目文件源码，再决定是否复制到编辑器。 -->
+    <!-- 这样可以把“查看参考实现”和“编辑自己的代码”分开，避免误覆盖主编辑器里的内容。 -->
     <div id="code-modal-overlay" class="code-modal-overlay" aria-hidden="true">
         <div id="code-modal" class="code-modal" role="dialog" aria-modal="true" aria-labelledby="code-modal-title">
             <div class="code-modal-header">
@@ -682,6 +685,11 @@ print("Hello, Python Projects!")</div>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
 
     <script>
+// 脚本总览：
+// 1) projects 数组定义左侧导航；
+// 2) showProject() 负责刷新项目文档区；
+// 3) loadMarkdown()/loadCodeFile() 负责拉取仓库文件；
+// 4) ensurePyodide()/runCode() 负责在线执行。
 // ========== 项目数据 (Codex优化的路径结构) ==========
 const projects = [
     {
@@ -806,6 +814,7 @@ const projects = [
 ];
 
 // ========== 全局状态 (Codex建议的改进) ==========
+// 这一组变量负责记住当前选中的项目、当前打开的代码文件和 Pyodide 初始化状态。
 let currentProject = null;
 let pyodide = null;
 let pyodideReadyPromise = null;
@@ -917,6 +926,7 @@ function renderNav() {
 }
 
 // ========== 项目展示 ==========
+// 页面主链路入口：点击左侧项目后，会在这里串起“项目概览 -> Markdown 文档 -> 代码文件列表 -> 编辑器默认内容”。
 function showProject(projectId) {
     const project = projects.find(p => p.id === projectId);
     if (!project) return;
@@ -965,7 +975,8 @@ function showProject(projectId) {
     updateCodeEditor(project);
 }
 
-// ========== Markdown加载 (Codex优化) ==========
+// ========== 文档加载：项目说明区真正的数据入口 ==========
+// 项目说明加载区：负责读取每个项目的 README / 项目说明并展示到 doc-panel。
 async function loadMarkdown(path) {
     const preview = document.getElementById('md-preview');
     if (!preview) return;
@@ -995,7 +1006,7 @@ async function loadMarkdown(path) {
     }
 }
 
-// ========== 代码文件加载 (Codex优化) ==========
+// ========== 代码文件加载：点击文件列表里的按钮后，会从仓库真实路径读取源码 ==========
 async function loadCodeFile(path) {
     const output = document.getElementById('output');
     if (!output) return;
@@ -1038,7 +1049,7 @@ async function loadCodeFile(path) {
     }
 }
 
-// ========== input()转换 (复用index.html逻辑) ==========
+// ========== 浏览器兼容转换：把包含 input() 的练习代码先改造成可在 Pyodide 中运行的示例值模式 ==========
 function convertInputToBrowserMode(code) {
     let converted = '# ========== 浏览器兼容模式 ==========\n';
     converted += '# 原代码中的 input() 已自动转换为示例值\n';
@@ -1080,7 +1091,7 @@ function convertInputToBrowserMode(code) {
     return result !== code ? converted + result : result;
 }
 
-// ========== 编辑器更新 ==========
+// ========== 编辑器占位刷新：切换项目时先放一个默认欢迎脚本，真正示例代码需要点击“查看代码”加载 ==========
 function updateCodeEditor(project) {
     const mainFile = project.files.find(f => f.type === 'main');
     if (mainFile && jar) {
@@ -1096,7 +1107,7 @@ document.getElementById('doc-panel')?.addEventListener('click', async (event) =>
     }
 });
 
-// ========== Pyodide执行 (Codex优化的单例Promise) ==========
+// ========== 在线执行链路：保证 Pyodide 只初始化一次，避免重复下载运行时 ==========
 async function ensurePyodide() {
     if (pyodide) return pyodide;
 
@@ -1119,6 +1130,7 @@ async function ensurePyodide() {
     return pyodideReadyPromise;
 }
 
+// 在线运行入口：适合执行单文件教学示例，不等同于完整项目的真实运行方式。
 async function runCode() {
     const output = document.getElementById('output');
     const runBtn = document.getElementById('run-btn');
@@ -1169,7 +1181,7 @@ result = _buf.getvalue()
 
 document.getElementById('run-btn')?.addEventListener('click', runCode);
 
-// ========== 主题切换 ==========
+// ========== 主题切换：仅影响展示层，不影响项目数据或代码加载 ==========
 const toggleBtn = document.getElementById('theme-toggle');
 const htmlEl = document.documentElement;
 
@@ -1196,7 +1208,7 @@ toggleBtn?.addEventListener('click', () => {
     } catch (e) {}
 });
 
-// ========== 初始化 ==========
+// ========== 页面初始化：先渲染左侧项目导航，再默认显示第一个项目 ==========
 renderNav();
 if (projects.length > 0) {
     showProject(projects[0].id);

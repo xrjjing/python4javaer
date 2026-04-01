@@ -1,4 +1,12 @@
-"""日志侦探路由模块"""
+"""
+日志侦探路由模块。
+
+本层职责很薄：
+- 接收并校验请求体；
+- 调用 analyzer.analyze_logs()；
+- 把 ValueError / 其他异常转换为 HTTP 响应。
+"""
+
 from fastapi import APIRouter, HTTPException
 from ..schemas import LogDetectiveRequest, LogAnalysisResult
 from ..analyzer import analyze_logs
@@ -6,6 +14,7 @@ from ..analyzer import analyze_logs
 router = APIRouter()
 
 
+# 网关最终转发到日志侦探服务的核心分析入口。
 @router.post("/analyze", response_model=LogAnalysisResult)
 async def analyze_log_endpoint(request: LogDetectiveRequest):
     """日志分析接口
@@ -16,6 +25,7 @@ async def analyze_log_endpoint(request: LogDetectiveRequest):
     - 识别关键错误记录
     """
     try:
+        # 真正的分析逻辑全部下沉到 analyzer.py，这里只做 HTTP 层包装。
         result = analyze_logs(request)
         return result
     except ValueError as e:

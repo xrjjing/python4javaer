@@ -1,8 +1,12 @@
 """
-角色与权限管理路由：
-- 创建角色 / 权限
-- 列出角色 / 权限
-- 为角色分配权限
+角色与权限管理路由。
+
+前端真实上游：
+- admin.html 的角色面板与权限面板
+
+下游依赖：
+- rbac_service.py：角色创建、权限创建、角色授权
+- require_superuser()：限制高权限管理动作
 """
 
 from __future__ import annotations
@@ -30,7 +34,7 @@ def create_role(
     db: Session = Depends(get_db),
     _: models.User = Depends(require_superuser),
 ):
-    """创建角色。"""
+    """创建角色。调用链：admin.html -> create_role() -> rbac_service.create_role() -> role_repository.save_role()."""
     try:
         role = rbac_service.create_role(db, role_in)
     except ValueError as exc:
@@ -48,7 +52,7 @@ def list_roles(
     db: Session = Depends(get_db),
     _: models.User = Depends(require_superuser),
 ):
-    """列出角色及其权限。"""
+    """列出角色及其权限。这是 admin.html Roles 面板的主读取接口。"""
     roles = rbac_service.list_roles(db)
     return schemas.APIResponse(
         code=schemas.ErrorCode.OK, message="获取角色列表成功", data=roles
@@ -65,7 +69,7 @@ def create_permission(
     db: Session = Depends(get_db),
     _: models.User = Depends(require_superuser),
 ):
-    """创建权限。"""
+    """创建权限。新权限会进入 permission_repository，再被角色分配逻辑复用。"""
     try:
         perm = rbac_service.create_permission(db, perm_in)
     except ValueError as exc:
@@ -83,7 +87,7 @@ def list_permissions(
     db: Session = Depends(get_db),
     _: models.User = Depends(require_superuser),
 ):
-    """列出权限列表。"""
+    """列出权限列表。这是 admin.html Permissions 面板的主读取接口。"""
     perms = rbac_service.list_permissions(db)
     return schemas.APIResponse(
         code=schemas.ErrorCode.OK, message="获取权限列表成功", data=perms
@@ -100,7 +104,7 @@ def assign_permissions_to_role(
     db: Session = Depends(get_db),
     _: models.User = Depends(require_superuser),
 ):
-    """为角色分配权限。"""
+    """为角色分配权限。这里会把前端传来的 permission_ids 覆盖写入角色权限集合。"""
     try:
         role = rbac_service.assign_permissions_to_role(
             db=db,
@@ -115,4 +119,3 @@ def assign_permissions_to_role(
     return schemas.APIResponse(
         code=schemas.ErrorCode.OK, message="分配权限成功", data=role
     )
-

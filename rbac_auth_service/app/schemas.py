@@ -1,5 +1,12 @@
 """
-Pydantic 模型定义：请求与响应体。
+RBAC 服务 Pydantic 模型定义。
+
+职责：
+- 定义请求体、响应体、统一 APIResponse 和错误码；
+- 作为前端 admin.html / login.html 与后端之间的字段契约。
+
+排查建议：
+- 前端字段名不匹配、response_model 校验失败、统一响应结构异常时，先看这里。
 """
 
 from __future__ import annotations
@@ -18,6 +25,7 @@ T = TypeVar("T")
 
 
 class UserBase(BaseModel):
+    """用户公共字段基类。"""
     username: str = Field(..., min_length=3, max_length=50)
     is_active: bool = True
     is_superuser: bool = False
@@ -53,6 +61,7 @@ class PermissionSimple(BaseModel):
 
 
 class UserOut(BaseModel):
+    """用户对外响应模型。admin.html 的用户表格最终就是围绕这个结构渲染。"""
     id: int
     username: str
     is_active: bool
@@ -100,10 +109,12 @@ class PermissionOut(BaseModel):
 
 
 class AssignRolesRequest(BaseModel):
+    """为用户分配角色的请求体。"""
     role_ids: List[int]
 
 
 class AssignPermissionsRequest(BaseModel):
+    """为角色分配权限的请求体。"""
     permission_ids: List[int]
 
 

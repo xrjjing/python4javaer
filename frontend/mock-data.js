@@ -1,14 +1,23 @@
 /**
- * Mock Data for Frontend Development
+ * 前端开发用 mock 数据。
  *
- * 用于前端开发的模拟数据，可以在不启动后端服务的情况下预览页面交互
+ * 主要服务页面：
+ * - login.html：登录与当前用户信息
+ * - admin.html：用户、角色、权限、日志
  *
- * 使用方式：
- * 1. URL 参数：访问页面时添加 ?mock=true
- * 2. localStorage：在控制台执行 localStorage.setItem('mockApi', 'true')
+ * 结构约定：
+ * - key 可以是纯路径，例如 `/users/`
+ * - 也可以是带方法的键，例如 `POST /auth/login`
+ *
+ * 排查建议：
+ * - mock-api.js 命中不到数据时，先看这里的 key 是否与真实请求 path 一致
+ * - 如果页面渲染结构异常，优先确认这里的数据字段名是否和页面读取逻辑一致
  */
 
+// mockData 的 key 设计为“路径优先，必要时补 METHOD + path”。
+// login.html / admin.html 在 mock 模式下的大部分请求都会先命中这里。
 const mockData = {
+  // ==================== 认证区：login.html 进入点 ====================
   // POST /auth/login - 登录接口
   '/auth/login': {
     code: 'OK',
@@ -38,7 +47,9 @@ const mockData = {
     }
   },
 
+  // ==================== 用户区：admin.html -> Users 面板 ====================
   // GET /users/ - 获取用户列表
+  // admin.html 的“用户管理”面板会把这组数据渲染到 users-table。
   '/users/': {
     code: 'OK',
     message: '查询成功',
@@ -86,7 +97,9 @@ const mockData = {
     ]
   },
 
+  // ==================== 角色 / 权限区：admin.html -> Roles / Permissions 面板 ====================
   // GET /rbac/roles - 获取角色列表
+  // admin.html 的“角色管理”面板会把 permissions 嵌套信息拼接展示出来。
   '/rbac/roles': {
     code: 'OK',
     message: '查询成功',
@@ -133,6 +146,7 @@ const mockData = {
   },
 
   // GET /rbac/permissions - 获取权限列表
+  // admin.html 的“权限列表”面板直接消费这里。
   '/rbac/permissions': {
     code: 'OK',
     message: '查询成功',
@@ -147,7 +161,9 @@ const mockData = {
     ]
   },
 
+  // ==================== 审计日志区：admin.html -> Logs 面板 ====================
   // GET /logs - 获取审计日志
+  // admin.html 的 Dashboard 统计卡片与 Audit Logs 面板都会读这组模拟日志。
   '/logs': {
     code: 'OK',
     message: 'Success',
@@ -216,7 +232,8 @@ const mockData = {
   }
 };
 
-// 暴露给全局作用域，供 mock-api.js 使用
+// 暴露给全局作用域，供 mock-api.js 在拦截 fetch 后读取。
+// 暴露到全局：mock-api.js 拦截到请求后，会从 window.mockData 中查找响应。
 window.mockData = mockData;
 
 // 如果是在模块环境中（例如 Node.js），也支持导出

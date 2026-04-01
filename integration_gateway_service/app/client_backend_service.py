@@ -22,10 +22,17 @@ class BackendServiceClient:
     """通用后端服务客户端封装。"""
 
     def __init__(self, base_url: str | None = None) -> None:
+        # base_url 默认指向 backend_user_order_service，便于本仓库本地直连联调。
         self.base_url = base_url or str(settings.backend_service_base_url)
 
     def _handle_response(self, resp: httpx.Response) -> Dict[str, Any]:
-        """处理 HTTP 响应，统一错误检测与解析。"""
+        """
+        处理 HTTP 响应，统一错误检测与解析。
+
+        这是网关和下游服务之间的“响应边界”：
+        - 下游状态码异常 -> 统一转成 BackendServiceError
+        - 下游返回非 JSON -> 统一转成 BackendServiceError
+        """
         try:
             resp.raise_for_status()
         except httpx.HTTPStatusError as exc:
@@ -45,7 +52,13 @@ class BackendServiceClient:
         return data
 
     def create_order(self, order_in: OrderCreateIn) -> OrderOut:
-        """调用后端服务创建订单并返回标准化结构。"""
+        """
+        调用后端服务创建订单并返回标准化结构。
+
+        排查建议：
+        - 如果 gateway.py 能进来但下游报 502，优先看这里
+        - 如果下游接口其实成功了，但网关仍报数据结构异常，也先看这里的 OrderOut 校验
+        """
         url = f"{self.base_url}/api/orders"
         payload = order_in.dict()
         with httpx.Client(trust_env=False) as client:

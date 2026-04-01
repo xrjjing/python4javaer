@@ -1,8 +1,13 @@
 """
 网关服务使用到的 Pydantic 模型定义。
 
-这里主要描述与下游用户/订单服务对接所需的请求/响应结构，
-下游服务可以是任意语言实现的 HTTP 服务。
+这份模型主要承担两类职责：
+- 描述网关自己对外暴露的统一响应结构；
+- 约束网关和下游 backend_user_order_service 之间共享的订单数据结构。
+
+排查建议：
+- 如果 router 返回成功但前端字段不对，先看 ApiResponse
+- 如果 create_order 校验失败，先看 OrderCreateIn / OrderOut
 """
 
 from datetime import datetime

@@ -1,10 +1,14 @@
 """
-应用配置模块。
+RBAC 服务配置模块。
 
-目标：
-- 使用 pydantic BaseSettings 统一管理配置；
-- 支持通过环境变量覆盖默认值；
-- 便于在本地切换 SQLite / MySQL、启用 Redis 等。
+职责：
+- 统一管理数据库、Redis、JWT、审计日志服务地址；
+- 给 database.py / security.py / log_audit_client.py 提供共享配置。
+
+排查建议：
+- 登录签名失败先看 secret_key；
+- 黑名单不生效先看 redis_url；
+- 审计日志不上报先看 log_audit_base_url。
 """
 
 from __future__ import annotations

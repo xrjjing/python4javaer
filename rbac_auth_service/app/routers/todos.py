@@ -1,7 +1,12 @@
 """
-受 RBAC 控制的 TODO 示例接口：
-- 列表 / 创建 / 更新 / 删除
-- 通过 require_permissions 控制访问权限
+TODO 示例业务路由。
+
+职责：
+- 演示“业务资源 + RBAC 权限依赖”的典型写法；
+- 把 HTTP 层参数转换为 todo_service 能理解的调用。
+
+排查建议：
+- 某个 TODO 接口 403 / 404 时，先看这里声明的 require_permissions，再看 todo_service。
 """
 
 from __future__ import annotations

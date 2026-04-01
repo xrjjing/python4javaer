@@ -1,7 +1,11 @@
 """
 日志侦探服务客户端封装。
 
-该模块负责与日志侦探服务进行通信，提供日志分析功能的调用接口。
+真实调用链：
+log-detective.html
+    -> integration_gateway_service/app/routers/gateway.py
+    -> LogDetectiveClient.analyze_logs()
+    -> log_detective_service /internal/log-detective/analyze
 """
 
 from typing import Any, Dict
@@ -34,6 +38,7 @@ class LogDetectiveClient:
         Raises:
             LogDetectiveServiceError: 调用服务失败时抛出
         """
+        # 网关只知道下游服务地址，不直接关心分析算法细节。
         url = f"{self.base_url}/internal/log-detective/analyze"
 
         try:

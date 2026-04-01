@@ -781,7 +781,10 @@ code[class*="language-"], pre[class*="language-"] {
     </style>
 </head>
 <body>
+    <!-- 页面总览：这是“章节导航 + 文档区 + 在线代码运行区”的学习首页。 -->
+    <!-- 数据源主要来自本页内的 chapters 数组，不依赖 RBAC 或其他业务后端。 -->
     <!-- Sidebar Navigation -->
+    <!-- 左侧导航区：renderNav() 会把 chapters 数组渲染成按钮列表。 -->
     <div class="sidebar">
         <div class="sidebar-header">
             📚 Python 学习导航
@@ -795,6 +798,7 @@ code[class*="language-"], pre[class*="language-"] {
     </div>
 
     <!-- Main Content Area -->
+    <!-- 右侧主工作区：顶部条负责主题切换，下面分成文档区和代码运行区。 -->
     <div class="main-content">
         <div class="top-bar">
             <div class="top-bar-title">Python 学习系统 - 面向 Java 开发者</div>
@@ -819,8 +823,10 @@ code[class*="language-"], pre[class*="language-"] {
             </button>
         </div>
 
+        <!-- 双栏工作区：左侧 doc-panel 展示章节说明，右侧 code-panel 展示编辑器 / 运行按钮 / 输出区。 -->
         <div class="content-scroll-area">
             <!-- Document Panel -->
+            <!-- 文档区：showChapter() 会把章节说明、文件列表、Markdown 预览插入这里。 -->
             <div class="doc-panel" id="doc-panel">
                 <div class="chapter-header">
                     <h1 class="chapter-title">欢迎使用 Python 学习系统</h1>
@@ -832,6 +838,7 @@ code[class*="language-"], pre[class*="language-"] {
             </div>
 
             <!-- Code Panel -->
+            <!-- 代码区：包含编辑器、代码片段按钮、参考代码查看器和运行输出。 -->
             <div class="code-panel">
                 <!-- Code Editor -->
                 <div class="editor-card">
@@ -861,6 +868,7 @@ print("1 + 1 =", 1 + 1)</div>
         </div>
     </div>
 
+    <!-- 模态预览区：查看章节关联示例代码时会打开，但不会直接改动主编辑器内容。 -->
     <!-- 参考代码模态框 -->
     <div id="code-modal-overlay" class="code-modal-overlay" aria-hidden="true">
         <div id="code-modal" class="code-modal" role="dialog" aria-modal="true" aria-labelledby="code-modal-title">
@@ -881,10 +889,17 @@ print("1 + 1 =", 1 + 1)</div>
         </div>
     </div>
 
+    <!-- 代码模态框：点击“查看代码”后在这里展示原始示例文件，不直接覆盖主编辑器。 -->
+
     <!-- Pyodide Script -->
     <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
 
     <script>
+// 脚本总览：
+// 1) 用 chapters 数组定义课程目录；
+// 2) renderNav()/showChapter() 驱动左侧导航与文档区；
+// 3) CodeJar + Pyodide 负责在线编辑和运行；
+// 4) loadMarkdown()/loadCodeFile() 负责把仓库里的文档和示例代码拉到页面上。
 // ========== 章节数据 ==========
 const chapters = [
     {
@@ -1126,6 +1141,7 @@ const chapters = [
 ];
 
 // ========== 初始化 ==========
+// 页面加载后会先渲染左侧章节导航，再根据默认章节更新文档区和代码区。
 let currentChapter = null;
 let pyodide = null;
 let jar = null; // CodeJar 实例
@@ -1147,7 +1163,7 @@ const codeModalCloseBtn = document.getElementById('code-modal-close');
 const contentCache = new Map(); // Markdown 文件缓存
 const codeFileCache = new Map(); // Python 代码文件缓存
 
-// ========== CodeJar + Prism 语法高亮 (Gemini Design) ==========
+// ========== 在线编辑器初始化：负责把 code-editor 变成可编辑 Python 区域 ==========
 const editorElement = document.querySelector('#code-editor');
 if (editorElement && window.CodeJar && window.Prism) {
     const highlight = (editor) => {
@@ -1304,6 +1320,7 @@ function renderNav() {
     });
 }
 
+// 页面主链路入口：点击左侧章节按钮后，会在这里串起“更新文档区 -> 更新代码片段 -> 更新参考文件列表”。
 function showChapter(chapterId) {
     const chapter = chapters.find(ch => ch.id === chapterId);
     if (!chapter) return;
@@ -1406,6 +1423,7 @@ function showChapter(chapterId) {
     }
 }
 
+// Markdown 加载区：负责把章节说明文件读出来并塞进 doc-panel。
 async function loadMarkdown(path) {
     const preview = document.getElementById('md-preview');
     if (!preview) return;
@@ -1439,7 +1457,7 @@ async function loadMarkdown(path) {
     }
 }
 
-// 加载示例代码并在模态框中展示
+// 文件查看入口：点击文档区里的“查看代码”按钮后会先走这里，再决定是否打开模态框。
 async function loadCodeFile(path) {
     const output = document.getElementById('output');
     if (!output) return;
@@ -1485,7 +1503,7 @@ async function loadCodeFile(path) {
     }
 }
 
-// 将 input() 转换为浏览器兼容的赋值语句
+// 浏览器兼容转换：仓库里的很多练习脚本含有 input()，浏览器环境不能直接跑，所以先在这里转成示例值。
 function convertInputToBrowserMode(code) {
     // 添加转换说明注释
     let converted = '# ========== 浏览器兼容模式 ==========\n';
@@ -1534,6 +1552,7 @@ function convertInputToBrowserMode(code) {
     return result;
 }
 
+// 章节切换后的编辑器刷新：负责初始代码片段按钮和默认代码。
 function updateCodeEditor(chapter) {
     const snippetContainer = document.getElementById('snippet-container');
 
@@ -1574,7 +1593,7 @@ if (docPanelElement) {
     });
 }
 
-// ========== Pyodide 代码执行 ==========
+// ========== 在线执行链路：runCode() 会先 ensurePyodide()，再把编辑器内容包裹后执行 ==========
 async function ensurePyodide() {
     if (!pyodide) {
         pyodide = await loadPyodide({
@@ -1584,6 +1603,7 @@ async function ensurePyodide() {
     return pyodide;
 }
 
+// 代码运行入口：点击“运行代码”后，从编辑器取代码，必要时转换 input()，再交给 Pyodide 执行。
 async function runCode() {
     const output = document.getElementById('output');
     const runBtn = document.getElementById('run-btn');
@@ -1672,7 +1692,8 @@ if (toggleBtn) {
     console.warn('theme-toggle 按钮未找到，主题切换不可用');
 }
 
-// 初始化
+// 页面初始化：先渲染导航，再默认打开第一章。
+// 如果初始页面空白，优先看这里是否执行成功。
 renderNav();
 if (chapters.length > 0) {
     showChapter(chapters[0].id);

@@ -101,6 +101,8 @@
   </style>
 </head>
 <body>
+  <!-- 页面总览：这是前端总入口页，不直接承载业务表单，而是把文档入口、功能页面和课程页面集中在一个卡片网格中。 -->
+  <!-- 页面头部：展示页面定位，并把当前 API 基础地址写到 #env-info，方便本地联调时先确认自己连到哪台后端。 -->
   <header>
     <div>
       <div class="title">前端入口汇总</div>
@@ -109,7 +111,10 @@
     </div>
   </header>
 
+  <!-- 页面主体：卡片网格区。每张卡片都是一个独立入口，跳转到文档查看器、业务页面或专项课程。 -->
+  <!-- 卡片导航区：每张卡片对应一个学习入口或工具入口，点击后跳转到具体页面或 doc-viewer。 -->
   <section class="grid">
+    <!-- 文档入口区：帮助先看快速开始、查漏补缺、文档导航。 -->
     <div class="card">
       <div class="tag">文档</div>
       <h3>快速开始 & 查漏补缺</h3>
@@ -124,6 +129,7 @@
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </a>
     </div>
+    <!-- 离线演练区：指向 mock 说明，适合后端未启动时先看前端交互。 -->
     <div class="card">
       <div class="tag">离线演练</div>
       <h3>Mock / 无后端模式</h3>
@@ -135,6 +141,7 @@
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </a>
     </div>
+    <!-- 单项目入口：直接跳到新闻爬虫示例文档和脚本。 -->
     <div class="card">
       <div class="tag">实战</div>
       <h3>新闻爬虫（离线）</h3>
@@ -146,6 +153,7 @@
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </a>
     </div>
+    <!-- 学习导航区：进入旧主页 index.html，那里有章节导航和在线运行区。 -->
     <div class="card">
       <div class="tag">学习导航</div>
       <h3>主导航首页</h3>
@@ -155,6 +163,7 @@
       </a>
     </div>
 
+    <!-- 认证入口：先登录拿到 accessToken，admin.html 与 log-detective.html 都依赖这里存下来的令牌。 -->
     <div class="card">
       <div class="tag">认证</div>
       <h3>RBAC 登录</h3>
@@ -164,6 +173,7 @@
       </a>
     </div>
 
+    <!-- 管理后台入口：进入 RBAC 管理页，页面内会继续调用 rbac_auth_service 与 log_audit_service。 -->
     <div class="card">
       <div class="tag">管理后台</div>
       <h3>RBAC Admin</h3>
@@ -173,6 +183,7 @@
       </a>
     </div>
 
+    <!-- 日志侦探入口：这是最典型的“页面 -> 网关 -> 下游分析服务”演示链路。 -->
     <div class="card">
       <div class="tag">日志分析</div>
       <h3>日志侦探</h3>
@@ -182,6 +193,7 @@
       </a>
     </div>
 
+    <!-- 项目索引入口：进入 projects.html，按项目维度浏览文档和示例代码。 -->
     <div class="card">
       <div class="tag">项目索引</div>
       <h3>实战项目目录</h3>
@@ -191,6 +203,7 @@
       </a>
     </div>
 
+    <!-- FastAPI 专题入口：进入子目录页面，实际交互逻辑由 fastapi-course/js/navigation.js 驱动。 -->
     <div class="card">
       <div class="tag">课程导航</div>
       <h3>FastAPI 深度专题</h3>
@@ -200,6 +213,7 @@
       </a>
     </div>
 
+    <!-- 额外专题入口：跳转到 RabbitMQ 独立演示模块，不参与本仓库主前端脚本链路。 -->
     <div class="card">
       <div class="tag">消息队列</div>
       <h3>RabbitMQ 实战</h3>
@@ -213,8 +227,11 @@
     </div>
   </section>
 
+  <!-- 页面脚本：这里只做一件事——读取 config.js 中的地址配置，回填到页面头部的环境提示区。 -->
   <script>
-    // 显示当前 API Base 信息，便于联调确认
+    // 这里没有复杂交互，只做一件事：把 config.js 里的 API 基础地址显示出来，帮助确认当前联调指向。
+    // 若入口页环境信息显示不对，优先排查 frontend/config.js 是否改过。
+    // 初始化入口：显示当前 API Base 信息，便于一打开入口页就先确认联调目标。
     const apiBase = window.AppConfig?.apiBaseUrl || window.API_BASE_URL || "未配置";
     document.getElementById("env-info").textContent = `当前 API 基础地址: ${apiBase}`;
   </script>

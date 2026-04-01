@@ -1,5 +1,9 @@
 """
-Project 相关的持久化操作（Repository 层）。
+Project Repository。
+
+职责：
+- 处理 Project 的 owner 维度查询、创建、保存和删除；
+- 供 project_service / task_service 复用。
 """
 
 from __future__ import annotations

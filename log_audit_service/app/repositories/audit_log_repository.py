@@ -1,5 +1,10 @@
 """
 审计日志数据访问层。
+
+调用关系：
+routers/audit_logs.py -> repository -> models/database
+
+这里不处理 HTTP 参数，也不负责 HTML 展示，只关心“怎么写库 / 怎么查库”。
 """
 
 from datetime import datetime
@@ -38,7 +43,12 @@ def query_audit_logs(
     limit: int = 50,
     offset: int = 0,
 ) -> Iterable[AuditLog]:
-    """按条件查询审计日志列表。"""
+    """
+    按条件查询审计日志列表。
+
+    当前 admin.html 主要走的是无过滤查询，
+    /logs/ui 则会把 actor / action / source_service 作为筛选条件传进来。
+    """
     query = db.query(AuditLog)
 
     if actor:
@@ -54,4 +64,3 @@ def query_audit_logs(
 
     query = query.order_by(AuditLog.created_at.desc())
     return query.offset(offset).limit(limit).all()
-

@@ -1,21 +1,20 @@
 /**
- * Mock API Interceptor
+ * Mock API 拦截器。
  *
- * 优雅的 fetch 拦截器，用于在开发环境下模拟后端 API 响应
+ * 主要服务页面：
+ * - login.html
+ * - admin.html
  *
- * 特性：
- * - 非侵入式设计：不影响生产环境的真实 API 调用
- * - 灵活的开关机制：支持 URL 参数或 localStorage 控制
- * - 模拟网络延迟：更真实地模拟网络请求
- * - 完整的日志输出：方便调试和追踪
+ * 工作方式：
+ * - 在 mock 模式开启时，接管 window.fetch
+ * - 先把 URL 解析成 path
+ * - 再到 window.mockData 中找匹配数据
+ * - 找到就返回模拟 Response，找不到就回退真实 fetch
  *
- * 使用方法：
- * 1. URL 参数方式（临时）：http://localhost/page.html?mock=true
- * 2. localStorage 方式（持久）：localStorage.setItem('mockApi', 'true')
- *
- * 停用方法：
- * 1. 移除 URL 中的 ?mock=true
- * 2. localStorage.removeItem('mockApi')
+ * 适合排查：
+ * - 页面到底有没有真正走到 fetch
+ * - 当前请求 path 为什么没有命中 mock 数据
+ * - mock 模式是否已经启用
  */
 
 (function() {
@@ -37,7 +36,10 @@
   // ==================== 核心功能 ====================
 
   /**
-   * 检查是否启用了模拟模式
+   * 检查是否启用了模拟模式。
+   *
+   * 这是整个拦截器是否生效的总开关。
+   *
    * @returns {boolean} 如果启用了模拟模式则返回 true
    */
   function isMockMode() {
@@ -57,7 +59,10 @@
   }
 
   /**
-   * 从 URL 中提取路径部分
+   * 从 URL 中提取路径部分。
+   *
+   * 之所以只取 path，是因为 mockData 的 key 主要按 `/auth/login` 这类路径组织。
+   *
    * @param {string} url - 完整的 URL 字符串
    * @returns {string} URL 的路径部分
    */
@@ -113,7 +118,12 @@
   }
 
   /**
-   * 根据请求信息查找匹配的模拟数据
+   * 根据请求信息查找匹配的模拟数据。
+   *
+   * 查找顺序：
+   * 1. 先按 path 直接匹配
+   * 2. 再按 `METHOD + path` 精确匹配
+   *
    * @param {string} method - HTTP 方法
    * @param {string} path - 请求路径
    * @returns {*} 模拟数据或 null
@@ -144,8 +154,10 @@
   const originalFetch = window.fetch;
 
   /**
-   * 拦截后的 fetch 函数
-   * 在模拟模式下返回模拟数据，否则调用真实 API
+   * 拦截后的 fetch 函数。
+   *
+   * 这是真正的入口点。页面代码仍然正常调用 fetch，
+   * 只是这里决定“返回 mock”还是“放行真实请求”。
    */
   window.fetch = function(url, options = {}) {
     // 如果未启用模拟模式，直接调用原始 fetch
@@ -180,6 +192,9 @@
   };
 
   // ==================== 初始化 ====================
+  // 这一段不是给业务页面主动调用的，而是在脚本加载时自动执行：
+  // - 如果 mock 已开启，就插入左下角可见徽标
+  // - 并把启停工具挂到 window.mockApiUtils，方便开发联调时手工开关
 
   if (isMockMode()) {
     log('success', '🎭 模拟 API 模式已激活', {
@@ -232,7 +247,8 @@
     }
   }
 
-  // 暴露工具函数到全局作用域，方便调试
+  // 暴露工具函数到全局作用域，方便在浏览器控制台快速启停 mock 模式。
+  // login.html / admin.html 本身不会主动调用这些函数，主要给手工排障和联调使用。
   window.mockApiUtils = {
     isMockMode,
     enableMock: () => {

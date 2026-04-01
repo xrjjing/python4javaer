@@ -9,6 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
+    <!-- 页面骨架：左侧课程导航 + 右侧主内容 + 独立 Markdown 预览面板。具体交互由 js/navigation.js 接管。 -->
+    <!-- 页面总览：FastAPI 深度专题页采用“左导航 + 中内容 + 右预览”的三段式阅读布局。 -->
     <!-- 顶部导航栏 -->
     <header class="header">
         <div class="header-content">
@@ -21,15 +23,16 @@
     </header>
 
     <!-- 主容器 -->
+    <!-- 双栏工作区：左栏是课程与实验导航，右栏是课程摘要与 Markdown 预览。 -->
     <div class="container">
-        <!-- 侧边栏导航 -->
+        <!-- 侧边栏导航：按章节和实验室组织入口，点击后由 js/navigation.js 负责加载右侧 Markdown。 -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h2>📚 课程目录</h2>
                 <button id="sidebarToggle" class="btn-icon">☰</button>
             </div>
 
-            <!-- 进度概览 -->
+            <!-- 进度概览：只是视觉进度展示，真实切换和进度文本更新在 navigation.js 中。 -->
             <div class="progress-section">
                 <h3>学习进度</h3>
                 <div class="progress-bar">
@@ -38,7 +41,7 @@
                 <p class="progress-text">Phase 1: 1/5 完成</p>
             </div>
 
-            <!-- 导航菜单 -->
+            <!-- 导航菜单：data-chapter / data-lab 是前端脚本绑定点击事件的关键定位点。 -->
             <nav class="nav-menu">
                 <!-- Phase 1: 核心概念 -->
                 <div class="nav-section">
@@ -115,7 +118,8 @@
             </nav>
         </aside>
 
-        <!-- 主内容区 -->
+        <!-- 主工作区：左边是课程说明，右边是 Markdown 预览。 -->
+        <!-- 主工作区：左侧 article #content 用来显示当前章节摘要，右侧 #previewPanel 用来显示原始 Markdown 渲染结果。 -->
         <main class="main-content">
             <!-- 面包屑导航 -->
             <div class="breadcrumb">
@@ -126,7 +130,7 @@
             </div>
 
             <div class="main-columns">
-                <!-- 内容显示区（左） -->
+                <!-- 左栏内容区：默认展示课程介绍；点击章节后会由 navigation.js 改写这里的摘要内容。 -->
                 <article id="content" class="content">
                     <h1>欢迎来到 FastAPI 深度专题</h1>
 
@@ -164,7 +168,7 @@
                     </div>
                 </article>
 
-                <!-- Markdown 预览区（右） -->
+                <!-- 右栏预览区：真正加载章节 / 实验 README 的地方，适合排查“为什么点菜单没显示内容”。 -->
                 <aside class="preview-panel" id="previewPanel">
                     <div class="preview-header">
                         <div>
@@ -181,6 +185,7 @@
         </main>
     </div>
 
+    <!-- 交互脚本依赖：Prism 负责高亮，navigation.js 负责章节切换、Markdown 加载、暗色模式和进度同步。 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
     <script src="js/navigation.js"></script>

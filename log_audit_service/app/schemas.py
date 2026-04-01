@@ -1,5 +1,9 @@
 """
 日志 / 审计服务用到的 Pydantic 模型定义。
+
+用途：
+- AuditLogCreate：其他服务写日志时的入参格式
+- AuditLogRead：前端查询日志时的返回结构
 """
 
 from datetime import datetime
@@ -35,4 +39,3 @@ class AuditLogRead(BaseModel):
 
     class Config:
         orm_mode = True
-

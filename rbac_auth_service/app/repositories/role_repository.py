@@ -1,5 +1,9 @@
 """
-角色相关持久化操作（Repository 层）。
+角色 Repository。
+
+职责：
+- 封装 Role 的查询与持久化；
+- 供 rbac_service / user_service 复用。
 """
 
 from __future__ import annotations
@@ -27,10 +31,9 @@ def list_roles(db: Session) -> List[models.Role]:
 
 
 def save_role(db: Session, role: models.Role) -> models.Role:
-    """保存角色实体。"""
+    """保存角色实体。提交并 refresh 后，调用方能拿到包含最新权限关联的对象。"""
     db.add(role)
     db.commit()
     db.refresh(role)
     return role
-
 

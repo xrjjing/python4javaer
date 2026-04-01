@@ -1,5 +1,12 @@
 """
-RBAC 相关 ORM 模型定义。
+RBAC 服务 ORM 模型定义。
+
+核心实体：
+- User / Role / Permission：支撑登录、授权和后台管理
+- Todo / Project / Task：作为受权限控制的示例业务资源
+
+排查建议：
+- 接口字段和数据库状态对不上、关联关系异常时，先回到这里确认模型与关系表定义。
 """
 
 from __future__ import annotations
@@ -21,7 +28,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .database import Base
 
 
-# 关联表：用户-角色 多对多
+# 关联表：用户-角色 多对多。
+# admin.html 给用户分配角色时，最终会改到这里。
 user_roles = Table(
     "user_roles",
     Base.metadata,
@@ -29,7 +37,8 @@ user_roles = Table(
     Column("role_id", ForeignKey("roles.id"), primary_key=True),
 )
 
-# 关联表：角色-权限 多对多
+# 关联表：角色-权限 多对多。
+# 角色赋权成功后，权限检查依赖会沿着 User -> Role -> Permission 这条关系链做判断。
 role_permissions = Table(
     "role_permissions",
     Base.metadata,
@@ -39,7 +48,14 @@ role_permissions = Table(
 
 
 class User(Base):
-    """用户模型。"""
+    """
+    用户模型。
+
+    这是认证链路的核心实体：
+    - auth.py 登录时按 username 查询它；
+    - dependencies.py 解析 token 后按 id 回查它；
+    - users.py / user_service.py 管理它的状态与角色。
+    """
 
     __tablename__ = "users"
 
@@ -70,7 +86,7 @@ class User(Base):
 
 
 class Role(Base):
-    """角色模型。"""
+    """角色模型，主要服务 users.py 里的角色分配与 roles.py 里的角色管理。"""
 
     __tablename__ = "roles"
 
@@ -109,7 +125,7 @@ class Permission(Base):
 
 
 class Todo(Base):
-    """受 RBAC 控制的示例 TODO。"""
+    """受 RBAC 控制的示例 TODO。对应 todos.py -> todo_service.py -> todo_repository.py 这条链路。"""
 
     __tablename__ = "todos"
 

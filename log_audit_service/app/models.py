@@ -1,5 +1,8 @@
 """
 日志 / 审计服务数据库模型定义。
+
+当前只有一个核心表：audit_logs。
+admin.html 查看日志、本地 /ui 页面查看日志，最终都依赖这张表。
 """
 
 from datetime import datetime
@@ -24,6 +27,6 @@ class AuditLog(Base):
     detail = Column(Text, nullable=True)
 
 
+# 组合索引：便于按 actor / action + 时间倒序过滤最近日志。
 Index("idx_audit_logs_actor_created_at", AuditLog.actor, AuditLog.created_at)
 Index("idx_audit_logs_action_created_at", AuditLog.action, AuditLog.created_at)
-

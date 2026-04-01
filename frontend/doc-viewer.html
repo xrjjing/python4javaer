@@ -179,7 +179,11 @@
   </style>
 </head>
 <body>
+  <!-- 页面骨架：顶部是文档路径与操作按钮，主体是 Markdown 渲染区。这个页面不关心具体业务，只负责把 ?file= 指向的文档加载出来。 -->
+  <!-- 页面总览：这是一个通用 Markdown 文档查看器，路径来自 URL 查询参数 file。它本身不关心业务接口，只负责读取文档、渲染 HTML 和代码高亮。 -->
   <div class="container">
+    <!-- 页面头部：显示当前文档路径，并提供“查看源码 / 返回入口”两个导航动作。 -->
+    <!-- 页面头部：显示当前文档路径，并提供“查看源码 / 返回入口”按钮。 -->
     <div class="header">
       <div>
         <div class="title">文档查看</div>
@@ -190,13 +194,23 @@
         <a href="portal.html" class="btn">返回入口</a>
       </div>
     </div>
+    <!-- 主内容区：加载前显示 loading，占位完成后把 Markdown 渲染到 markdown-content；两者会在脚本中切换显示。 -->
+    <!-- 文档显示区：先显示 loading，占位完成后再把 Markdown 渲染进 #markdown-content。 -->
     <div class="content">
       <div id="loading" class="loading">正在加载文档...</div>
       <div id="markdown-content" class="markdown-body" style="display:none;"></div>
     </div>
   </div>
 
+  <!-- 页面脚本：读取 URL 参数 file -> fetch 原文 -> marked 渲染 -> highlight.js 高亮；失败时在同一区域展示错误提示。 -->
   <script>
+    // 脚本总览：
+    // 1) 从 URL 读取 file 参数；
+    // 2) 请求 Markdown 文件；
+    // 3) 用 marked 渲染 HTML；
+    // 4) 再用 highlight.js 做代码高亮；
+    // 5) 若失败，优先提示路径问题或 file:// 模式限制。
+    // 初始化阶段：先拿到 URL 参数和关键 DOM，后续所有文档加载都围绕这些节点展开。
     const params = new URLSearchParams(window.location.search);
     const fileParam = params.get('file');
     const docPathEl = document.getElementById('doc-path');
@@ -204,6 +218,8 @@
     const loadingEl = document.getElementById('loading');
     const contentEl = document.getElementById('markdown-content');
 
+    // 页面初始化入口：portal.html / 其他页面传入 file 参数后，真正的文档加载从这里开始。
+    // 核心加载链路：解析 file 参数 -> 发起 fetch -> 渲染 Markdown -> 对代码块做高亮。
     async function loadMarkdown() {
       if (!fileParam) {
         loadingEl.innerHTML = '<div class="error">未指定要加载的文档文件，请从入口页重新打开。</div>';
@@ -211,6 +227,7 @@
       }
 
       try {
+        // 先把 file 参数回显到头部，方便确认当前看的是哪份文档。
         const decoded = decodeURIComponent(fileParam);
         docPathEl.textContent = decoded;
         if (viewRawBtn) {
@@ -230,7 +247,7 @@
         loadingEl.style.display = 'none';
         contentEl.style.display = 'block';
 
-        // 代码高亮
+        // 代码高亮：仅对渲染后的 pre code 生效。
         contentEl.querySelectorAll('pre code').forEach((block) => {
           hljs.highlightElement(block);
         });
@@ -250,6 +267,7 @@
       }
     }
 
+    // 页面入口：脚本加载完立即尝试读取并渲染目标文档。
     loadMarkdown();
   </script>
 </body>

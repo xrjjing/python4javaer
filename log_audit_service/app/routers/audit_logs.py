@@ -1,5 +1,9 @@
 """
 审计日志相关 API 路由。
+
+对外入口分两类：
+- JSON API：给前端或其他服务调用
+- /ui：给本地开发时直接在浏览器中快速查看
 """
 
 from datetime import datetime
@@ -15,8 +19,10 @@ from ..schemas import AuditLogCreate, AuditLogRead
 
 
 router = APIRouter(prefix="/logs", tags=["audit_logs"])
+# admin.html 默认会直接请求这个前缀下的接口。
 
 
+# 其他服务写审计日志时的统一入口。
 @router.post("", response_model=AuditLogRead, status_code=201)
 def create_log(log_in: AuditLogCreate, db: Session = Depends(get_db)) -> AuditLogRead:
     """
@@ -24,10 +30,12 @@ def create_log(log_in: AuditLogCreate, db: Session = Depends(get_db)) -> AuditLo
 
     通常由其他服务在关键操作（如登录、下单、权限变更等）完成后调用。
     """
+    # 写库动作下沉到 repository，路由层只负责接请求和返回响应。
     log = create_audit_log(db, log_in)
     return log
 
 
+# admin.html 查询日志列表的主要 JSON 接口。
 @router.get("", response_model=List[AuditLogRead])
 def list_logs(
     actor: Optional[str] = Query(None, description="按 actor 精确过滤"),
@@ -50,6 +58,7 @@ def list_logs(
 
     支持按 actor/action/source_service 以及时间范围过滤，默认按时间倒序返回。
     """
+    # 这是 admin.html 查看审计日志时最常走到的入口。
     logs = query_audit_logs(
         db,
         actor=actor,
@@ -63,6 +72,7 @@ def list_logs(
     return list(logs)
 
 
+# 本地快速排查入口：不走前端 admin 页面，也能直接在浏览器里看最近日志。
 @router.get("/ui", response_class=HTMLResponse)
 def logs_ui(
     request: Request,
@@ -79,6 +89,7 @@ def logs_ui(
 
     仅用于本地开发与学习，便于在浏览器中快速查看最近的审计日志。
     """
+    # 本地调试页走这条链：/logs/ui -> query_audit_logs() -> 拼成一页简单 HTML。
     logs = query_audit_logs(
         db,
         actor=actor,
@@ -90,6 +101,7 @@ def logs_ui(
         offset=0,
     )
 
+    # 最小 HTML 转义，避免把日志内容直接插入页面时破坏 DOM。
     def esc(value: Optional[str]) -> str:
         if value is None:
             return ""

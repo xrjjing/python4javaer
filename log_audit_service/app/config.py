@@ -1,7 +1,12 @@
 """
 日志 / 审计服务配置模块。
 
-通过配置类统一管理配置，支持从环境变量或 .env 文件加载。
+职责：
+- 提供数据库连接地址等运行参数；
+- 作为 database.py / main.py 的共同配置入口。
+
+排查建议：
+- 服务启动后连不上库，先看这里的 database_url。
 """
 
 from functools import lru_cache
@@ -28,3 +33,4 @@ def get_settings() -> Settings:
 
 
 settings = get_settings()
+# 模块级单例：database.py / main.py 直接复用这份配置。

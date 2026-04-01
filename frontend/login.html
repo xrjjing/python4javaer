@@ -238,6 +238,8 @@ body {
     </style>
 </head>
 <body>
+    <!-- 页面总览：登录页只做两件事——提交用户名密码到 RBAC 服务，以及把登录成功后的 accessToken 写入 localStorage。 -->
+    <!-- 页面右上角：主题切换按钮，仅影响显示主题，不参与登录链路。 -->
     <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Dark Mode">
         <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"></circle>
@@ -255,12 +257,15 @@ body {
         </svg>
     </button>
 
+    <!-- 页面主体：单卡片登录区。login-container 负责整页居中，login-box 才是真正的登录表单卡片。 -->
     <div class="login-container">
         <div class="login-box">
+            <!-- 页面头部：说明当前页面是登录入口，不承担权限管理逻辑。 -->
             <div class="login-header">
                 <h1>Welcome Back</h1>
                 <p>Sign in to access the Python Learning Platform</p>
             </div>
+            <!-- 登录表单区：submit 事件在下方内联脚本中绑定，提交后先调 /auth/login，再决定跳 admin.html 还是 index.html。 -->
             <form id="login-form">
                 <div class="form-group">
                     <label for="username">Username</label>
@@ -270,9 +275,12 @@ body {
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="admin123">
                 </div>
+                <!-- 按钮区：提交按钮会在请求期间切换为禁用态，避免重复点击。 -->
                 <button type="submit" class="btn btn-primary" id="submit-btn">Login</button>
+                <!-- 错误提示区：登录失败或后端不可达时，在这里显示错误信息。 -->
                 <div id="error-message"></div>
             </form>
+            <!-- 辅助信息区：展示默认账号与返回首页入口，不参与认证逻辑。 -->
             <div class="links">
                 <p>Default: admin / admin123</p>
                 <p style="margin-top: 0.5rem;"><a href="index.html">Back to Learning</a></p>
@@ -280,9 +288,14 @@ body {
         </div>
     </div>
 
+    <!-- 页面脚本：IIFE 内完成 API 地址解析、主题初始化、登录表单提交和登录后跳转判定。 -->
     <script>
     (() => {
-        // RBAC 服务地址：优先使用 config.js 中的 authApiBaseUrl
+        // 脚本总览：
+        // 1) 解析 RBAC 服务地址；
+        // 2) 初始化主题；
+        // 3) 绑定登录表单提交；
+        // 4) 登录成功后再调用 /auth/me，决定跳 admin.html 还是 index.html。
         // 其次回退到历史上的 apiBaseUrl / 全局变量，便于向后兼容
         const API_BASE =
             window.AppConfig?.authApiBaseUrl ??
@@ -290,7 +303,7 @@ body {
             window.API_BASE_URL ??
             '';
 
-        // Theme management (same as index.html)
+        // 主题切换：只影响视觉，不影响登录链路。
         const htmlEl = document.documentElement;
         const themeToggle = document.getElementById('theme-toggle');
 
@@ -311,7 +324,9 @@ body {
             try { localStorage.setItem('theme', newTheme); } catch (e) {}
         });
 
-        // Login form handler
+        // 登录入口：按钮点击 / 回车提交最终都会走到这里。
+        // 真实调用链：
+        // login.html -> POST /auth/login -> GET /auth/me -> 根据是否超管跳转页面
         const loginForm = document.getElementById('login-form');
         const errorMessage = document.getElementById('error-message');
         const submitBtn = document.getElementById('submit-btn');
@@ -323,12 +338,13 @@ body {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Logging in...';
 
-            // Backend expects OAuth2 form data (application/x-www-form-urlencoded)
+            // 请求体格式说明：后端 login 接口走 OAuth2PasswordRequestForm，所以这里必须提交 form-urlencoded，而不是 JSON。
             const formData = new URLSearchParams();
             formData.append('username', document.getElementById('username').value);
             formData.append('password', document.getElementById('password').value);
 
             try {
+                // 第一步：调用 RBAC 登录接口，后端要求表单格式而不是 JSON。
                 const response = await fetch(`${API_BASE}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -338,10 +354,10 @@ body {
                 const body = await response.json();
 
                 if (response.ok && body.code === 'OK' && body.data?.access_token) {
-                    // Store token
+                    // 写入本地登录态，供 admin.html 与 log-detective.html 继续复用。
                     localStorage.setItem('accessToken', body.data.access_token);
 
-                    // Check if user is superuser to redirect to admin
+                    // 再补查当前用户信息：超级管理员进入 admin.html，普通用户回到 index.html。
                     try {
                         const meResp = await fetch(`${API_BASE}/auth/me`, {
                             headers: { 'Authorization': `Bearer ${body.data.access_token}` }

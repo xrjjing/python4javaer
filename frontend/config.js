@@ -1,5 +1,21 @@
 // frontend/config.js
-// 统一前端调用的后端服务地址配置
+// 统一前端调用的后端服务地址配置。
+//
+// 主要被以下页面读取：
+// - login.html：优先读取 authApiBaseUrl
+// - admin.html：读取 authApiBaseUrl 和 logApiBaseUrl
+// - log-detective.html：读取 gatewayApiBaseUrl
+// - portal.html：只把当前地址展示出来，帮助联调确认
+//
+// 真实关系：
+// - login.html / admin.html 主要直连 RBAC 服务
+// - admin.html 额外读取审计日志服务
+// - log-detective.html 只打网关，由网关再转发到日志分析服务
+//
+// 排查建议：
+// - 登录报错先看 authApiBaseUrl
+// - 日志侦探 502/连不上网关先看 gatewayApiBaseUrl
+// - Admin 审计日志为空先看 logApiBaseUrl
 window.AppConfig = {
     // RBAC 认证与权限服务
     authApiBaseUrl: 'http://127.0.0.1:8001',

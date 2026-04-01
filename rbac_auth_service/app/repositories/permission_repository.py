@@ -1,5 +1,9 @@
 """
-权限相关持久化操作（Repository 层）。
+权限 Repository。
+
+职责：
+- 封装 Permission 的查询与持久化；
+- 给 rbac_service 处理角色授权时使用。
 """
 
 from __future__ import annotations
@@ -35,10 +39,9 @@ def list_permissions(db: Session) -> List[models.Permission]:
 
 
 def save_permission(db: Session, perm: models.Permission) -> models.Permission:
-    """保存权限实体。"""
+    """保存权限实体。提交并 refresh 后返回数据库最新状态。"""
     db.add(perm)
     db.commit()
     db.refresh(perm)
     return perm
-
 

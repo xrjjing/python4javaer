@@ -18,8 +18,10 @@ from ..config import settings
 
 
 router = APIRouter(prefix="/gateway", tags=["gateway"])
+# 这里是所有“前端可见 / 客户端可见”的网关入口集合。
 
 
+# 网关代理查询用户：适合演示“JWT 已校验 -> 请求转发到下游服务”的最短链路。
 @router.get("/backend/users/{user_id}", response_model=ApiResponse)
 def proxy_get_user(
     user_id: int,
@@ -32,6 +34,7 @@ def proxy_get_user(
     仅作为示例：调用前会校验当前用户的身份，再转发请求。
     """
     # 这里可以根据 current_user 中的角色/权限做更细粒度控制，此处先只要求登录成功。
+    # 链路：router -> BackendServiceClient.get_user() -> backend_user_order_service
     try:
         user_data: Dict[str, Any] = backend_client.get_user(user_id)
     except BackendServiceError as exc:
@@ -43,6 +46,7 @@ def proxy_get_user(
     return ApiResponse(success=True, data=user_data)
 
 
+# 网关代理创建订单：除了转发，还会补当前登录用户 ID，并尝试写审计日志。
 @router.post("/backend/orders", response_model=ApiResponse, status_code=status.HTTP_201_CREATED)
 def proxy_create_order(
     order_in: OrderCreateIn,
@@ -56,6 +60,7 @@ def proxy_create_order(
     示例中会将当前用户 ID 写入下游请求，模拟“网关根据登录身份补充参数”的场景。
     """
     # 假定 payload 中的 sub 字段就是用户 ID。
+    # 这一步相当于“网关根据登录态补充下游所需业务字段”。
     try:
         user_id = int(current_user["sub"])
     except (KeyError, ValueError, TypeError):
@@ -64,7 +69,8 @@ def proxy_create_order(
             detail="当前用户信息不完整，无法创建订单",
         )
 
-    # 简单示例：只有超级管理员才允许通过网关创建订单
+    # 简单示例：只有超级管理员才允许通过网关创建订单。
+    # 这里既演示权限控制，也演示“被拒绝时照样记录审计日志”。
     is_superuser = bool(current_user.get("is_superuser"))
     if not is_superuser:
         client_host = request.client.host if request and request.client else None
@@ -83,6 +89,7 @@ def proxy_create_order(
             detail="权限不足，无法创建订单",
         )
 
+    # 下游订单服务需要 user_id，这里由网关统一补齐，而不是交给前端自己传。
     enriched_order = OrderCreateIn(
         user_id=user_id,
         product_id=order_in.product_id,
@@ -97,7 +104,8 @@ def proxy_create_order(
             detail=str(exc),
         ) from exc
 
-    # 上报通过网关创建订单的审计日志（失败时静默忽略）
+    # 上报通过网关创建订单的审计日志（失败时静默忽略）。
+    # 这条日志最终会落到 log_audit_service。
     client_host = request.client.host if request.client else None
     log_audit_client.send_log(
         {
@@ -127,6 +135,8 @@ async def analyze_logs(
     - 转发到日志侦探服务
     - 统一错误处理和响应包装
     """
+    # 这里不在网关层解析日志字段细节，而是原样读取请求体并转发。
+    # 网关转发日志分析：前端传什么 body，这里基本原样交给下游日志侦探服务。
     body = await request.json()
 
     try:
